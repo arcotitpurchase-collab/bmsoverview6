@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://deepikaarcot18-png.github.io/bmsfrontend6/",
+  "homepage": "https://deepikaarcot18-png.github.io/bmsfrontend6-2/",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
