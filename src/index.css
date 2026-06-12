@@ -162,3 +162,20 @@ a:visited,
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
 }
+
+/* Animated SVG dash-array flow lines */
+.flow-path-left, .flow-path-right, .flow-path-center {
+  stroke-dasharray: 8 8;
+  animation: flowStroke 1.2s linear infinite;
+}
+
+@keyframes flowStroke {
+  to {
+    stroke-dashoffset: -16;
+  }
+}
+
+/* Equipment glow shadow */
+.panel-active-glow {
+  box-shadow: 0 0 15px rgba(0, 229, 255, 0.25), inset 0 0 15px rgba(0, 74, 173, 0.4);
+}

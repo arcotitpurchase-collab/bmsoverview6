@@ -125,19 +125,19 @@ export const powerAssets = [
   {
     id: "ht",
     title: "HT Panel",
-    subtitle: "11kV Incoming",
+    subtitle: "33kV Incoming",
     status: "ON",
   },
   {
     id: "tf1",
     title: "Transformer 1",
-    subtitle: "11kV / 433V",
+    subtitle: "33kV / 433V",
     status: "Normal",
   },
   {
     id: "tf2",
     title: "Transformer 2",
-    subtitle: "11kV / 433V",
+    subtitle: "33kV / 433V",
     status: "Normal",
   },
   {
