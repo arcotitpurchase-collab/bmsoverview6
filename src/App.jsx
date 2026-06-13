@@ -6,7 +6,7 @@ import ClientOverview from "./pages/ClientOverview";
 
 export default function App() {
   return (
-    <BrowserRouter basename="/bmsfrontend6-2">
+    <BrowserRouter basename="/bmsdashboard1">
       <Routes>
         <Route path="/" element={<MainOverview />} />
         <Route path="/building/:buildingId" element={<BuildingOverview />} />
