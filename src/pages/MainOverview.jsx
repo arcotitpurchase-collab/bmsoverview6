@@ -804,16 +804,114 @@ export default function MainOverview() {
     { id: "TR-6", oilTemp: "51°C", windingTemp: "57°C", buchholz: "Healthy", load: "60%" },
   ];
 
-const OverviewBox = ({ title, subtitle, onClick }) => (
-  <button
-    onClick={onClick}
-    className="h-[160px] w-full bg-[#081F5C] border-2 border-[#004AAD] text-white rounded-1 shadow-xl hover:bg-[#0A276E] transition-colors flex flex-col items-center justify-center text-center px-6"
-  >
-    <h3 className="text-2xl font-400 uppercase tracking-wide">{title}</h3>
-    <p className="text-sm text-blue-300 font-bold uppercase mt-4">{subtitle}</p>
-  </button>
-);
+// const OverviewBox = ({ title, subtitle, onClick }) => (
+//   <button
+//     onClick={onClick}
+//     className="h-[160px] w-full bg-[#081F5C] border-2 border-[#004AAD] text-white rounded-1 shadow-xl hover:bg-[#0A276E] transition-colors flex flex-col items-center justify-center text-center px-6"
+//   >
+//     <h3 className="text-2xl font-400 uppercase tracking-wide">{title}</h3>
+//     <p className="text-sm text-blue-300 font-bold uppercase mt-4">{subtitle}</p>
+//   </button>
+// );
 
+const OverviewBox = ({
+  title,
+  subtitle,
+  onClick,
+  liveStatus = {
+    on: true,
+    healthy: true,
+    off: false,
+  },
+}) => {
+  const conditions = [
+    {
+      key: "on",
+      label: "ON",
+      value: liveStatus.on ? "Active" : "Inactive",
+      active: liveStatus.on,
+      color: "emerald",
+    },
+    {
+      key: "healthy",
+      label: "HEALTHY",
+      value: liveStatus.healthy ? "Normal" : "Warning",
+      active: liveStatus.healthy,
+      color: "yellow",
+    },
+    {
+      key: "off",
+      label: "OFF",
+      value: liveStatus.off ? "Stopped" : "No Fault",
+      active: liveStatus.off,
+      color: "red",
+    },
+  ];
+
+  const colorClasses = {
+    emerald: {
+      dot: "bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.9)]",
+      text: "text-emerald-400",
+    },
+    yellow: {
+      dot: "bg-yellow-400 shadow-[0_0_12px_rgba(250,204,21,0.9)]",
+      text: "text-yellow-400",
+    },
+    red: {
+      dot: "bg-red-500 shadow-[0_0_12px_rgba(239,68,68,0.9)]",
+      text: "text-red-500",
+    },
+  };
+
+  return (
+    <div
+      onClick={onClick}
+      className="h-[145px] w-full bg-[#081F5C] border-2 border-[#004AAD] text-white rounded-none shadow-xl panel-active-glow flex flex-col text-center cursor-pointer overflow-hidden"
+    >
+     <div className="flex-1 flex flex-col items-center justify-center px-4">
+  <h4 className="text-xl font-bold uppercase tracking-[0.05em] text-white">
+    {title}
+  </h4>
+
+  <span className="mt-1 text-[11px] text-slate-300 font-medium">
+    {subtitle}
+  </span>
+</div>
+
+      <div className="grid grid-cols-3 border-t border-[#004AAD]/60 bg-[#061746]">
+        {conditions.map((item) => {
+          const c = colorClasses[item.color];
+
+          return (
+            <div
+              key={item.key}
+              className="py-2 flex flex-col items-center justify-center border-r last:border-r-0 border-[#004AAD]/40"
+            >
+              <div className="flex items-center gap-1.5">
+                <span
+                  className={`h-2.5 w-2.5 rounded-full ${
+                    item.active ? c.dot : "bg-slate-600 opacity-40"
+                  }`}
+                />
+                <span
+                  className={`text-[10px] font-black uppercase ${
+                    item.active ? c.text : "text-slate-500"
+                  }`}
+                >
+                  {item.label}
+                </span>
+              </div>
+
+              <span className="mt-1 text-[8px] font-semibold text-slate-300 uppercase tracking-wide">
+                {item.value}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
 
 // const WingOverviewBox = ({ title, subtitle }) => (
 //   <div className="h-[160px] w-[50%] mx-auto bg-[#081F5C] border-2 border-[#004AAD] text-white rounded-1 shadow-xl hover:bg-[#0A276E] transition-all duration-300 flex items-center justify-center gap-4 px-4">
@@ -1023,33 +1121,194 @@ const FlowLineV = () => (
   //   </PopupShell>
   // );
 
-  const SourceBox = ({ title, subtitle, icon }) => (
-  <div className="h-[115px] w-full bg-[#081F5C] border-2 border-[#004AAD] text-white rounded-none shadow-xl panel-active-glow flex flex-col items-center justify-center text-center px-4">
-    {icon && (
-      <div className="bg-[#05143C] p-2 border border-blue-900 mb-2">
-        <Zap className="h-5 w-5 text-emerald-400" />
-      </div>
-    )}
+  
+//   const SourceBox = ({ title, subtitle, icon }) => (
+//   <div className="h-[115px] w-full bg-[#081F5C] border-2 border-[#004AAD] text-white rounded-none shadow-xl panel-active-glow flex flex-col items-center justify-center text-center px-4">
+//     {icon && (
+//       <div className="bg-[#05143C] p-2 border border-blue-900 mb-2">
+//         <Zap className="h-5 w-5 text-emerald-400" />
+//       </div>
+//     )}
 
-    <span className="text-[9px] font-black text-blue-300 tracking-[0.2em] uppercase">
-      {subtitle}x
-    </span>
+//     <span className="text-[9px] font-black text-blue-300 tracking-[0.2em] uppercase">
+//       {subtitle}x
+//     </span>
 
-    <h4 className="text-lg font-semibold uppercase tracking-wide mt-1">
-      {title}
-    </h4>
-  </div>
-);
+//     <h4 className="text-lg font-semibold uppercase tracking-wide mt-1">
+//       {title}
+//     </h4>
+//   </div>
+// );
 
+// const SourcePopup = () => (
+//   <PopupShell title="33kV Source → 2 Incoming / 1 Outgoing ">
+//     <div className="max-w-5xl mx-auto">
 
+//       {/* SOURCE */}
+//       <div className="flex justify-center">
+//         <div className="w-[320px]">
+//           <SourceBox
+//             title="33kV SOURCE"
+//             subtitle="CENTRAL CONTROL PANEL"
+//             icon
+//           />
+//         </div>
+//       </div>
+
+//       {/* SOURCE DOWN TO BUS */}
+//       <div className="flex justify-center h-10">
+//         <div className="flow-line-vertical h-full">
+//           <div className="flow-pulse-vertical" />
+//         </div>
+//       </div>
+
+//       {/* BUS FLOW BELOW SOURCE */}
+//       <div className="relative h-[4px] w-[760px] mx-auto bg-cyan-400 overflow-hidden">
+//         <div className="flow-pulse-horizontal" />
+//       </div>
+
+//       {/* BUS TO INC1 / INC2 */}
+//       <div className="relative h-14 w-[760px] mx-auto">
+//         <div className="absolute left-0 top-0 h-full">
+//           <div className="flow-line-vertical h-full">
+//             <div className="flow-pulse-vertical" />
+//           </div>
+//         </div>
+
+//         <div className="absolute right-0 top-0 h-full">
+//           <div className="flow-line-vertical h-full">
+//             <div className="flow-pulse-vertical" />
+//           </div>
+//         </div>
+//       </div>
+
+//       {/* INC1 - OUT - INC2 */}
+//       <div className="grid grid-cols-[320px_80px_320px_80px_320px] items-center">
+//         <SourceBox title="INC1" subtitle="FEEDER BREAKER" />
+
+//         <div className="h-[4px] bg-cyan-400 relative overflow-hidden">
+//           <div className="flow-pulse-horizontal" />
+//         </div>
+
+//         <SourceBox title="OUT" subtitle="OUTGOING BUSBAR" />
+
+//         <div className="h-[4px] bg-cyan-400 relative overflow-hidden">
+//           <div className="flow-pulse-horizontal" />
+//         </div>
+
+//         <SourceBox title="INC2" subtitle="FEEDER BREAKER" />
+//       </div>
+
+//       {/* OUT TO METER */}
+//       <div className="flex justify-center h-12">
+//         <div className="flow-line-vertical h-full">
+//           <div className="flow-pulse-vertical" />
+//         </div>
+//       </div>
+
+//       {/* METER */}
+//       <div className="flex justify-center">
+//         <div className="w-[320px]">
+//           <SourceBox title="METER" subtitle="METERING UNIT" />
+//         </div>
+//       </div>
+
+//       {/* METER TO FEEDER */}
+//       <div className="flex justify-center h-12">
+//         <div className="flow-line-vertical h-full">
+//           <div className="flow-pulse-vertical" />
+//         </div>
+//       </div>
+
+//       {/* FEEDER */}
+//       <div className="flex justify-center">
+//         <div className="w-[320px]">
+//           <SourceBox title="33kV FEEDER" subtitle="FEEDER SWITCHGEAR PANEL" />
+//         </div>
+//       </div>
+
+//     </div>
+//   </PopupShell>
+// );
+
+const SourceBox = ({ title, subtitle, icon, hoverMonitor = false }) => {
+  const [isHovered, setIsHovered] = React.useState(false);
+
+  const monitorData = [
+    ["kWh", "1,280"],
+    ["kVh", "1,195"],
+    ["PF", "0.98"],
+    ["Voltage", "33.0 kV"],
+    ["Current", "420 A"],
+  ];
+
+  const showMonitor = hoverMonitor && isHovered;
+
+  return (
+    <div
+      onMouseEnter={() => hoverMonitor && setIsHovered(true)}
+      onMouseLeave={() => hoverMonitor && setIsHovered(false)}
+      className="relative h-[125px] w-full bg-[#081F5C] border-2 border-[#004AAD] text-white shadow-xl panel-active-glow overflow-hidden cursor-pointer"
+    >
+      {!showMonitor && (
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
+          {icon && (
+            <div className="bg-[#05143C] p-2 border border-blue-900 mb-2">
+              <Zap className="h-4 w-4 text-emerald-400" />
+            </div>
+          )}
+
+          <h4 className="text-[17px] font-bold uppercase tracking-[0.05em] leading-none">
+            {title}
+          </h4>
+
+          <span className="mt-2 text-[8px] font-black text-blue-300 tracking-[0.18em] uppercase leading-none">
+            {subtitle}
+          </span>
+        </div>
+      )}
+
+      {showMonitor && (
+        <div className="absolute inset-0 z-20 bg-[#081F5C] px-5 py-3">
+          <div className="flex items-center justify-between border-b border-[#2B5DA8] pb-1 mb-1.5">
+            <span className="text-[7px] font-black tracking-[0.15em] text-blue-300 uppercase">
+              Monitoring
+            </span>
+
+            <span className="flex items-center gap-1 text-[7px] font-bold text-emerald-400 uppercase">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.9)]" />
+              Live
+            </span>
+          </div>
+
+          <div className="px-2 pt-1 space-y-[3px]">
+            {monitorData.map(([label, value]) => (
+              <div
+                key={label}
+                className="flex items-center justify-between px-2"
+              >
+                <span className="text-[9px] font-medium text-slate-300 tracking-wide">
+                  {label}
+                </span>
+
+                <span className="text-[10px] font-bold text-white tabular-nums tracking-wide">
+                  {value}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
 
 const SourcePopup = () => (
-  <PopupShell title="33kV Source → 2 Incoming / 1 Outgoing ">
+  <PopupShell title="33kV Source → 2 Incoming / 1 Outgoing">
     <div className="max-w-5xl mx-auto">
-
       {/* SOURCE */}
       <div className="flex justify-center">
-        <div className="w-[320px]">
+        <div className="w-[340px]">
           <SourceBox
             title="33kV SOURCE"
             subtitle="CENTRAL CONTROL PANEL"
@@ -1066,12 +1325,12 @@ const SourcePopup = () => (
       </div>
 
       {/* BUS FLOW BELOW SOURCE */}
-      <div className="relative h-[4px] w-[760px] mx-auto bg-cyan-400 overflow-hidden">
+      <div className="relative h-[4px] w-[680px] mx-auto bg-cyan-400 overflow-hidden">
         <div className="flow-pulse-horizontal" />
       </div>
 
       {/* BUS TO INC1 / INC2 */}
-      <div className="relative h-14 w-[760px] mx-auto">
+      <div className="relative h-14 w-[680px] mx-auto">
         <div className="absolute left-0 top-0 h-full">
           <div className="flow-line-vertical h-full">
             <div className="flow-pulse-vertical" />
@@ -1086,20 +1345,20 @@ const SourcePopup = () => (
       </div>
 
       {/* INC1 - OUT - INC2 */}
-      <div className="grid grid-cols-[320px_80px_320px_80px_320px] items-center">
-        <SourceBox title="INC1" subtitle="FEEDER BREAKER" />
+      <div className="grid grid-cols-[280px_60px_280px_60px_280px] items-center justify-center mx-auto">
+        <SourceBox title="INC1" subtitle="FEEDER BREAKER" hoverMonitor />
 
-        <div className="h-[4px] bg-cyan-400 relative overflow-hidden">
+        <div className="h-[4px] w-full bg-cyan-400 relative overflow-hidden">
           <div className="flow-pulse-horizontal" />
         </div>
 
-        <SourceBox title="OUT" subtitle="OUTGOING BUSBAR" />
+        <SourceBox title="OUT" subtitle="OUTGOING BUSBAR" hoverMonitor />
 
-        <div className="h-[4px] bg-cyan-400 relative overflow-hidden">
+        <div className="h-[4px] w-full bg-cyan-400 relative overflow-hidden">
           <div className="flow-pulse-horizontal" />
         </div>
 
-        <SourceBox title="INC2" subtitle="FEEDER BREAKER" />
+        <SourceBox title="INC2" subtitle="FEEDER BREAKER" hoverMonitor />
       </div>
 
       {/* OUT TO METER */}
@@ -1111,7 +1370,7 @@ const SourcePopup = () => (
 
       {/* METER */}
       <div className="flex justify-center">
-        <div className="w-[320px]">
+        <div className="w-[340px]">
           <SourceBox title="METER" subtitle="METERING UNIT" />
         </div>
       </div>
@@ -1125,11 +1384,10 @@ const SourcePopup = () => (
 
       {/* FEEDER */}
       <div className="flex justify-center">
-        <div className="w-[320px]">
+        <div className="w-[340px]">
           <SourceBox title="33kV FEEDER" subtitle="FEEDER SWITCHGEAR PANEL" />
         </div>
       </div>
-
     </div>
   </PopupShell>
 );
@@ -1274,76 +1532,492 @@ const SourcePopup = () => (
     </PopupShell>
   );
 
-  const KioskPopup = () => (
-    <PopupShell title="LT Kiosk">
-      <div className="flex justify-center w-full my-3">
-        <div onClick={() => setKiosksExpanded(!kiosksExpanded)} className="w-[90%] md:w-[70%] lg:w-[45%] h-32 max-w-xl bg-[#081F5C] border-2 border-[#004AAD] text-white shadow-lg rounded-md cursor-pointer hover:bg-[#0A276E] transition-colors">
-          <div className="h-full flex flex-col items-center justify-center text-center">
-            <span className="text-[10px] font-black text-blue-300 tracking-[0.2em] uppercase">STEP-DOWN COMBINER PANEL</span>
-            <h3 className="text-lg font-black text-white tracking-wider mt-1">LT KIOSK</h3>
-          </div>
-        </div>
-      </div>
-      {kiosksExpanded && (
-        <>
-          <div className="flex justify-center h-10"><div className="flow-line-vertical h-full"><div className="flow-pulse-vertical" /></div></div>
-          <div className="max-w-7xl mx-auto px-4">
-            <div className="mx-auto w-[84%] h-[2px] bg-cyan-400 relative overflow-hidden"><div className="flow-pulse-horizontal" /></div>
-            <div className="grid grid-cols-6 gap-4">
-              {Array.from({ length: 6 }).map((_, index) => (
-                <div key={index} className="flex flex-col items-center">
-                  <div className="flow-line-vertical h-8"><div className="flow-pulse-vertical" /></div>
-                  <div className="w-full bg-[#081F5C] border-2 border-[#004AAD] p-4 text-white shadow-md rounded relative panel-active-glow min-h-[200px] flex flex-col items-center justify-center text-center">
-                    <span className="text-[10px] font-black text-blue-300 uppercase tracking-wider">LT KIOSK</span>
-                    <strong className="text-xl font-black tracking-widest mt-2">KIOSK-{index + 1}</strong>
-                    <span className="text-[9px] font-bold text-blue-300 uppercase mt-1">433V PANEL</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </>
-      )}
-    </PopupShell>
-  );
+  // const KioskPopup = () => (
+  //   <PopupShell title="LT Kiosk">
+  //     <div className="flex justify-center w-full my-3">
+  //       <div onClick={() => setKiosksExpanded(!kiosksExpanded)} className="w-[90%] md:w-[70%] lg:w-[45%] h-32 max-w-xl bg-[#081F5C] border-2 border-[#004AAD] text-white shadow-lg rounded-md cursor-pointer hover:bg-[#0A276E] transition-colors">
+  //         <div className="h-full flex flex-col items-center justify-center text-center">
+  //           <span className="text-[10px] font-black text-blue-300 tracking-[0.2em] uppercase">STEP-DOWN COMBINER PANEL</span>
+  //           <h3 className="text-lg font-black text-white tracking-wider mt-1">LT KIOSK</h3>
+  //         </div>
+  //       </div>
+  //     </div>
+  //     {kiosksExpanded && (
+  //       <>
+  //         <div className="flex justify-center h-10"><div className="flow-line-vertical h-full"><div className="flow-pulse-vertical" /></div></div>
+  //         <div className="max-w-7xl mx-auto px-4">
+  //           <div className="mx-auto w-[84%] h-[2px] bg-cyan-400 relative overflow-hidden"><div className="flow-pulse-horizontal" /></div>
+  //           <div className="grid grid-cols-6 gap-4">
+  //             {Array.from({ length: 6 }).map((_, index) => (
+  //               <div key={index} className="flex flex-col items-center">
+  //                 <div className="flow-line-vertical h-8"><div className="flow-pulse-vertical" /></div>
+  //                 <div className="w-full bg-[#081F5C] border-2 border-[#004AAD] p-4 text-white shadow-md rounded relative panel-active-glow min-h-[200px] flex flex-col items-center justify-center text-center">
+  //                   <span className="text-[10px] font-black text-blue-300 uppercase tracking-wider">LT KIOSK</span>
+  //                   <strong className="text-xl font-black tracking-widest mt-2">KIOSK-{index + 1}</strong>
+  //                   <span className="text-[9px] font-bold text-blue-300 uppercase mt-1">433V PANEL</span>
+  //                 </div>
+  //               </div>
+  //             ))}
+  //           </div>
+  //         </div>
+  //       </>
+  //     )}
+  //   </PopupShell>
+  // );
 
-  const BusbarPopup = () => (
-    <PopupShell title="LT Busduct / Busbar">
-      <div className="flex justify-center w-full my-3">
-        <div onClick={() => setBusbarsExpanded(!busbarsExpanded)} className="w-[90%] md:w-[70%] lg:w-[45%] h-32 max-w-xl bg-[#081F5C] border-2 border-[#004AAD] text-white shadow-lg rounded-md cursor-pointer hover:bg-[#0A276E] transition-colors">
-          <div className="h-full flex flex-col items-center justify-center text-center">
-            <span className="text-[10px] font-black text-blue-300 tracking-[0.2em] uppercase">POWER DISTRIBUTION</span>
-            <h3 className="text-lg font-black text-white tracking-wider mt-1">LT BUSDUCT / BUSBAR</h3>
-            <span className="text-xs text-blue-300 mt-1">433V</span>
+const KioskMonitorBox = ({ title, subtitle }) => {
+  const [isHovered, setIsHovered] = React.useState(false);
+
+  const monitorData = [
+    ["kWh", "1,280"],
+    ["kVh", "1,195"],
+    ["PF", "0.98"],
+    ["AMPS", "420 A"],
+    ["Voltage", "433 V"],
+  ];
+
+  return (
+    <div
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className="w-full bg-[#081F5C] border-2 border-[#004AAD] text-white shadow-md rounded relative panel-active-glow h-[150px] overflow-hidden cursor-pointer"
+    >
+      {!isHovered && (
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-3">
+          <span className="text-[9px] font-black text-blue-300 uppercase tracking-wider">
+            LT KIOSK
+          </span>
+
+          <strong className="text-[18px] font-black tracking-widest mt-2">
+            {title}
+          </strong>
+
+          <span className="text-[8px] font-bold text-blue-300 uppercase mt-1">
+            {subtitle}
+          </span>
+        </div>
+      )}
+
+      {isHovered && (
+        <div className="absolute inset-0 z-20 bg-[#081F5C] px-4 py-3">
+          <div className="flex items-center justify-between border-b border-[#2B5DA8] pb-1 mb-2">
+            <span className="text-[8px] font-black tracking-[0.15em] text-blue-300 uppercase">
+              Monitoring
+            </span>
+
+            <span className="flex items-center gap-1 text-[7px] font-bold text-emerald-400 uppercase">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.9)]" />
+              Live
+            </span>
+          </div>
+
+          <div className="px-2 space-y-[4px]">
+            {monitorData.map(([label, value]) => (
+              <div
+                key={label}
+                className="flex items-center justify-between px-1"
+              >
+                <span className="text-[10px] font-medium text-slate-300">
+                  {label}
+                </span>
+
+                <span className="text-[11px] font-bold text-white tabular-nums">
+                  {value}
+                </span>
+              </div>
+            ))}
           </div>
         </div>
-      </div>
-      {busbarsExpanded && (
-        <>
-          <div className="flex justify-center h-10"><div className="flow-line-vertical h-full"><div className="flow-pulse-vertical" /></div></div>
-          <div className="max-w-7xl mx-auto px-4">
-            <div className="mx-auto w-[84%] h-[2px] bg-cyan-400 relative overflow-hidden"><div className="flow-pulse-horizontal" /></div>
-            <div className="grid grid-cols-6 gap-4">
-              {Array.from({ length: 6 }).map((_, index) => (
-                <div key={index} className="flex flex-col items-center">
-                  <div className="flow-line-vertical h-8"><div className="flow-pulse-vertical" /></div>
-                  <div className="w-full bg-[#081F5C] border-2 border-[#004AAD] p-4 text-white shadow-md rounded relative panel-active-glow min-h-[200px] flex flex-col items-center justify-center">
-                    <span className="text-[10px] font-black text-blue-300 uppercase tracking-wider">LT BUSBAR</span>
-                    <strong className="text-xl font-black tracking-widest mt-2">BUS-{index + 1}</strong>
-                    <span className="text-[9px] font-bold text-blue-300 uppercase mt-1">433V</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </>
       )}
-    </PopupShell>
+    </div>
   );
+};
+
+const KioskPopup = () => (
+  <PopupShell title="LT Kiosk">
+    <div className="flex justify-center w-full my-3">
+      <div
+        onClick={() => setKiosksExpanded(!kiosksExpanded)}
+        className="w-[90%] md:w-[70%] lg:w-[45%] h-32 max-w-xl bg-[#081F5C] border-2 border-[#004AAD] text-white shadow-lg rounded-md cursor-pointer hover:bg-[#0A276E] transition-colors"
+      >
+        <div className="h-full flex flex-col items-center justify-center text-center">
+          <span className="text-[10px] font-black text-blue-300 tracking-[0.2em] uppercase">
+            STEP-DOWN COMBINER PANEL
+          </span>
+
+          <h3 className="text-lg font-black text-white tracking-wider mt-1">
+            LT KIOSK
+          </h3>
+        </div>
+      </div>
+    </div>
+
+    {kiosksExpanded && (
+      <>
+        <div className="flex justify-center h-10">
+          <div className="flow-line-vertical h-full">
+            <div className="flow-pulse-vertical" />
+          </div>
+        </div>
+
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="mx-auto w-[84%] h-[2px] bg-cyan-400 relative overflow-hidden">
+            <div className="flow-pulse-horizontal" />
+          </div>
+
+          <div className="grid grid-cols-6 gap-4">
+            {Array.from({ length: 6 }).map((_, index) => (
+              <div key={index} className="flex flex-col items-center">
+                <div className="flow-line-vertical h-8">
+                  <div className="flow-pulse-vertical" />
+                </div>
+
+                <KioskMonitorBox
+                  title={`KIOSK-${index + 1}`}
+                  subtitle="433V PANEL"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      </>
+    )}
+  </PopupShell>
+);
+
+
+  // const BusbarPopup = () => (
+  //   <PopupShell title="LT Busduct / Busbar">
+  //     <div className="flex justify-center w-full my-3">
+  //       <div onClick={() => setBusbarsExpanded(!busbarsExpanded)} className="w-[90%] md:w-[70%] lg:w-[45%] h-32 max-w-xl bg-[#081F5C] border-2 border-[#004AAD] text-white shadow-lg rounded-md cursor-pointer hover:bg-[#0A276E] transition-colors">
+  //         <div className="h-full flex flex-col items-center justify-center text-center">
+  //           <span className="text-[10px] font-black text-blue-300 tracking-[0.2em] uppercase">POWER DISTRIBUTION</span>
+  //           <h3 className="text-lg font-black text-white tracking-wider mt-1">LT BUSDUCT / BUSBAR</h3>
+  //           <span className="text-xs text-blue-300 mt-1">433V</span>
+  //         </div>
+  //       </div>
+  //     </div>
+  //     {busbarsExpanded && (
+  //       <>
+  //         <div className="flex justify-center h-10"><div className="flow-line-vertical h-full"><div className="flow-pulse-vertical" /></div></div>
+  //         <div className="max-w-7xl mx-auto px-4">
+  //           <div className="mx-auto w-[84%] h-[2px] bg-cyan-400 relative overflow-hidden"><div className="flow-pulse-horizontal" /></div>
+  //           <div className="grid grid-cols-6 gap-4">
+  //             {Array.from({ length: 6 }).map((_, index) => (
+  //               <div key={index} className="flex flex-col items-center">
+  //                 <div className="flow-line-vertical h-8"><div className="flow-pulse-vertical" /></div>
+  //                 <div className="w-full bg-[#081F5C] border-2 border-[#004AAD] p-4 text-white shadow-md rounded relative panel-active-glow min-h-[200px] flex flex-col items-center justify-center">
+  //                   <span className="text-[10px] font-black text-blue-300 uppercase tracking-wider">LT BUSBAR</span>
+  //                   <strong className="text-xl font-black tracking-widest mt-2">BUS-{index + 1}</strong>
+  //                   <span className="text-[9px] font-bold text-blue-300 uppercase mt-1">433V</span>
+  //                 </div>
+  //               </div>
+  //             ))}
+  //           </div>
+  //         </div>
+  //       </>
+  //     )}
+  //   </PopupShell>
+  // );
+
+  const BusbarMonitorBox = ({ title }) => {
+  const [isHovered, setIsHovered] = React.useState(false);
+
+  const monitorData = [
+    ["Temp", "42°C"],
+    ["Vibration", "Normal"],
+    ["Health", "ON"],
+  ];
+
+  return (
+    <div
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className="w-full h-[150px] bg-[#081F5C] border-2 border-[#004AAD] text-white shadow-md rounded relative panel-active-glow overflow-hidden cursor-pointer"
+    >
+      {!isHovered && (
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-3">
+          <span className="text-[9px] font-black text-blue-300 uppercase tracking-wider">
+            LT BUSBAR
+          </span>
+
+          <strong className="text-[18px] font-black tracking-widest mt-2">
+            {title}
+          </strong>
+
+          <span className="text-[8px] font-bold text-blue-300 uppercase mt-1">
+            433V
+          </span>
+        </div>
+      )}
+
+      {isHovered && (
+        <div className="absolute inset-0 z-20 bg-[#081F5C] px-4 py-3">
+          <div className="flex items-center justify-between border-b border-[#2B5DA8] pb-1 mb-3">
+            <span className="text-[8px] font-black tracking-[0.15em] text-blue-300 uppercase">
+              Busbar Status
+            </span>
+
+            <span className="flex items-center gap-1 text-[7px] font-bold text-emerald-400 uppercase">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.9)]" />
+              Live
+            </span>
+          </div>
+
+          <div className="px-2 space-y-[8px]">
+            {monitorData.map(([label, value]) => {
+              const isOn = value === "ON";
+              const isNormal = value === "Normal";
+
+              return (
+                <div
+                  key={label}
+                  className="flex items-center justify-between px-1"
+                >
+                  <span className="text-[10px] font-medium text-slate-300">
+                    {label}
+                  </span>
+
+                  <span
+                    className={`text-[11px] font-bold tabular-nums ${
+                      isOn || isNormal ? "text-emerald-400" : "text-white"
+                    }`}
+                  >
+                    {value}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+const BusbarPopup = () => (
+  <PopupShell title="LT Busduct / Busbar">
+    <div className="flex justify-center w-full my-3">
+      <div
+        onClick={() => setBusbarsExpanded(!busbarsExpanded)}
+        className="w-[90%] md:w-[70%] lg:w-[45%] h-32 max-w-xl bg-[#081F5C] border-2 border-[#004AAD] text-white shadow-lg rounded-md cursor-pointer hover:bg-[#0A276E] transition-colors"
+      >
+        <div className="h-full flex flex-col items-center justify-center text-center">
+          <span className="text-[10px] font-black text-blue-300 tracking-[0.2em] uppercase">
+            POWER DISTRIBUTION
+          </span>
+
+          <h3 className="text-lg font-black text-white tracking-wider mt-1">
+            LT BUSDUCT / BUSBAR
+          </h3>
+
+          <span className="text-xs text-blue-300 mt-1">433V</span>
+        </div>
+      </div>
+    </div>
+
+    {busbarsExpanded && (
+      <>
+        <div className="flex justify-center h-10">
+          <div className="flow-line-vertical h-full">
+            <div className="flow-pulse-vertical" />
+          </div>
+        </div>
+
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="mx-auto w-[84%] h-[2px] bg-cyan-400 relative overflow-hidden">
+            <div className="flow-pulse-horizontal" />
+          </div>
+
+          <div className="grid grid-cols-6 gap-4">
+            {Array.from({ length: 6 }).map((_, index) => (
+              <div key={index} className="flex flex-col items-center">
+                <div className="flow-line-vertical h-8">
+                  <div className="flow-pulse-vertical" />
+                </div>
+
+                <BusbarMonitorBox title={`BUS-${index + 1}`} />
+              </div>
+            ))}
+          </div>
+        </div>
+      </>
+    )}
+  </PopupShell>
+);
+
+
+// const Wing1Popup = () => (
+//   <PopupShell title="Wing 1 LT Distribution Flow">
+//     <div className="relative w-full max-w-7xl mx-auto px-4 py-6 bg-white border border-slate-200 overflow-hidden">
+//       <div className="relative w-full h-[560px]">
+
+//         {/* PCC1 */}
+//         <div className="absolute left-[3%] top-[20px] w-[30%] h-[235px] bg-[#081F5C] border-2 border-[#004AAD] p-5 text-white shadow-md rounded-lg panel-active-glow z-20">
+//           <div className="text-center text-[12px] font-black text-blue-300 tracking-[0.2em] uppercase mb-4 border-b border-blue-900/60 pb-2">
+//             PCC1
+//           </div>
+
+//           <div className="grid grid-cols-2 gap-6 h-[150px]">
+//             {[
+//               { title: "LT IN", value: "06" },
+//               { title: "LT IN", value: "05" },
+//             ].map((item) => (
+//               <div
+//                 key={item.value}
+//                 className="bg-[#05143C] border-2 border-[#004AAD] rounded-xl flex flex-col items-center justify-center shadow-[0_0_16px_rgba(0,74,173,0.35)]"
+//               >
+//                 <span className="text-[10px] font-black text-blue-300 uppercase">
+//                   {item.title}
+//                 </span>
+//                 <strong className="text-3xl font-black mt-2">
+//                   {item.value}
+//                 </strong>
+//               </div>
+//             ))}
+//           </div>
+//         </div>
+
+//         {/* PCC2 */}
+//         <div className="absolute left-[3%] top-[320px] w-[30%] h-[210px] bg-[#081F5C] border-2 border-[#004AAD] p-5 text-white shadow-md rounded-lg panel-active-glow z-20">
+//           <div className="text-center text-[12px] font-black text-blue-300 tracking-[0.2em] uppercase mb-4 border-b border-blue-900/60 pb-2">
+//             PCC2
+//           </div>
+
+//           <div className="grid grid-cols-2 gap-6 h-[125px]">
+//             {[
+//               { title: "LT IN", value: "01" },
+//               { title: "LT IN", value: "02" },
+//             ].map((item) => (
+//               <div
+//                 key={item.value}
+//                 className="bg-[#05143C] border-2 border-[#004AAD] rounded-xl flex flex-col items-center justify-center shadow-[0_0_16px_rgba(0,74,173,0.35)]"
+//               >
+//                 <span className="text-[10px] font-black text-blue-300 uppercase">
+//                   {item.title}
+//                 </span>
+//                 <strong className="text-3xl font-black mt-2">
+//                   {item.value}
+//                 </strong>
+//               </div>
+//             ))}
+//           </div>
+//         </div>
+
+//         {/* DG INC */}
+//         <div className="absolute right-[3%] top-[130px] w-[39%] h-[265px] bg-[#081F5C] border-2 border-[#004AAD] p-5 text-white shadow-md rounded-lg panel-active-glow z-20">
+//           <div className="text-center text-[12px] font-black text-blue-300 tracking-[0.2em] uppercase mb-4 border-b border-blue-900/60 pb-2">
+//             DG INC
+//           </div>
+
+//           <div className="grid grid-cols-2 gap-7">
+//             {[
+//               { title: "DG 1 & 2", values: ["1", "2"] },
+//               { title: "DG 3 & 4", values: ["3", "4"] },
+//             ].map((group) => (
+//               <div
+//                 key={group.title}
+//                 className="bg-[#05143C] border-2 border-[#004AAD] p-4 rounded-xl shadow-[0_0_16px_rgba(0,74,173,0.35)]"
+//               >
+//                 <div className="text-center text-[11px] font-black text-blue-300 uppercase mb-4">
+//                   {group.title}
+//                 </div>
+
+//                 <div className="grid grid-cols-2 gap-4">
+//                   {group.values.map((value) => (
+//                     <div
+//                       key={value}
+//                       className="h-[90px] bg-[#081F5C] border-2 border-[#004AAD] rounded-xl flex items-center justify-center text-2xl font-black shadow-[0_0_14px_rgba(0,74,173,0.35)]"
+//                     >
+//                       {value}
+//                     </div>
+//                   ))}
+//                 </div>
+//               </div>
+//             ))}
+//           </div>
+//         </div>
+
+//         {/* FLOWS */}
+//         <svg
+//           className="absolute inset-0 w-full h-full pointer-events-none z-10"
+//           viewBox="0 0 1200 560"
+//           fill="none"
+//         >
+//           <defs>
+//             <marker
+//               id="wing-arrow"
+//               viewBox="0 0 10 10"
+//               refX="6"
+//               refY="5"
+//               markerWidth="5"
+//               markerHeight="5"
+//               orient="auto"
+//             >
+//               <path d="M 0 2 L 6 5 L 0 8 z" fill="#00E5FF" />
+//             </marker>
+//           </defs>
+
+//           {/* DG 1&2 to PCC1 */}
+// <path
+//   d="M 360 105 H 820 V 250"
+//   stroke="#004AAD"
+//   strokeWidth="3"
+//   fill="none"
+// />
+
+// <path
+//   d="M 360 105 H 820 V 250"
+//   stroke="#00E5FF"
+//   strokeWidth="3"
+//   fill="none"
+//   className="flow-path-right"
+//   markerEnd="url(#wing-arrow)"
+// />
+
+//           {/* DG 1&2 to PCC2 */}
+//           <path d="M 820 245 V 455 H 360" stroke="#004AAD" strokeWidth="3" fill="none" />
+//           <path
+//             d="M 820 245 V 455 H 360"
+//             stroke="#00E5FF"
+//             strokeWidth="3"
+//             fill="none"
+//             className="flow-path-left"
+//             markerEnd="url(#wing-arrow)"
+//           />
+
+//           {/* DG 3&4 to PCC1 */}
+//           <path d="M 1020 205 V 70 H 360" stroke="#004AAD" strokeWidth="3" fill="none" />
+//           <path
+//             d="M 1020 205 V 70 H 360"
+//             stroke="#00E5FF"
+//             strokeWidth="3"
+//             fill="none"
+//             className="flow-path-left"
+//             markerEnd="url(#wing-arrow)"
+//           />
+
+//           {/* DG 3&4 to PCC2 */}
+//           <path d="M 1020 380 V 485 H 360" stroke="#004AAD" strokeWidth="3" fill="none" />
+//           <path
+//             d="M 1020 380 V 485 H 360"
+//             stroke="#00E5FF"
+//             strokeWidth="3"
+//             fill="none"
+//             className="flow-path-left"
+//             markerEnd="url(#wing-arrow)"
+//           />
+//         </svg>
+
+//       </div>
+//     </div>
+//   </PopupShell>
+// );
+
 
 const Wing1Popup = () => (
   <PopupShell title="Wing 1 LT Distribution Flow">
-    <div className="relative w-full max-w-7xl mx-auto px-4 py-6 bg-white border border-slate-200 overflow-hidden">
+    <div className="relative w-full max-w-7xl mx-auto px-4 py-6 overflow-hidden">
       <div className="relative w-full h-[560px]">
 
         {/* PCC1 */}
@@ -1452,55 +2126,17 @@ const Wing1Popup = () => (
             </marker>
           </defs>
 
-          {/* DG 1&2 to PCC1 */}
-<path
-  d="M 360 105 H 820 V 250"
-  stroke="#004AAD"
-  strokeWidth="3"
-  fill="none"
-/>
+          <path d="M 360 105 H 820 V 250" stroke="#004AAD" strokeWidth="3" fill="none" />
+          <path d="M 360 105 H 820 V 250" stroke="#00E5FF" strokeWidth="3" fill="none" className="flow-path-right" markerEnd="url(#wing-arrow)" />
 
-<path
-  d="M 360 105 H 820 V 250"
-  stroke="#00E5FF"
-  strokeWidth="3"
-  fill="none"
-  className="flow-path-right"
-  markerEnd="url(#wing-arrow)"
-/>
-
-          {/* DG 1&2 to PCC2 */}
           <path d="M 820 245 V 455 H 360" stroke="#004AAD" strokeWidth="3" fill="none" />
-          <path
-            d="M 820 245 V 455 H 360"
-            stroke="#00E5FF"
-            strokeWidth="3"
-            fill="none"
-            className="flow-path-left"
-            markerEnd="url(#wing-arrow)"
-          />
+          <path d="M 820 245 V 455 H 360" stroke="#00E5FF" strokeWidth="3" fill="none" className="flow-path-left" markerEnd="url(#wing-arrow)" />
 
-          {/* DG 3&4 to PCC1 */}
           <path d="M 1020 205 V 70 H 360" stroke="#004AAD" strokeWidth="3" fill="none" />
-          <path
-            d="M 1020 205 V 70 H 360"
-            stroke="#00E5FF"
-            strokeWidth="3"
-            fill="none"
-            className="flow-path-left"
-            markerEnd="url(#wing-arrow)"
-          />
+          <path d="M 1020 205 V 70 H 360" stroke="#00E5FF" strokeWidth="3" fill="none" className="flow-path-left" markerEnd="url(#wing-arrow)" />
 
-          {/* DG 3&4 to PCC2 */}
           <path d="M 1020 380 V 485 H 360" stroke="#004AAD" strokeWidth="3" fill="none" />
-          <path
-            d="M 1020 380 V 485 H 360"
-            stroke="#00E5FF"
-            strokeWidth="3"
-            fill="none"
-            className="flow-path-left"
-            markerEnd="url(#wing-arrow)"
-          />
+          <path d="M 1020 380 V 485 H 360" stroke="#00E5FF" strokeWidth="3" fill="none" className="flow-path-left" markerEnd="url(#wing-arrow)" />
         </svg>
 
       </div>
@@ -1644,11 +2280,12 @@ const Wing2Popup = () => (
 
     {/* ROW 1: SOURCE → FEEDERS → TRANSFORMER → LT KIOSK */}
     <div className="grid grid-cols-[1fr_70px_1fr_70px_1fr_70px_1fr] items-center">
-      <OverviewBox
-        title="33kV Source"
-        subtitle="2 Incoming / 1 Outgoing"
-        onClick={() => setActivePopup("source")}
-      />
+     <OverviewBox
+  title="33kV Source"
+  subtitle="2 Incoming / 1 Outgoing"
+  liveStatus={{ on: true, healthy: true, off: false }}
+  onClick={() => setActivePopup("source")}
+/>
 
       <FlowLineH />
 
