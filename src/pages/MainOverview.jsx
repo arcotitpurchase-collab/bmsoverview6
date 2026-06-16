@@ -2737,6 +2737,138 @@ const RaisingMainPopup = () => {
   );
 };
 
+const BuildingsPopup = () => {
+ const BuildingBox = ({ title, subtitle, onClick, showIcon = false }) => (
+  <div
+    onClick={onClick}
+    className="h-[125px] w-full bg-gradient-to-br from-[#081F5C] to-[#061746] border border-[#1F6FEB] text-white shadow-[0_12px_30px_rgba(8,31,92,0.25)] flex items-center justify-center text-center cursor-pointer px-5 overflow-hidden"
+  >
+    {showIcon && (
+      <div className="w-[62px] h-[92px] border border-[#1F6FEB] bg-[#05143C] p-2 flex flex-col justify-between shrink-0 mr-5">
+        <div className="h-[3px] w-full bg-[#00E5FF]" />
+
+        <div className="grid grid-cols-4 gap-[4px]">
+          {Array.from({ length: 24 }).map((_, i) => (
+            <span
+              key={i}
+              className="w-[6px] h-[6px] rounded-[2px] bg-slate-400/60"
+            />
+          ))}
+        </div>
+
+        <div className="h-[8px] w-full bg-[#004AAD]" />
+      </div>
+    )}
+
+    <div className="flex flex-col items-center justify-center">
+      <h4 className="text-lg font-bold uppercase tracking-[0.08em]">
+        {title}
+      </h4>
+
+      <span className="mt-2 text-[11px] text-blue-200 font-semibold">
+        {subtitle}
+      </span>
+    </div>
+  </div>
+);
+
+  return (
+    <PopupShell
+      title="Buildings Distribution"
+      onBack={() => setActivePopup(null)}
+    >
+      <div className="w-full max-w-5xl mx-auto px-6 py-8 overflow-visible">
+        <div className="relative h-[420px] overflow-visible">
+          <div className="absolute left-1/2 top-0 -translate-x-1/2 w-[300px]">
+            <BuildingBox
+              title="Buildings"
+              subtitle="Main Building Distribution"
+            />
+          </div>
+
+          <svg
+            className="absolute left-0 top-[130px] w-full h-[140px] overflow-visible pointer-events-none"
+            viewBox="0 0 1000 140"
+            fill="none"
+          >
+            <defs>
+              <marker
+                id="building-arrow"
+                viewBox="0 0 10 10"
+                refX="4"
+                refY="5"
+                markerWidth="8"
+                markerHeight="8"
+                orient="auto"
+              >
+                <path d="M0 2 L6 5 L0 8 Z" fill="#00E5FF" />
+              </marker>
+            </defs>
+
+            <path
+              d="M500 0 V45 H250 V105"
+              stroke="#004AAD"
+              strokeWidth="4"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+
+            <path
+              d="M500 45 H750 V105"
+              stroke="#004AAD"
+              strokeWidth="4"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+
+            <path
+              d="M500 0 V45 H250 V105"
+              stroke="#00E5FF"
+              strokeWidth="4"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="flow-path-left"
+              markerEnd="url(#building-arrow)"
+            />
+
+            <path
+              d="M500 45 H750 V105"
+              stroke="#00E5FF"
+              strokeWidth="4"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="flow-path-right"
+              markerEnd="url(#building-arrow)"
+            />
+          </svg>
+
+<div className="absolute left-[12%] top-[240px] w-[30%]">
+  <Link to="/building/wing-a">
+    <BuildingBox
+      title="Wing A"
+      subtitle="20 Floors / 40 Zones"
+      showIcon
+    />
+  </Link>
+</div>
+
+<div className="absolute right-[12%] top-[240px] w-[30%]">
+  <Link to="/building/wing-b">
+    <BuildingBox
+      title="Wing B"
+      subtitle="20 Floors / 40 Zones"
+      showIcon
+    />
+  </Link>
+</div>
+        </div>
+      </div>
+    </PopupShell>
+  );
+};
+
+
+
   return (
     <main className="min-h-screen bg-white text-[#081F5C] flex flex-col font-sans">
       {/* <header className="sticky top-0 z-50 h-[72px] bg-[#081F5C] border-b-4 border-[#004AAD] px-4 text-white shadow-md">
@@ -2859,7 +2991,14 @@ const RaisingMainPopup = () => {
       subtitle="Vertical Distribution"
       onClick={() => setActivePopup("raisingMain")}
     />
+    
+    <FlowLineH />
 
+    <OverviewBox
+      title="WING"
+      subtitle="wing A / wing B"
+      onClick={() => setActivePopup("buildings")}
+    />
     <div />
     <div />
 
@@ -2883,6 +3022,7 @@ const RaisingMainPopup = () => {
 {activePopup === "wing1" && <Pcc1Popup />}
 {activePopup === "wing2" && <Pcc2Popup />}
 {activePopup === "raisingMain" && <RaisingMainPopup />}
+{activePopup === "buildings" && <BuildingsPopup />}
 
 
 

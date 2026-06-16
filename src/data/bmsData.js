@@ -1,19 +1,16 @@
 export const buildings = [
   {
-    id: "sky-1",
-    name: "Sky 1",
+    id: "wing-a",
+    name: "Wing A",
     floors: 20,
-    clientsPerFloor: 4,
-    status: "Healthy",
   },
   {
-    id: "sky-2",
-    name: "Sky 2",
+    id: "wing-b",
+    name: "Wing B",
     floors: 20,
-    clientsPerFloor: 4,
-    status: "Healthy",
   },
 ];
+
 export const clients = [
   "TCS",
   "Infosys",
