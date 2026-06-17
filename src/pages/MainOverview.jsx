@@ -3036,6 +3036,8 @@ const BuildingsPopup = () => {
           </div>
         </div>
       </footer>
+
+      
     </main>
   );
 }
