@@ -1279,6 +1279,613 @@
 
 
 
+
+
+// import React, { useEffect, useMemo, useState } from "react";
+// import { useNavigate } from "react-router-dom";
+// import prestigeLogo from "../assets/ser-removebg.png";
+
+// export default function OverviewPage() {
+//   const navigate = useNavigate();
+
+//   const initialFlow = [
+//     { key: "source", title: "33kV Source", short: "SRC", incoming: 1120, outgoing: 1085, today: 18420, month: 486500 },
+//     { key: "feeder", title: "33kV Feeder", short: "FDR", incoming: 1085, outgoing: 1040, today: 17680, month: 462300 },
+//     { key: "transformer", title: "Transformers", short: "TRF", incoming: 1040, outgoing: 980, today: 16940, month: 441900 },
+//     { key: "kiosk", title: "LT Kiosk", short: "KSK", incoming: 980, outgoing: 935, today: 15720, month: 408700 },
+//     { key: "busbar", title: "LT Busbar", short: "BUS", incoming: 935, outgoing: 900, today: 14980, month: 392100 },
+//     { key: "pcc", title: "PCC Main", short: "PCC", incoming: 900, outgoing: 850, today: 14160, month: 366400 },
+//     { key: "wing1", title: "Wing 1", short: "W1", incoming: 425, outgoing: 402, today: 7080, month: 181000 },
+//     { key: "wing2", title: "Wing 2", short: "W2", incoming: 425, outgoing: 410, today: 7420, month: 190400 },
+//   ];
+
+//   const colors = [
+//     "#1687D9",
+//     "#1E46B8",
+//     "#2F67E8",
+//     "#1F78B8",
+//     "#2048B8",
+//     "#2563EB",
+//     "#67E8F9",
+//     "#081F5C",
+//   ];
+
+//   const [flowData, setFlowData] = useState(initialFlow);
+//   const [lastUpdated, setLastUpdated] = useState(new Date());
+//   const [reportView, setReportView] = useState("month");
+
+//   useEffect(() => {
+//     const timer = setInterval(() => {
+//       setFlowData((prev) =>
+//         prev.map((item) => {
+//           const incoming = Math.max(
+//             40,
+//             item.incoming + Math.floor(Math.random() * 15) - 7
+//           );
+
+//           const outgoing = Math.min(
+//             incoming - 5,
+//             Math.max(35, item.outgoing + Math.floor(Math.random() * 13) - 6)
+//           );
+
+//           return {
+//             ...item,
+//             incoming,
+//             outgoing,
+//             today: item.today + Math.floor(outgoing / 360),
+//             month: item.month + Math.floor(outgoing / 180),
+//           };
+//         })
+//       );
+
+//       setLastUpdated(new Date());
+//     }, 1000);
+
+//     return () => clearInterval(timer);
+//   }, []);
+
+//   const totals = useMemo(() => {
+//     const incoming = flowData[0].incoming;
+//     const wing1 = flowData.find((x) => x.key === "wing1")?.outgoing || 0;
+//     const wing2 = flowData.find((x) => x.key === "wing2")?.outgoing || 0;
+//     const outgoing = wing1 + wing2;
+//     const loss = incoming - outgoing;
+//     const efficiency = Math.round((outgoing / incoming) * 100);
+//     const today = flowData.reduce((sum, x) => sum + x.today, 0);
+//     const month = flowData.reduce((sum, x) => sum + x.month, 0);
+
+//     return { incoming, outgoing, loss, efficiency, today, month, wing1, wing2 };
+//   }, [flowData]);
+
+//   const maxValue = Math.max(
+//     ...flowData.flatMap((x) => [x.incoming, x.outgoing])
+//   );
+
+//   const dayReport = [
+//     { label: "12 AM", value: 820 },
+//     { label: "04 AM", value: 760 },
+//     { label: "08 AM", value: 1010 },
+//     { label: "12 PM", value: totals.outgoing },
+//     { label: "04 PM", value: 940 },
+//     { label: "08 PM", value: 870 },
+//   ];
+
+//   const monthReport = [
+//     { label: "Week 1", value: Math.round(totals.month * 0.22) },
+//     { label: "Week 2", value: Math.round(totals.month * 0.25) },
+//     { label: "Week 3", value: Math.round(totals.month * 0.27) },
+//     { label: "Week 4", value: Math.round(totals.month * 0.26) },
+//   ];
+
+//   const activeReport = reportView === "day" ? dayReport : monthReport;
+//   const maxReport = Math.max(...activeReport.map((x) => x.value));
+
+//   const KpiCard = ({ value, label, active = false }) => (
+//     <div
+//       className={`relative h-[108px] overflow-hidden rounded-[4px] px-5 py-5 text-white shadow-[0_8px_24px_rgba(0,74,173,0.25)] ${
+//         active ? "bg-[#1687D9]" : "bg-[#1E46B8]"
+//       }`}
+//     >
+//       <h2 className="text-[32px] font-light leading-none tracking-wide text-center">
+//         {value}
+//       </h2>
+
+//       <p className="mt-2 text-center text-[10px] font-black uppercase tracking-[0.12em] text-blue-100">
+//         {label}
+//       </p>
+
+//       <svg
+//         className="absolute left-0 bottom-0 w-full h-[34px] opacity-25"
+//         viewBox="0 0 260 40"
+//         preserveAspectRatio="none"
+//       >
+//         <path
+//           d="M0 28 C25 8, 45 38, 70 20 C95 3, 110 33, 135 19 C160 4, 180 36, 205 18 C230 2, 245 27, 260 13"
+//           fill="none"
+//           stroke="#67E8F9"
+//           strokeWidth="4"
+//         />
+//       </svg>
+//     </div>
+//   );
+
+//   const SectionTitle = ({ title, right }) => (
+//     <div className="mb-4 flex min-h-[38px] items-center justify-between">
+//       <h3 className="text-[17px] font-semibold text-slate-700">{title}</h3>
+//       {right}
+//     </div>
+//   );
+
+//   return (
+//     <div className="h-screen w-screen overflow-hidden bg-[#F5F9FF]">
+//       <header className="h-[72px] bg-[#081F5C] border-b-4 border-[#004AAD] px-8 text-white shadow-md">
+//         <div className="h-full w-full flex items-center justify-between">
+//           <div
+//             onClick={() => navigate("/")}
+//             className="flex items-center cursor-pointer"
+//           >
+//             <div className="flex flex-col justify-center">
+//               <h1 className="text-[26px] font-semibold tracking-[0.18em] text-white leading-none uppercase">
+//                 ARCOT <span className="text-[#67E8F9] ml-2">IIoT 1.0</span>
+//               </h1>
+
+//               <span className="mt-1 text-[9px] uppercase tracking-[0.35em] text-blue-300 font-medium">
+//                 Industrial Internet of Things
+//               </span>
+//             </div>
+
+//             <div className="h-[58px] border-l border-[#004AAD] ml-5"></div>
+
+//             <img
+//               src={prestigeLogo}
+//               alt="Prestige Group"
+//               className="h-[60px] w-[110px] object-cover ml-5"
+//             />
+//           </div>
+
+//           <button
+//             onClick={() => navigate("/")}
+//             className="h-[36px] px-6 bg-[#004AAD] border border-cyan-400 text-white text-[10px] font-black uppercase tracking-[0.15em] hover:bg-[#0058cc] transition-all"
+//           >
+//             Dashboard
+//           </button>
+//         </div>
+//       </header>
+
+//       <main className="h-[calc(100vh-72px)] w-full overflow-y-auto bg-white">
+//         <div className="w-full px-8 py-8">
+//           {/* KPI CARDS */}
+//           <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+//             <KpiCard value={`${totals.incoming} kW`} label="Total Incoming" />
+//             <KpiCard value={`${totals.outgoing} kW`} label="Final Outgoing" active />
+//             <KpiCard value={`${totals.loss} kW`} label="Distribution Loss" />
+//             <KpiCard value={`${totals.efficiency}%`} label="System Efficiency" active />
+//             <KpiCard value={`${totals.today.toLocaleString()} kWh`} label="Today Energy" />
+//           </section>
+
+//           {/* DONUT + TREND */}
+//           <section className="grid grid-cols-1 xl:grid-cols-[34%_66%] gap-8 pt-8">
+//             <div>
+//               <SectionTitle title="Power Consumption Distribution" />
+
+//               <div className="grid grid-cols-1 md:grid-cols-[230px_1fr] items-center gap-6 h-[280px]">
+//                 <div className="relative mx-auto w-[210px] h-[210px] rounded-full bg-[conic-gradient(#1687D9_0_14%,#1E46B8_14%_28%,#2F67E8_28%_42%,#1F78B8_42%_56%,#2048B8_56%_70%,#2563EB_70%_82%,#67E8F9_82%_91%,#081F5C_91%_100%)]">
+//                   <div className="absolute inset-[44px] rounded-full bg-white flex flex-col items-center justify-center">
+//                     <h3 className="text-[21px] font-light text-slate-600 leading-none">
+//                       {totals.month.toLocaleString()}
+//                     </h3>
+//                     <p className="mt-3 text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">
+//                       Month kWh
+//                     </p>
+//                   </div>
+//                 </div>
+
+//                 <div className="space-y-2.5">
+//                   {flowData.map((item, index) => (
+//                     <div
+//                       key={item.key}
+//                       className="flex items-center justify-between gap-3"
+//                     >
+//                       <div className="flex items-center gap-3">
+//                         <span
+//                           className="h-3 w-3 rounded-full shrink-0"
+//                           style={{ backgroundColor: colors[index] }}
+//                         />
+//                         <span className="text-[12px] font-semibold text-slate-500">
+//                           {item.title}
+//                         </span>
+//                       </div>
+
+//                       <span className="text-[12px] font-black text-[#081F5C]">
+//                         {item.outgoing} kW
+//                       </span>
+//                     </div>
+//                   ))}
+//                 </div>
+//               </div>
+//             </div>
+
+//             <div>
+//               <SectionTitle
+//                 title="Power Trend Analysis"
+//                 right={
+//                   <div className="flex items-center gap-5 text-[12px] text-slate-400">
+//                     <span className="text-[#004AAD] font-bold">Live</span>
+//                     <span>Day</span>
+//                     <span>Month</span>
+//                   </div>
+//                 }
+//               />
+
+//               <div className="h-[245px]">
+//                 <svg viewBox="0 0 780 250" className="w-full h-full">
+//                   {[0, 1, 2, 3, 4, 5].map((i) => (
+//                     <line
+//                       key={i}
+//                       x1="45"
+//                       x2="740"
+//                       y1={28 + i * 34}
+//                       y2={28 + i * 34}
+//                       stroke="#E5E7EB"
+//                     />
+//                   ))}
+
+//                   <polyline
+//                     points={flowData
+//                       .map((d, i) => {
+//                         const x = 70 + i * 92;
+//                         const y = 215 - (d.incoming / maxValue) * 160;
+//                         return `${x},${y}`;
+//                       })
+//                       .join(" ")}
+//                     fill="none"
+//                     stroke="#081F5C"
+//                     strokeWidth="4"
+//                     strokeLinecap="round"
+//                     strokeLinejoin="round"
+//                   />
+
+//                   <polygon
+//                     points={`
+//                       ${flowData
+//                         .map((d, i) => {
+//                           const x = 70 + i * 92;
+//                           const y = 215 - (d.outgoing / maxValue) * 160;
+//                           return `${x},${y}`;
+//                         })
+//                         .join(" ")}
+//                       ${70 + (flowData.length - 1) * 92},215
+//                       70,215
+//                     `}
+//                     fill="#1687D9"
+//                     opacity="0.22"
+//                   />
+
+//                   <polyline
+//                     points={flowData
+//                       .map((d, i) => {
+//                         const x = 70 + i * 92;
+//                         const y = 215 - (d.outgoing / maxValue) * 160;
+//                         return `${x},${y}`;
+//                       })
+//                       .join(" ")}
+//                     fill="none"
+//                     stroke="#1687D9"
+//                     strokeWidth="5"
+//                     strokeLinecap="round"
+//                     strokeLinejoin="round"
+//                   />
+
+//                   {flowData.map((d, i) => {
+//                     const x = 70 + i * 92;
+//                     const incomingY = 215 - (d.incoming / maxValue) * 160;
+//                     const outgoingY = 215 - (d.outgoing / maxValue) * 160;
+
+//                     return (
+//                       <g key={d.key}>
+//                         <circle cx={x} cy={incomingY} r="5" fill="#081F5C" />
+//                         <circle cx={x} cy={outgoingY} r="6" fill="#1687D9" />
+
+//                         <text
+//                           x={x}
+//                           y={incomingY - 11}
+//                           textAnchor="middle"
+//                           fontSize="9"
+//                           fontWeight="800"
+//                           fill="#081F5C"
+//                         >
+//                           {d.incoming}
+//                         </text>
+
+//                         <text
+//                           x={x}
+//                           y={outgoingY + 20}
+//                           textAnchor="middle"
+//                           fontSize="9"
+//                           fontWeight="800"
+//                           fill="#1687D9"
+//                         >
+//                           {d.outgoing}
+//                         </text>
+
+//                         <text
+//                           x={x}
+//                           y="242"
+//                           textAnchor="middle"
+//                           fontSize="10"
+//                           fontWeight="900"
+//                           fill="#64748B"
+//                         >
+//                           {d.short}
+//                         </text>
+//                       </g>
+//                     );
+//                   })}
+
+//                   <circle cx="555" cy="18" r="5" fill="#081F5C" />
+//                   <text x="568" y="22" fontSize="11" fontWeight="700" fill="#64748B">
+//                     Incoming
+//                   </text>
+
+//                   <circle cx="650" cy="18" r="5" fill="#1687D9" />
+//                   <text x="663" y="22" fontSize="11" fontWeight="700" fill="#64748B">
+//                     Outgoing
+//                   </text>
+//                 </svg>
+//               </div>
+
+//               <div className="grid grid-cols-4 text-center pt-3 border-t border-slate-100 mt-2">
+//                 {[
+//                   [`${totals.incoming} kW`, "Incoming"],
+//                   [`${totals.outgoing} kW`, "Outgoing"],
+//                   [`${totals.loss} kW`, "Loss"],
+//                   [`${totals.efficiency}%`, "Efficiency"],
+//                 ].map(([v, l]) => (
+//                   <div key={l}>
+//                     <h3 className="text-[20px] font-light text-slate-600 leading-none">
+//                       {v}
+//                     </h3>
+//                     <p className="mt-2 text-[11px] text-slate-300">{l}</p>
+//                   </div>
+//                 ))}
+//               </div>
+//             </div>
+//           </section>
+
+//           {/* BOTTOM ROW */}
+//           <section className="grid grid-cols-1 xl:grid-cols-[40%_60%] gap-8 pt-8 items-stretch">
+//          <div className="min-w-0">
+//   <SectionTitle title="Live Energy Monitoring" />
+
+//   <div className="h-[360px] rounded-[10px] border border-blue-100 bg-white p-6 shadow-[0_18px_40px_rgba(8,31,92,0.10)] flex flex-col overflow-hidden">
+//     <div className="flex items-center justify-between shrink-0">
+//       <div>
+//         <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">
+//           Real-Time Load Curve
+//         </p>
+//         <h3 className="mt-2 text-[30px] font-light leading-none text-[#081F5C]">
+//           {totals.outgoing} kW
+//         </h3>
+//       </div>
+
+//       <div className="text-right">
+//         <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">
+//           Updated
+//         </p>
+//         <p className="mt-2 text-[13px] font-bold text-[#004AAD]">
+//           {lastUpdated.toLocaleTimeString()}
+//         </p>
+//       </div>
+//     </div>
+
+//     <div className="mt-4 flex-1 min-h-0 rounded-[8px] bg-gradient-to-b from-blue-50 to-white p-3">
+//       <svg viewBox="0 0 520 190" className="w-full h-full">
+//         {[0, 1, 2, 3].map((i) => (
+//           <line
+//             key={i}
+//             x1="30"
+//             x2="500"
+//             y1={30 + i * 38}
+//             y2={30 + i * 38}
+//             stroke="#E5E7EB"
+//           />
+//         ))}
+
+//         <polygon
+//           points={`
+//             ${flowData
+//               .map((d, i) => {
+//                 const x = 35 + i * 65;
+//                 const y = 165 - (d.outgoing / maxValue) * 130;
+//                 return `${x},${y}`;
+//               })
+//               .join(" ")}
+//             ${35 + (flowData.length - 1) * 65},165
+//             35,165
+//           `}
+//           fill="#1687D9"
+//           opacity="0.25"
+//         />
+
+//         <polyline
+//           points={flowData
+//             .map((d, i) => {
+//               const x = 35 + i * 65;
+//               const y = 165 - (d.outgoing / maxValue) * 130;
+//               return `${x},${y}`;
+//             })
+//             .join(" ")}
+//           fill="none"
+//           stroke="#004AAD"
+//           strokeWidth="4"
+//           strokeLinecap="round"
+//           strokeLinejoin="round"
+//         />
+
+//         {flowData.map((d, i) => {
+//           const x = 35 + i * 65;
+//           const y = 165 - (d.outgoing / maxValue) * 130;
+
+//           return (
+//             <g key={d.key}>
+//               <circle cx={x} cy={y} r="5" fill="#081F5C" />
+//               <text
+//                 x={x}
+//                 y="184"
+//                 textAnchor="middle"
+//                 fontSize="9"
+//                 fontWeight="800"
+//                 fill="#64748B"
+//               >
+//                 {d.short}
+//               </text>
+//             </g>
+//           );
+//         })}
+//       </svg>
+//     </div>
+
+//     <div className="mt-4 grid grid-cols-3 gap-3 text-center shrink-0">
+//       {[
+//         ["Incoming", `${totals.incoming} kW`, "#081F5C"],
+//         ["Outgoing", `${totals.outgoing} kW`, "#004AAD"],
+//         ["Loss", `${totals.loss} kW`, "#F97316"],
+//       ].map(([label, value, color]) => (
+//         <div
+//           key={label}
+//           className="rounded-[8px] border border-slate-100 bg-slate-50 px-2 py-3"
+//         >
+//           <p className="text-[9px] font-black uppercase tracking-[0.12em] text-slate-400">
+//             {label}
+//           </p>
+//           <h4
+//             className="mt-2 text-[16px] font-light leading-none"
+//             style={{ color }}
+//           >
+//             {value}
+//           </h4>
+//         </div>
+//       ))}
+//     </div>
+//   </div>
+// </div>
+
+//      <div className="min-w-0">
+//   <SectionTitle
+//     title={reportView === "day" ? "Day Wise Energy Report" : "Monthly Energy Report"}
+//     right={
+//       <div className="flex rounded-full bg-blue-50 p-1 shrink-0">
+//         <button
+//           onClick={() => setReportView("day")}
+//           className={`px-4 py-2 text-[10px] font-black uppercase tracking-[0.12em] rounded-full transition-all ${
+//             reportView === "day"
+//               ? "bg-[#004AAD] text-white shadow-sm"
+//               : "text-[#004AAD] hover:bg-white"
+//           }`}
+//         >
+//           Day Wise
+//         </button>
+
+//         <button
+//           onClick={() => setReportView("month")}
+//           className={`px-4 py-2 text-[10px] font-black uppercase tracking-[0.12em] rounded-full transition-all ${
+//             reportView === "month"
+//               ? "bg-[#004AAD] text-white shadow-sm"
+//               : "text-[#004AAD] hover:bg-white"
+//           }`}
+//         >
+//           Monthly
+//         </button>
+//       </div>
+//     }
+//   />
+
+//   <div className="relative h-[360px] overflow-hidden rounded-[10px] border border-blue-100 bg-white p-6 shadow-[0_18px_40px_rgba(8,31,92,0.10)] flex flex-col">
+//     <div className="absolute right-0 top-0 h-28 w-28 rounded-bl-full bg-blue-50/80" />
+
+//     <div className="relative z-10 flex items-start justify-between">
+//       <div>
+//         <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">
+//           Consumption Graph
+//         </p>
+//         <h3 className="mt-2 text-[26px] font-light leading-none text-[#081F5C]">
+//           {reportView === "day"
+//             ? `${totals.today.toLocaleString()} kWh`
+//             : `${totals.month.toLocaleString()} kWh`}
+//         </h3>
+//       </div>
+
+//       <div className="rounded-full border border-blue-100 bg-blue-50 px-3 py-1">
+//         <span className="text-[10px] font-black uppercase tracking-[0.12em] text-[#004AAD]">
+//           {reportView === "day" ? "Today" : "This Month"}
+//         </span>
+//       </div>
+//     </div>
+
+//     <div className="relative z-10 mt-5 flex-1 rounded-[8px] bg-gradient-to-b from-slate-50 to-white px-5 pt-4 pb-3">
+//       <div className="absolute inset-x-5 top-1/4 border-t border-dashed border-slate-200" />
+//       <div className="absolute inset-x-5 top-1/2 border-t border-dashed border-slate-200" />
+//       <div className="absolute inset-x-5 top-3/4 border-t border-dashed border-slate-200" />
+
+//       <div className="relative z-10 flex h-full items-end justify-between gap-6">
+//         {activeReport.map((item) => {
+//           const height = Math.max(42, (item.value / maxReport) * 160);
+
+//           return (
+//             <div key={item.label} className="flex flex-1 flex-col items-center justify-end">
+//               <p className="mb-3 text-[11px] font-black text-[#081F5C]">
+//                 {item.value.toLocaleString()}
+//               </p>
+
+//               <div
+//                 className="w-full max-w-[76px] rounded-t-[9px] bg-gradient-to-t from-[#081F5C] via-[#004AAD] to-[#67E8F9] shadow-[0_8px_18px_rgba(0,74,173,0.22)] transition-all duration-700"
+//                 style={{ height: `${height}px` }}
+//               />
+
+//               <p className="mt-3 text-[11px] font-bold text-slate-500">
+//                 {item.label}
+//               </p>
+//             </div>
+//           );
+//         })}
+//       </div>
+//     </div>
+
+//     <div className="relative z-10 mt-5 grid grid-cols-3 gap-4 text-center">
+//       {[
+//         ["Today", totals.today.toLocaleString(), "kWh", "#081F5C"],
+//         ["Month", totals.month.toLocaleString(), "kWh", "#004AAD"],
+//         ["Avg Week", Math.round(totals.month / 4).toLocaleString(), "kWh", "#081F5C"],
+//       ].map(([label, value, unit, color]) => (
+//         <div
+//           key={label}
+//           className="rounded-[8px] border border-blue-100 bg-blue-50/60 py-3"
+//         >
+//           <p className="text-[9px] font-black uppercase tracking-[0.14em] text-slate-400">
+//             {label}
+//           </p>
+//           <h3
+//             className="mt-2 text-[18px] font-light leading-none"
+//             style={{ color }}
+//           >
+//             {value}
+//           </h3>
+//           <p className="mt-1 text-[9px] text-slate-400">{unit}</p>
+//         </div>
+//       ))}
+//     </div>
+//   </div>
+// </div>
+//           </section>
+//         </div>
+//       </main>
+//     </div>
+//   );
+// }
+
+
+
+
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import prestigeLogo from "../assets/ser-removebg.png";
@@ -1297,20 +1904,8 @@ export default function OverviewPage() {
     { key: "wing2", title: "Wing 2", short: "W2", incoming: 425, outgoing: 410, today: 7420, month: 190400 },
   ];
 
-  const colors = [
-    "#1687D9",
-    "#1E46B8",
-    "#2F67E8",
-    "#1F78B8",
-    "#2048B8",
-    "#2563EB",
-    "#67E8F9",
-    "#081F5C",
-  ];
-
   const [flowData, setFlowData] = useState(initialFlow);
   const [lastUpdated, setLastUpdated] = useState(new Date());
-  const [reportView, setReportView] = useState("month");
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -1359,522 +1954,381 @@ export default function OverviewPage() {
     ...flowData.flatMap((x) => [x.incoming, x.outgoing])
   );
 
-  const dayReport = [
-    { label: "12 AM", value: 820 },
-    { label: "04 AM", value: 760 },
-    { label: "08 AM", value: 1010 },
-    { label: "12 PM", value: totals.outgoing },
-    { label: "04 PM", value: 940 },
-    { label: "08 PM", value: 870 },
-  ];
-
-  const monthReport = [
-    { label: "Week 1", value: Math.round(totals.month * 0.22) },
-    { label: "Week 2", value: Math.round(totals.month * 0.25) },
-    { label: "Week 3", value: Math.round(totals.month * 0.27) },
-    { label: "Week 4", value: Math.round(totals.month * 0.26) },
-  ];
-
-  const activeReport = reportView === "day" ? dayReport : monthReport;
-  const maxReport = Math.max(...activeReport.map((x) => x.value));
-
-  const KpiCard = ({ value, label, active = false }) => (
+  const Card = ({ children, className = "" }) => (
     <div
-      className={`relative h-[108px] overflow-hidden rounded-[4px] px-5 py-5 text-white shadow-[0_8px_24px_rgba(0,74,173,0.25)] ${
-        active ? "bg-[#1687D9]" : "bg-[#1E46B8]"
-      }`}
+      className={`rounded-[18px] bg-[#224da3] border border-cyan-300/10 shadow-[0_10px_24px_rgba(0,0,0,0.25)] overflow-hidden ${className}`}
     >
-      <h2 className="text-[32px] font-light leading-none tracking-wide text-center">
-        {value}
-      </h2>
-
-      <p className="mt-2 text-center text-[10px] font-black uppercase tracking-[0.12em] text-blue-100">
-        {label}
-      </p>
-
-      <svg
-        className="absolute left-0 bottom-0 w-full h-[34px] opacity-25"
-        viewBox="0 0 260 40"
-        preserveAspectRatio="none"
-      >
-        <path
-          d="M0 28 C25 8, 45 38, 70 20 C95 3, 110 33, 135 19 C160 4, 180 36, 205 18 C230 2, 245 27, 260 13"
-          fill="none"
-          stroke="#67E8F9"
-          strokeWidth="4"
-        />
-      </svg>
+      {children}
     </div>
   );
 
-  const SectionTitle = ({ title, right }) => (
-    <div className="mb-4 flex min-h-[38px] items-center justify-between">
-      <h3 className="text-[17px] font-semibold text-slate-700">{title}</h3>
-      {right}
-    </div>
+  const Title = ({ children }) => (
+    <h3 className="text-[14px] font-bold text-blue-50 mb-2">{children}</h3>
   );
 
   return (
-    <div className="h-screen w-screen overflow-hidden bg-[#F5F9FF]">
-      <header className="h-[72px] bg-[#081F5C] border-b-4 border-[#004AAD] px-8 text-white shadow-md">
-        <div className="h-full w-full flex items-center justify-between">
-          <div
-            onClick={() => navigate("/")}
-            className="flex items-center cursor-pointer"
-          >
-            <div className="flex flex-col justify-center">
-              <h1 className="text-[26px] font-semibold tracking-[0.18em] text-white leading-none uppercase">
-                ARCOT <span className="text-[#67E8F9] ml-2">IIoT 1.0</span>
-              </h1>
+    <div className="min-h-screen w-full bg-[#151c55] text-white">
+      <header className="sticky top-0 z-50 h-[64px] bg-[#10194b] px-6 flex items-center justify-between border-b border-cyan-400/20">
+        <div
+          onClick={() => navigate("/")}
+          className="flex items-center cursor-pointer"
+        >
+          <div>
+            <h1 className="text-[22px] font-semibold tracking-[0.18em] uppercase leading-none">
+              ARCOT <span className="text-[#67E8F9]">IIOT 1.0</span>
+            </h1>
 
-              <span className="mt-1 text-[9px] uppercase tracking-[0.35em] text-blue-300 font-medium">
-                Industrial Internet of Things
-              </span>
-            </div>
-
-            <div className="h-[58px] border-l border-[#004AAD] ml-5"></div>
-
-            <img
-              src={prestigeLogo}
-              alt="Prestige Group"
-              className="h-[60px] w-[110px] object-cover ml-5"
-            />
+            <p className="mt-2 text-[8px] tracking-[0.35em] uppercase text-cyan-200">
+              Industrial Internet of Things
+            </p>
           </div>
 
-          <button
-            onClick={() => navigate("/")}
-            className="h-[36px] px-6 bg-[#004AAD] border border-cyan-400 text-white text-[10px] font-black uppercase tracking-[0.15em] hover:bg-[#0058cc] transition-all"
-          >
-            Dashboard
-          </button>
+          <div className="h-[46px] border-l border-cyan-300/30 mx-4" />
+
+          <img
+            src={prestigeLogo}
+            alt="Prestige"
+            className="h-[48px] w-[95px] object-contain"
+          />
         </div>
+
+        <button
+          onClick={() => navigate("/")}
+          className="rounded-full border border-cyan-300/60 px-6 py-2 text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100"
+        >
+          Dashboard
+        </button>
       </header>
 
-      <main className="h-[calc(100vh-72px)] w-full overflow-y-auto bg-white">
-        <div className="w-full px-8 py-8">
-          {/* KPI CARDS */}
-          <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
-            <KpiCard value={`${totals.incoming} kW`} label="Total Incoming" />
-            <KpiCard value={`${totals.outgoing} kW`} label="Final Outgoing" active />
-            <KpiCard value={`${totals.loss} kW`} label="Distribution Loss" />
-            <KpiCard value={`${totals.efficiency}%`} label="System Efficiency" active />
-            <KpiCard value={`${totals.today.toLocaleString()} kWh`} label="Today Energy" />
-          </section>
-
-          {/* DONUT + TREND */}
-          <section className="grid grid-cols-1 xl:grid-cols-[34%_66%] gap-8 pt-8">
-            <div>
-              <SectionTitle title="Power Consumption Distribution" />
-
-              <div className="grid grid-cols-1 md:grid-cols-[230px_1fr] items-center gap-6 h-[280px]">
-                <div className="relative mx-auto w-[210px] h-[210px] rounded-full bg-[conic-gradient(#1687D9_0_14%,#1E46B8_14%_28%,#2F67E8_28%_42%,#1F78B8_42%_56%,#2048B8_56%_70%,#2563EB_70%_82%,#67E8F9_82%_91%,#081F5C_91%_100%)]">
-                  <div className="absolute inset-[44px] rounded-full bg-white flex flex-col items-center justify-center">
-                    <h3 className="text-[21px] font-light text-slate-600 leading-none">
-                      {totals.month.toLocaleString()}
-                    </h3>
-                    <p className="mt-3 text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">
-                      Month kWh
-                    </p>
-                  </div>
+      <main className="w-full p-4">
+        <div className="grid w-full grid-cols-12 gap-4">
+          {/* LEFT */}
+          <div className="col-span-3 space-y-4">
+            <Card className="p-4 h-[140px]">
+              <div className="grid grid-cols-2 h-full">
+                <div className="flex flex-col justify-center">
+                  <h2 className="text-[34px] font-light leading-none">
+                    {totals.incoming}
+                  </h2>
+                  <p className="mt-3 text-[10px] text-cyan-300">Incoming kW</p>
                 </div>
 
-                <div className="space-y-2.5">
-                  {flowData.map((item, index) => (
-                    <div
-                      key={item.key}
-                      className="flex items-center justify-between gap-3"
-                    >
-                      <div className="flex items-center gap-3">
-                        <span
-                          className="h-3 w-3 rounded-full shrink-0"
-                          style={{ backgroundColor: colors[index] }}
-                        />
-                        <span className="text-[12px] font-semibold text-slate-500">
-                          {item.title}
-                        </span>
-                      </div>
+                <div className="border-l border-cyan-300/20 pl-5 flex flex-col justify-center">
+                  <h2 className="text-[34px] font-light leading-none">
+                    {totals.outgoing}
+                  </h2>
+                  <p className="mt-3 text-[10px] text-cyan-300">Outgoing kW</p>
+                </div>
+              </div>
+            </Card>
 
-                      <span className="text-[12px] font-black text-[#081F5C]">
-                        {item.outgoing} kW
-                      </span>
+            <Card className="p-4 h-[220px]">
+              <Title>Live Summary</Title>
+
+              <div className="grid h-[calc(100%-28px)] grid-cols-2 gap-4">
+                <div className="flex flex-col justify-center">
+                  <h2 className="text-[30px] font-light leading-none text-cyan-100">
+                    ↑ {totals.today.toLocaleString()}
+                  </h2>
+                  <p className="mt-3 text-[10px] text-cyan-300">
+                    Today Energy kWh
+                  </p>
+                </div>
+
+                <div className="flex flex-col justify-center">
+                  <h2 className="text-[30px] font-light leading-none text-yellow-300">
+                    ↓ {totals.loss}
+                  </h2>
+                  <p className="mt-3 text-[10px] text-cyan-300">Loss kW</p>
+                </div>
+              </div>
+            </Card>
+
+            <Card className="p-4 h-[220px]">
+              <Title>Equipment Load Bars</Title>
+
+              <div className="flex h-[calc(100%-28px)] flex-col justify-center gap-4">
+                {flowData.slice(0, 4).map((item) => (
+                  <div key={item.key}>
+                    <div className="mb-1 flex justify-between text-[10px] text-cyan-200">
+                      <span>{item.title}</span>
+                      <span>{item.outgoing} kW</span>
                     </div>
-                  ))}
-                </div>
-              </div>
-            </div>
 
-            <div>
-              <SectionTitle
-                title="Power Trend Analysis"
-                right={
-                  <div className="flex items-center gap-5 text-[12px] text-slate-400">
-                    <span className="text-[#004AAD] font-bold">Live</span>
-                    <span>Day</span>
-                    <span>Month</span>
-                  </div>
-                }
-              />
-
-              <div className="h-[245px]">
-                <svg viewBox="0 0 780 250" className="w-full h-full">
-                  {[0, 1, 2, 3, 4, 5].map((i) => (
-                    <line
-                      key={i}
-                      x1="45"
-                      x2="740"
-                      y1={28 + i * 34}
-                      y2={28 + i * 34}
-                      stroke="#E5E7EB"
-                    />
-                  ))}
-
-                  <polyline
-                    points={flowData
-                      .map((d, i) => {
-                        const x = 70 + i * 92;
-                        const y = 215 - (d.incoming / maxValue) * 160;
-                        return `${x},${y}`;
-                      })
-                      .join(" ")}
-                    fill="none"
-                    stroke="#081F5C"
-                    strokeWidth="4"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-
-                  <polygon
-                    points={`
-                      ${flowData
-                        .map((d, i) => {
-                          const x = 70 + i * 92;
-                          const y = 215 - (d.outgoing / maxValue) * 160;
-                          return `${x},${y}`;
-                        })
-                        .join(" ")}
-                      ${70 + (flowData.length - 1) * 92},215
-                      70,215
-                    `}
-                    fill="#1687D9"
-                    opacity="0.22"
-                  />
-
-                  <polyline
-                    points={flowData
-                      .map((d, i) => {
-                        const x = 70 + i * 92;
-                        const y = 215 - (d.outgoing / maxValue) * 160;
-                        return `${x},${y}`;
-                      })
-                      .join(" ")}
-                    fill="none"
-                    stroke="#1687D9"
-                    strokeWidth="5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-
-                  {flowData.map((d, i) => {
-                    const x = 70 + i * 92;
-                    const incomingY = 215 - (d.incoming / maxValue) * 160;
-                    const outgoingY = 215 - (d.outgoing / maxValue) * 160;
-
-                    return (
-                      <g key={d.key}>
-                        <circle cx={x} cy={incomingY} r="5" fill="#081F5C" />
-                        <circle cx={x} cy={outgoingY} r="6" fill="#1687D9" />
-
-                        <text
-                          x={x}
-                          y={incomingY - 11}
-                          textAnchor="middle"
-                          fontSize="9"
-                          fontWeight="800"
-                          fill="#081F5C"
-                        >
-                          {d.incoming}
-                        </text>
-
-                        <text
-                          x={x}
-                          y={outgoingY + 20}
-                          textAnchor="middle"
-                          fontSize="9"
-                          fontWeight="800"
-                          fill="#1687D9"
-                        >
-                          {d.outgoing}
-                        </text>
-
-                        <text
-                          x={x}
-                          y="242"
-                          textAnchor="middle"
-                          fontSize="10"
-                          fontWeight="900"
-                          fill="#64748B"
-                        >
-                          {d.short}
-                        </text>
-                      </g>
-                    );
-                  })}
-
-                  <circle cx="555" cy="18" r="5" fill="#081F5C" />
-                  <text x="568" y="22" fontSize="11" fontWeight="700" fill="#64748B">
-                    Incoming
-                  </text>
-
-                  <circle cx="650" cy="18" r="5" fill="#1687D9" />
-                  <text x="663" y="22" fontSize="11" fontWeight="700" fill="#64748B">
-                    Outgoing
-                  </text>
-                </svg>
-              </div>
-
-              <div className="grid grid-cols-4 text-center pt-3 border-t border-slate-100 mt-2">
-                {[
-                  [`${totals.incoming} kW`, "Incoming"],
-                  [`${totals.outgoing} kW`, "Outgoing"],
-                  [`${totals.loss} kW`, "Loss"],
-                  [`${totals.efficiency}%`, "Efficiency"],
-                ].map(([v, l]) => (
-                  <div key={l}>
-                    <h3 className="text-[20px] font-light text-slate-600 leading-none">
-                      {v}
-                    </h3>
-                    <p className="mt-2 text-[11px] text-slate-300">{l}</p>
+                    <div className="h-3 overflow-hidden rounded-full bg-[#173579]">
+                      <div
+                        className="h-full rounded-full bg-gradient-to-r from-cyan-400 to-yellow-300"
+                        style={{ width: `${(item.outgoing / maxValue) * 100}%` }}
+                      />
+                    </div>
                   </div>
                 ))}
               </div>
-            </div>
-          </section>
+            </Card>
 
-          {/* BOTTOM ROW */}
-          <section className="grid grid-cols-1 xl:grid-cols-[40%_60%] gap-8 pt-8 items-stretch">
-         <div className="min-w-0">
-  <SectionTitle title="Live Energy Monitoring" />
+            <Card className="p-4 h-[260px]">
+              <Title>Day Wise Energy Report</Title>
 
-  <div className="h-[360px] rounded-[10px] border border-blue-100 bg-white p-6 shadow-[0_18px_40px_rgba(8,31,92,0.10)] flex flex-col overflow-hidden">
-    <div className="flex items-center justify-between shrink-0">
-      <div>
-        <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">
-          Real-Time Load Curve
-        </p>
-        <h3 className="mt-2 text-[30px] font-light leading-none text-[#081F5C]">
-          {totals.outgoing} kW
-        </h3>
-      </div>
+              <div className="flex h-[calc(100%-28px)] items-end justify-between gap-3">
+                {["12 AM", "04 AM", "08 AM", "12 PM", "04 PM", "08 PM"].map(
+                  (label, i) => (
+                    <div
+                      key={label}
+                      className="flex flex-1 flex-col items-center justify-end"
+                    >
+                      <div className="flex h-[165px] items-end gap-1">
+                        <div
+                          className="w-4 rounded-t bg-cyan-400"
+                          style={{ height: `${82 + (i % 3) * 16}px` }}
+                        />
 
-      <div className="text-right">
-        <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">
-          Updated
-        </p>
-        <p className="mt-2 text-[13px] font-bold text-[#004AAD]">
-          {lastUpdated.toLocaleTimeString()}
-        </p>
-      </div>
-    </div>
+                        <div
+                          className="w-4 rounded-t bg-yellow-400"
+                          style={{ height: `${72 + (i % 4) * 14}px` }}
+                        />
+                      </div>
 
-    <div className="mt-4 flex-1 min-h-0 rounded-[8px] bg-gradient-to-b from-blue-50 to-white p-3">
-      <svg viewBox="0 0 520 190" className="w-full h-full">
-        {[0, 1, 2, 3].map((i) => (
-          <line
-            key={i}
-            x1="30"
-            x2="500"
-            y1={30 + i * 38}
-            y2={30 + i * 38}
-            stroke="#E5E7EB"
-          />
-        ))}
+                      <p className="mt-2 text-[10px] text-cyan-100">{label}</p>
+                    </div>
+                  )
+                )}
+              </div>
+            </Card>
+          </div>
 
-        <polygon
-          points={`
-            ${flowData
-              .map((d, i) => {
-                const x = 35 + i * 65;
-                const y = 165 - (d.outgoing / maxValue) * 130;
-                return `${x},${y}`;
-              })
-              .join(" ")}
-            ${35 + (flowData.length - 1) * 65},165
-            35,165
-          `}
-          fill="#1687D9"
-          opacity="0.25"
-        />
+          {/* MIDDLE */}
+          <div className="col-span-3 space-y-4">
+            <Card className="p-4 h-[270px]">
+              <Title>System Efficiency</Title>
 
-        <polyline
-          points={flowData
-            .map((d, i) => {
-              const x = 35 + i * 65;
-              const y = 165 - (d.outgoing / maxValue) * 130;
-              return `${x},${y}`;
-            })
-            .join(" ")}
-          fill="none"
-          stroke="#004AAD"
-          strokeWidth="4"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
+              <div className="flex h-[calc(100%-28px)] flex-col items-center justify-center">
+                <div className="relative h-[155px] w-[155px] rounded-full bg-[conic-gradient(#35D8F5_0_65%,rgba(255,255,255,0.15)_65%_100%)]">
+                  <div className="absolute inset-[17px] rounded-full bg-[#224da3] flex items-center justify-center">
+                    <h2 className="text-[40px] font-light">
+                      {totals.efficiency}%
+                    </h2>
+                  </div>
+                </div>
 
-        {flowData.map((d, i) => {
-          const x = 35 + i * 65;
-          const y = 165 - (d.outgoing / maxValue) * 130;
+                <button className="mt-4 rounded-full bg-cyan-400 px-14 py-2 text-[#12306F] text-[12px] font-black">
+                  Healthy
+                </button>
+              </div>
+            </Card>
 
-          return (
-            <g key={d.key}>
-              <circle cx={x} cy={y} r="5" fill="#081F5C" />
-              <text
-                x={x}
-                y="184"
-                textAnchor="middle"
-                fontSize="9"
-                fontWeight="800"
-                fill="#64748B"
-              >
-                {d.short}
-              </text>
-            </g>
-          );
-        })}
-      </svg>
-    </div>
+            <Card className="p-4 h-[270px]">
+              <Title>Area Load Curve</Title>
 
-    <div className="mt-4 grid grid-cols-3 gap-3 text-center shrink-0">
-      {[
-        ["Incoming", `${totals.incoming} kW`, "#081F5C"],
-        ["Outgoing", `${totals.outgoing} kW`, "#004AAD"],
-        ["Loss", `${totals.loss} kW`, "#F97316"],
-      ].map(([label, value, color]) => (
-        <div
-          key={label}
-          className="rounded-[8px] border border-slate-100 bg-slate-50 px-2 py-3"
-        >
-          <p className="text-[9px] font-black uppercase tracking-[0.12em] text-slate-400">
-            {label}
-          </p>
-          <h4
-            className="mt-2 text-[16px] font-light leading-none"
-            style={{ color }}
-          >
-            {value}
-          </h4>
-        </div>
-      ))}
-    </div>
-  </div>
-</div>
+              <svg viewBox="0 0 330 160" className="w-full h-[210px]">
+                <polygon
+                  points="0,95 40,115 80,70 120,108 160,35 200,100 240,75 280,98 330,60 330,160 0,160"
+                  fill="#35D8F5"
+                  opacity="0.38"
+                />
 
-     <div className="min-w-0">
-  <SectionTitle
-    title={reportView === "day" ? "Day Wise Energy Report" : "Monthly Energy Report"}
-    right={
-      <div className="flex rounded-full bg-blue-50 p-1 shrink-0">
-        <button
-          onClick={() => setReportView("day")}
-          className={`px-4 py-2 text-[10px] font-black uppercase tracking-[0.12em] rounded-full transition-all ${
-            reportView === "day"
-              ? "bg-[#004AAD] text-white shadow-sm"
-              : "text-[#004AAD] hover:bg-white"
-          }`}
-        >
-          Day Wise
-        </button>
+                <polygon
+                  points="0,125 40,85 80,145 120,75 160,150 200,82 240,140 280,95 330,120 330,160 0,160"
+                  fill="#F6B23F"
+                  opacity="0.78"
+                />
+              </svg>
+            </Card>
 
-        <button
-          onClick={() => setReportView("month")}
-          className={`px-4 py-2 text-[10px] font-black uppercase tracking-[0.12em] rounded-full transition-all ${
-            reportView === "month"
-              ? "bg-[#004AAD] text-white shadow-sm"
-              : "text-[#004AAD] hover:bg-white"
-          }`}
-        >
-          Monthly
-        </button>
-      </div>
-    }
-  />
+            <Card className="p-4 h-[315px]">
+              <Title>Monthly Energy</Title>
 
-  <div className="relative h-[360px] overflow-hidden rounded-[10px] border border-blue-100 bg-white p-6 shadow-[0_18px_40px_rgba(8,31,92,0.10)] flex flex-col">
-    <div className="absolute right-0 top-0 h-28 w-28 rounded-bl-full bg-blue-50/80" />
+              <h2 className="text-[38px] font-light text-yellow-300 leading-none">
+                {totals.month.toLocaleString()}
+              </h2>
 
-    <div className="relative z-10 flex items-start justify-between">
-      <div>
-        <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">
-          Consumption Graph
-        </p>
-        <h3 className="mt-2 text-[26px] font-light leading-none text-[#081F5C]">
-          {reportView === "day"
-            ? `${totals.today.toLocaleString()} kWh`
-            : `${totals.month.toLocaleString()} kWh`}
-        </h3>
-      </div>
-
-      <div className="rounded-full border border-blue-100 bg-blue-50 px-3 py-1">
-        <span className="text-[10px] font-black uppercase tracking-[0.12em] text-[#004AAD]">
-          {reportView === "day" ? "Today" : "This Month"}
-        </span>
-      </div>
-    </div>
-
-    <div className="relative z-10 mt-5 flex-1 rounded-[8px] bg-gradient-to-b from-slate-50 to-white px-5 pt-4 pb-3">
-      <div className="absolute inset-x-5 top-1/4 border-t border-dashed border-slate-200" />
-      <div className="absolute inset-x-5 top-1/2 border-t border-dashed border-slate-200" />
-      <div className="absolute inset-x-5 top-3/4 border-t border-dashed border-slate-200" />
-
-      <div className="relative z-10 flex h-full items-end justify-between gap-6">
-        {activeReport.map((item) => {
-          const height = Math.max(42, (item.value / maxReport) * 160);
-
-          return (
-            <div key={item.label} className="flex flex-1 flex-col items-center justify-end">
-              <p className="mb-3 text-[11px] font-black text-[#081F5C]">
-                {item.value.toLocaleString()}
+              <p className="text-[11px] text-cyan-300 mt-2 mb-5">
+                kWh this month
               </p>
 
-              <div
-                className="w-full max-w-[76px] rounded-t-[9px] bg-gradient-to-t from-[#081F5C] via-[#004AAD] to-[#67E8F9] shadow-[0_8px_18px_rgba(0,74,173,0.22)] transition-all duration-700"
-                style={{ height: `${height}px` }}
-              />
+              <div className="space-y-4">
+                {[0.22, 0.25, 0.27, 0.26].map((v, i) => (
+                  <div key={i} className="flex items-center gap-3">
+                    <span className="w-12 text-[10px] text-cyan-200">
+                      Week {i + 1}
+                    </span>
 
-              <p className="mt-3 text-[11px] font-bold text-slate-500">
-                {item.label}
-              </p>
+                    <div className="flex-1 h-4 rounded-full bg-[#173579] overflow-hidden">
+                      <div
+                        className="h-full bg-gradient-to-r from-yellow-300 via-cyan-400 to-blue-300"
+                        style={{ width: `${v * 100}%` }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </Card>
+          </div>
+
+          {/* RIGHT */}
+          <div className="col-span-6 space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <Card className="p-4 h-[145px]">
+                <Title>Realtime Monitoring</Title>
+
+                <div className="grid grid-cols-2">
+                  <div>
+                    <h2 className="text-[32px] font-light">{totals.outgoing}</h2>
+                    <p className="text-[10px] text-cyan-300">Live Load kW</p>
+                  </div>
+
+                  <div>
+                    <h2 className="text-[20px] font-light text-yellow-300">
+                      {lastUpdated.toLocaleTimeString()}
+                    </h2>
+                    <p className="text-[10px] text-cyan-300">Last Updated</p>
+                  </div>
+                </div>
+              </Card>
+
+              <Card className="p-4 h-[145px]">
+                <Title>Power Load</Title>
+
+                <svg viewBox="0 0 330 115" className="w-full h-[95px]">
+                  <polyline
+                    points="30,70 70,80 110,52 150,90 190,30 230,72 270,55 310,82"
+                    fill="none"
+                    stroke="#F6B23F"
+                    strokeWidth="5"
+                  />
+
+                  <polyline
+                    points="30,74 70,82 110,60 150,94 190,30 230,68 270,52 310,78"
+                    fill="none"
+                    stroke="#35D8F5"
+                    strokeWidth="5"
+                  />
+                </svg>
+              </Card>
             </div>
-          );
-        })}
-      </div>
-    </div>
 
-    <div className="relative z-10 mt-5 grid grid-cols-3 gap-4 text-center">
-      {[
-        ["Today", totals.today.toLocaleString(), "kWh", "#081F5C"],
-        ["Month", totals.month.toLocaleString(), "kWh", "#004AAD"],
-        ["Avg Week", Math.round(totals.month / 4).toLocaleString(), "kWh", "#081F5C"],
-      ].map(([label, value, unit, color]) => (
-        <div
-          key={label}
-          className="rounded-[8px] border border-blue-100 bg-blue-50/60 py-3"
-        >
-          <p className="text-[9px] font-black uppercase tracking-[0.14em] text-slate-400">
-            {label}
-          </p>
-          <h3
-            className="mt-2 text-[18px] font-light leading-none"
-            style={{ color }}
-          >
-            {value}
-          </h3>
-          <p className="mt-1 text-[9px] text-slate-400">{unit}</p>
-        </div>
-      ))}
-    </div>
-  </div>
-</div>
-          </section>
+            <div className="grid grid-cols-2 gap-4">
+              <Card className="p-4 h-[185px]">
+                <Title>Wing Distribution</Title>
+
+                <div className="flex items-center justify-around">
+                  {[
+                    ["Wing 1", totals.wing1],
+                    ["Wing 2", totals.wing2],
+                  ].map(([label, value]) => (
+                    <div key={label} className="text-center">
+                      <div className="relative h-[100px] w-[100px] rounded-full bg-[conic-gradient(#F6B23F_0_72%,#35D8F5_72%_100%)]">
+                        <div className="absolute inset-[13px] rounded-full bg-[#224da3] flex items-center justify-center">
+                          <h3 className="text-[22px] font-light">{value}</h3>
+                        </div>
+                      </div>
+
+                      <p className="mt-2 text-[11px] text-cyan-200">{label}</p>
+                    </div>
+                  ))}
+                </div>
+              </Card>
+
+              <Card className="p-4 h-[185px]">
+                <Title>System Status</Title>
+
+                <h2 className="text-[34px] font-light text-cyan-100">HEALTHY</h2>
+
+                <p className="text-[11px] text-cyan-300 mt-2">
+                  All equipment running normally
+                </p>
+
+                <div className="mt-5 h-3 rounded-full bg-[#173579] overflow-hidden">
+                  <div
+                    className="h-full rounded-full bg-gradient-to-r from-cyan-400 to-yellow-300"
+                    style={{ width: `${totals.efficiency}%` }}
+                  />
+                </div>
+              </Card>
+            </div>
+
+            <Card className="p-4 h-[250px]">
+              <Title>Power Trend Analysis</Title>
+
+              <svg viewBox="0 0 760 220" className="w-full h-[200px]">
+                {[0, 1, 2, 3, 4].map((i) => (
+                  <line
+                    key={i}
+                    x1="45"
+                    x2="720"
+                    y1={35 + i * 35}
+                    y2={35 + i * 35}
+                    stroke="rgba(255,255,255,0.12)"
+                  />
+                ))}
+
+                <polyline
+                  points={flowData
+                    .map(
+                      (d, i) =>
+                        `${60 + i * 90},${185 - (d.incoming / maxValue) * 140}`
+                    )
+                    .join(" ")}
+                  fill="none"
+                  stroke="#F6B23F"
+                  strokeWidth="4"
+                  strokeLinecap="round"
+                />
+
+                <polyline
+                  points={flowData
+                    .map(
+                      (d, i) =>
+                        `${60 + i * 90},${185 - (d.outgoing / maxValue) * 140}`
+                    )
+                    .join(" ")}
+                  fill="none"
+                  stroke="#35D8F5"
+                  strokeWidth="4"
+                  strokeLinecap="round"
+                />
+
+                {flowData.map((d, i) => {
+                  const x = 60 + i * 90;
+                  const y = 185 - (d.outgoing / maxValue) * 140;
+
+                  return (
+                    <g key={d.key}>
+                      <circle cx={x} cy={y} r="5" fill="#E9FFFF" />
+
+                      <text
+                        x={x}
+                        y="210"
+                        textAnchor="middle"
+                        fontSize="10"
+                        fill="#BCEEFF"
+                      >
+                        {d.short}
+                      </text>
+                    </g>
+                  );
+                })}
+              </svg>
+            </Card>
+
+            <Card className="p-4 h-[255px]">
+              <Title>Equipment Flow Overview</Title>
+
+              <div className="grid grid-cols-4 gap-3 h-[175px]">
+                {flowData.map((item) => (
+                  <div
+                    key={item.key}
+                    className="rounded-[12px] bg-[#173579] p-3 flex flex-col justify-center"
+                  >
+                    <p className="text-[10px] text-cyan-200">{item.short}</p>
+
+                    <h4 className="text-[20px] font-light">{item.outgoing}</h4>
+
+                    <p className="text-[9px] text-cyan-300">kW</p>
+                  </div>
+                ))}
+              </div>
+            </Card>
+          </div>
         </div>
       </main>
     </div>
