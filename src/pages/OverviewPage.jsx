@@ -1886,6 +1886,458 @@
 
 
 
+
+// import React, { useEffect, useMemo, useState } from "react";
+// import { useNavigate } from "react-router-dom";
+// import prestigeLogo from "../assets/ser-removebg.png";
+
+// export default function OverviewPage() {
+//   const navigate = useNavigate();
+
+//   const initialFlow = [
+//     { key: "source", title: "33kV Source", short: "SRC", incoming: 1120, outgoing: 1085, today: 18420, month: 486500 },
+//     { key: "feeder", title: "33kV Feeder", short: "FDR", incoming: 1085, outgoing: 1040, today: 17680, month: 462300 },
+//     { key: "transformer", title: "Transformers", short: "TRF", incoming: 1040, outgoing: 980, today: 16940, month: 441900 },
+//     { key: "kiosk", title: "LT Kiosk", short: "KSK", incoming: 980, outgoing: 935, today: 15720, month: 408700 },
+//     { key: "busbar", title: "LT Busbar", short: "BUS", incoming: 935, outgoing: 900, today: 14980, month: 392100 },
+//     { key: "pcc", title: "PCC Main", short: "PCC", incoming: 900, outgoing: 850, today: 14160, month: 366400 },
+//     { key: "wing1", title: "Wing 1", short: "W1", incoming: 425, outgoing: 402, today: 7080, month: 181000 },
+//     { key: "wing2", title: "Wing 2", short: "W2", incoming: 425, outgoing: 410, today: 7420, month: 190400 },
+//   ];
+
+//   const [flowData, setFlowData] = useState(initialFlow);
+//   const [lastUpdated, setLastUpdated] = useState(new Date());
+
+//   useEffect(() => {
+//     const timer = setInterval(() => {
+//       setFlowData((prev) =>
+//         prev.map((item) => {
+//           const incoming = Math.max(
+//             40,
+//             item.incoming + Math.floor(Math.random() * 15) - 7
+//           );
+
+//           const outgoing = Math.min(
+//             incoming - 5,
+//             Math.max(35, item.outgoing + Math.floor(Math.random() * 13) - 6)
+//           );
+
+//           return {
+//             ...item,
+//             incoming,
+//             outgoing,
+//             today: item.today + Math.floor(outgoing / 360),
+//             month: item.month + Math.floor(outgoing / 180),
+//           };
+//         })
+//       );
+
+//       setLastUpdated(new Date());
+//     }, 1000);
+
+//     return () => clearInterval(timer);
+//   }, []);
+
+//   const totals = useMemo(() => {
+//     const incoming = flowData[0].incoming;
+//     const wing1 = flowData.find((x) => x.key === "wing1")?.outgoing || 0;
+//     const wing2 = flowData.find((x) => x.key === "wing2")?.outgoing || 0;
+//     const outgoing = wing1 + wing2;
+//     const loss = incoming - outgoing;
+//     const efficiency = Math.round((outgoing / incoming) * 100);
+//     const today = flowData.reduce((sum, x) => sum + x.today, 0);
+//     const month = flowData.reduce((sum, x) => sum + x.month, 0);
+
+//     return { incoming, outgoing, loss, efficiency, today, month, wing1, wing2 };
+//   }, [flowData]);
+
+//   const maxValue = Math.max(
+//     ...flowData.flatMap((x) => [x.incoming, x.outgoing])
+//   );
+
+//   const Card = ({ children, className = "" }) => (
+//     <div
+//       className={`rounded-[18px] bg-[#224da3] border border-cyan-300/10 shadow-[0_10px_24px_rgba(0,0,0,0.25)] overflow-hidden ${className}`}
+//     >
+//       {children}
+//     </div>
+//   );
+
+//   const Title = ({ children }) => (
+//     <h3 className="text-[14px] font-bold text-blue-50 mb-2">{children}</h3>
+//   );
+
+//   return (
+//     <div className="min-h-screen w-full bg-[#151c55] text-white">
+//       <header className="sticky top-0 z-50 h-[64px] bg-[#10194b] px-6 flex items-center justify-between border-b border-cyan-400/20">
+//         <div
+//           onClick={() => navigate("/")}
+//           className="flex items-center cursor-pointer"
+//         >
+//           <div>
+//             <h1 className="text-[22px] font-semibold tracking-[0.18em] uppercase leading-none">
+//               ARCOT <span className="text-[#67E8F9]">IIOT 1.0</span>
+//             </h1>
+
+//             <p className="mt-2 text-[8px] tracking-[0.35em] uppercase text-cyan-200">
+//               Industrial Internet of Things
+//             </p>
+//           </div>
+
+//           <div className="h-[46px] border-l border-cyan-300/30 mx-4" />
+
+//           <img
+//             src={prestigeLogo}
+//             alt="Prestige"
+//             className="h-[48px] w-[95px] object-contain"
+//           />
+//         </div>
+
+//         <button
+//           onClick={() => navigate("/")}
+//           className="rounded-full border border-cyan-300/60 px-6 py-2 text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100"
+//         >
+//           Dashboard
+//         </button>
+//       </header>
+
+//       <main className="w-full p-4">
+//         <div className="grid w-full grid-cols-12 gap-4">
+//           {/* LEFT */}
+//           <div className="col-span-3 space-y-4">
+//             <Card className="p-4 h-[140px]">
+//               <div className="grid grid-cols-2 h-full">
+//                 <div className="flex flex-col justify-center">
+//                   <h2 className="text-[34px] font-light leading-none">
+//                     {totals.incoming}
+//                   </h2>
+//                   <p className="mt-3 text-[10px] text-cyan-300">Incoming kW</p>
+//                 </div>
+
+//                 <div className="border-l border-cyan-300/20 pl-5 flex flex-col justify-center">
+//                   <h2 className="text-[34px] font-light leading-none">
+//                     {totals.outgoing}
+//                   </h2>
+//                   <p className="mt-3 text-[10px] text-cyan-300">Outgoing kW</p>
+//                 </div>
+//               </div>
+//             </Card>
+
+//             <Card className="p-4 h-[220px]">
+//               <Title>Live Summary</Title>
+
+//               <div className="grid h-[calc(100%-28px)] grid-cols-2 gap-4">
+//                 <div className="flex flex-col justify-center">
+//                   <h2 className="text-[30px] font-light leading-none text-cyan-100">
+//                     ↑ {totals.today.toLocaleString()}
+//                   </h2>
+//                   <p className="mt-3 text-[10px] text-cyan-300">
+//                     Today Energy kWh
+//                   </p>
+//                 </div>
+
+//                 <div className="flex flex-col justify-center">
+//                   <h2 className="text-[30px] font-light leading-none text-yellow-300">
+//                     ↓ {totals.loss}
+//                   </h2>
+//                   <p className="mt-3 text-[10px] text-cyan-300">Loss kW</p>
+//                 </div>
+//               </div>
+//             </Card>
+
+//             <Card className="p-4 h-[220px]">
+//               <Title>Equipment Load Bars</Title>
+
+//               <div className="flex h-[calc(100%-28px)] flex-col justify-center gap-4">
+//                 {flowData.slice(0, 4).map((item) => (
+//                   <div key={item.key}>
+//                     <div className="mb-1 flex justify-between text-[10px] text-cyan-200">
+//                       <span>{item.title}</span>
+//                       <span>{item.outgoing} kW</span>
+//                     </div>
+
+//                     <div className="h-3 overflow-hidden rounded-full bg-[#173579]">
+//                       <div
+//                         className="h-full rounded-full bg-gradient-to-r from-cyan-400 to-yellow-300"
+//                         style={{ width: `${(item.outgoing / maxValue) * 100}%` }}
+//                       />
+//                     </div>
+//                   </div>
+//                 ))}
+//               </div>
+//             </Card>
+
+//             <Card className="p-4 h-[260px]">
+//               <Title>Day Wise Energy Report</Title>
+
+//               <div className="flex h-[calc(100%-28px)] items-end justify-between gap-3">
+//                 {["12 AM", "04 AM", "08 AM", "12 PM", "04 PM", "08 PM"].map(
+//                   (label, i) => (
+//                     <div
+//                       key={label}
+//                       className="flex flex-1 flex-col items-center justify-end"
+//                     >
+//                       <div className="flex h-[165px] items-end gap-1">
+//                         <div
+//                           className="w-4 rounded-t bg-cyan-400"
+//                           style={{ height: `${82 + (i % 3) * 16}px` }}
+//                         />
+
+//                         <div
+//                           className="w-4 rounded-t bg-yellow-400"
+//                           style={{ height: `${72 + (i % 4) * 14}px` }}
+//                         />
+//                       </div>
+
+//                       <p className="mt-2 text-[10px] text-cyan-100">{label}</p>
+//                     </div>
+//                   )
+//                 )}
+//               </div>
+//             </Card>
+//           </div>
+
+//           {/* MIDDLE */}
+//           <div className="col-span-3 space-y-4">
+//             <Card className="p-4 h-[270px]">
+//               <Title>System Efficiency</Title>
+
+//               <div className="flex h-[calc(100%-28px)] flex-col items-center justify-center">
+//                 <div className="relative h-[155px] w-[155px] rounded-full bg-[conic-gradient(#35D8F5_0_65%,rgba(255,255,255,0.15)_65%_100%)]">
+//                   <div className="absolute inset-[17px] rounded-full bg-[#224da3] flex items-center justify-center">
+//                     <h2 className="text-[40px] font-light">
+//                       {totals.efficiency}%
+//                     </h2>
+//                   </div>
+//                 </div>
+
+//                 <button className="mt-4 rounded-full bg-cyan-400 px-14 py-2 text-[#12306F] text-[12px] font-black">
+//                   Healthy
+//                 </button>
+//               </div>
+//             </Card>
+
+//             <Card className="p-4 h-[270px]">
+//               <Title>Area Load Curve</Title>
+
+//               <svg viewBox="0 0 330 160" className="w-full h-[210px]">
+//                 <polygon
+//                   points="0,95 40,115 80,70 120,108 160,35 200,100 240,75 280,98 330,60 330,160 0,160"
+//                   fill="#35D8F5"
+//                   opacity="0.38"
+//                 />
+
+//                 <polygon
+//                   points="0,125 40,85 80,145 120,75 160,150 200,82 240,140 280,95 330,120 330,160 0,160"
+//                   fill="#F6B23F"
+//                   opacity="0.78"
+//                 />
+//               </svg>
+//             </Card>
+
+//             <Card className="p-4 h-[315px]">
+//               <Title>Monthly Energy</Title>
+
+//               <h2 className="text-[38px] font-light text-yellow-300 leading-none">
+//                 {totals.month.toLocaleString()}
+//               </h2>
+
+//               <p className="text-[11px] text-cyan-300 mt-2 mb-5">
+//                 kWh this month
+//               </p>
+
+//               <div className="space-y-4">
+//                 {[0.22, 0.25, 0.27, 0.26].map((v, i) => (
+//                   <div key={i} className="flex items-center gap-3">
+//                     <span className="w-12 text-[10px] text-cyan-200">
+//                       Week {i + 1}
+//                     </span>
+
+//                     <div className="flex-1 h-4 rounded-full bg-[#173579] overflow-hidden">
+//                       <div
+//                         className="h-full bg-gradient-to-r from-yellow-300 via-cyan-400 to-blue-300"
+//                         style={{ width: `${v * 100}%` }}
+//                       />
+//                     </div>
+//                   </div>
+//                 ))}
+//               </div>
+//             </Card>
+//           </div>
+
+//           {/* RIGHT */}
+//           <div className="col-span-6 space-y-4">
+//             <div className="grid grid-cols-2 gap-4">
+//               <Card className="p-4 h-[145px]">
+//                 <Title>Realtime Monitoring</Title>
+
+//                 <div className="grid grid-cols-2">
+//                   <div>
+//                     <h2 className="text-[32px] font-light">{totals.outgoing}</h2>
+//                     <p className="text-[10px] text-cyan-300">Live Load kW</p>
+//                   </div>
+
+//                   <div>
+//                     <h2 className="text-[20px] font-light text-yellow-300">
+//                       {lastUpdated.toLocaleTimeString()}
+//                     </h2>
+//                     <p className="text-[10px] text-cyan-300">Last Updated</p>
+//                   </div>
+//                 </div>
+//               </Card>
+
+//               <Card className="p-4 h-[145px]">
+//                 <Title>Power Load</Title>
+
+//                 <svg viewBox="0 0 330 115" className="w-full h-[95px]">
+//                   <polyline
+//                     points="30,70 70,80 110,52 150,90 190,30 230,72 270,55 310,82"
+//                     fill="none"
+//                     stroke="#F6B23F"
+//                     strokeWidth="5"
+//                   />
+
+//                   <polyline
+//                     points="30,74 70,82 110,60 150,94 190,30 230,68 270,52 310,78"
+//                     fill="none"
+//                     stroke="#35D8F5"
+//                     strokeWidth="5"
+//                   />
+//                 </svg>
+//               </Card>
+//             </div>
+
+//             <div className="grid grid-cols-2 gap-4">
+//               <Card className="p-4 h-[185px]">
+//                 <Title>Wing Distribution</Title>
+
+//                 <div className="flex items-center justify-around">
+//                   {[
+//                     ["Wing 1", totals.wing1],
+//                     ["Wing 2", totals.wing2],
+//                   ].map(([label, value]) => (
+//                     <div key={label} className="text-center">
+//                       <div className="relative h-[100px] w-[100px] rounded-full bg-[conic-gradient(#F6B23F_0_72%,#35D8F5_72%_100%)]">
+//                         <div className="absolute inset-[13px] rounded-full bg-[#224da3] flex items-center justify-center">
+//                           <h3 className="text-[22px] font-light">{value}</h3>
+//                         </div>
+//                       </div>
+
+//                       <p className="mt-2 text-[11px] text-cyan-200">{label}</p>
+//                     </div>
+//                   ))}
+//                 </div>
+//               </Card>
+
+//               <Card className="p-4 h-[185px]">
+//                 <Title>System Status</Title>
+
+//                 <h2 className="text-[34px] font-light text-cyan-100">HEALTHY</h2>
+
+//                 <p className="text-[11px] text-cyan-300 mt-2">
+//                   All equipment running normally
+//                 </p>
+
+//                 <div className="mt-5 h-3 rounded-full bg-[#173579] overflow-hidden">
+//                   <div
+//                     className="h-full rounded-full bg-gradient-to-r from-cyan-400 to-yellow-300"
+//                     style={{ width: `${totals.efficiency}%` }}
+//                   />
+//                 </div>
+//               </Card>
+//             </div>
+
+//             <Card className="p-4 h-[250px]">
+//               <Title>Power Trend Analysis</Title>
+
+//               <svg viewBox="0 0 760 220" className="w-full h-[200px]">
+//                 {[0, 1, 2, 3, 4].map((i) => (
+//                   <line
+//                     key={i}
+//                     x1="45"
+//                     x2="720"
+//                     y1={35 + i * 35}
+//                     y2={35 + i * 35}
+//                     stroke="rgba(255,255,255,0.12)"
+//                   />
+//                 ))}
+
+//                 <polyline
+//                   points={flowData
+//                     .map(
+//                       (d, i) =>
+//                         `${60 + i * 90},${185 - (d.incoming / maxValue) * 140}`
+//                     )
+//                     .join(" ")}
+//                   fill="none"
+//                   stroke="#F6B23F"
+//                   strokeWidth="4"
+//                   strokeLinecap="round"
+//                 />
+
+//                 <polyline
+//                   points={flowData
+//                     .map(
+//                       (d, i) =>
+//                         `${60 + i * 90},${185 - (d.outgoing / maxValue) * 140}`
+//                     )
+//                     .join(" ")}
+//                   fill="none"
+//                   stroke="#35D8F5"
+//                   strokeWidth="4"
+//                   strokeLinecap="round"
+//                 />
+
+//                 {flowData.map((d, i) => {
+//                   const x = 60 + i * 90;
+//                   const y = 185 - (d.outgoing / maxValue) * 140;
+
+//                   return (
+//                     <g key={d.key}>
+//                       <circle cx={x} cy={y} r="5" fill="#E9FFFF" />
+
+//                       <text
+//                         x={x}
+//                         y="210"
+//                         textAnchor="middle"
+//                         fontSize="10"
+//                         fill="#BCEEFF"
+//                       >
+//                         {d.short}
+//                       </text>
+//                     </g>
+//                   );
+//                 })}
+//               </svg>
+//             </Card>
+
+//             <Card className="p-4 h-[255px]">
+//               <Title>Equipment Flow Overview</Title>
+
+//               <div className="grid grid-cols-4 gap-3 h-[175px]">
+//                 {flowData.map((item) => (
+//                   <div
+//                     key={item.key}
+//                     className="rounded-[12px] bg-[#173579] p-3 flex flex-col justify-center"
+//                   >
+//                     <p className="text-[10px] text-cyan-200">{item.short}</p>
+
+//                     <h4 className="text-[20px] font-light">{item.outgoing}</h4>
+
+//                     <p className="text-[9px] text-cyan-300">kW</p>
+//                   </div>
+//                 ))}
+//               </div>
+//             </Card>
+//           </div>
+//         </div>
+//       </main>
+//     </div>
+//   );
+// }
+
+
+
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import prestigeLogo from "../assets/ser-removebg.png";
@@ -1894,17 +2346,18 @@ export default function OverviewPage() {
   const navigate = useNavigate();
 
   const initialFlow = [
-    { key: "source", title: "33kV Source", short: "SRC", incoming: 1120, outgoing: 1085, today: 18420, month: 486500 },
-    { key: "feeder", title: "33kV Feeder", short: "FDR", incoming: 1085, outgoing: 1040, today: 17680, month: 462300 },
-    { key: "transformer", title: "Transformers", short: "TRF", incoming: 1040, outgoing: 980, today: 16940, month: 441900 },
-    { key: "kiosk", title: "LT Kiosk", short: "KSK", incoming: 980, outgoing: 935, today: 15720, month: 408700 },
-    { key: "busbar", title: "LT Busbar", short: "BUS", incoming: 935, outgoing: 900, today: 14980, month: 392100 },
-    { key: "pcc", title: "PCC Main", short: "PCC", incoming: 900, outgoing: 850, today: 14160, month: 366400 },
-    { key: "wing1", title: "Wing 1", short: "W1", incoming: 425, outgoing: 402, today: 7080, month: 181000 },
-    { key: "wing2", title: "Wing 2", short: "W2", incoming: 425, outgoing: 410, today: 7420, month: 190400 },
+    { key: "source", short: "SRC", incoming: 1120, outgoing: 1085, today: 18420 },
+    { key: "feeder", short: "FDR", incoming: 1085, outgoing: 1040, today: 17680 },
+    { key: "transformer", short: "TRF", incoming: 1040, outgoing: 980, today: 16940 },
+    { key: "kiosk", short: "KSK", incoming: 980, outgoing: 935, today: 15720 },
+    { key: "busbar", short: "BUS", incoming: 935, outgoing: 900, today: 14980 },
+    { key: "pcc", short: "PCC", incoming: 900, outgoing: 850, today: 14160 },
+    { key: "wing1", short: "W1", incoming: 425, outgoing: 402, today: 7080 },
+    { key: "wing2", short: "W2", incoming: 425, outgoing: 410, today: 7420 },
   ];
 
   const [flowData, setFlowData] = useState(initialFlow);
+  const [activeView, setActiveView] = useState("overview");
   const [lastUpdated, setLastUpdated] = useState(new Date());
 
   useEffect(() => {
@@ -1926,7 +2379,6 @@ export default function OverviewPage() {
             incoming,
             outgoing,
             today: item.today + Math.floor(outgoing / 360),
-            month: item.month + Math.floor(outgoing / 180),
           };
         })
       );
@@ -1945,391 +2397,545 @@ export default function OverviewPage() {
     const loss = incoming - outgoing;
     const efficiency = Math.round((outgoing / incoming) * 100);
     const today = flowData.reduce((sum, x) => sum + x.today, 0);
-    const month = flowData.reduce((sum, x) => sum + x.month, 0);
 
-    return { incoming, outgoing, loss, efficiency, today, month, wing1, wing2 };
+    return { incoming, outgoing, loss, efficiency, today };
   }, [flowData]);
 
   const maxValue = Math.max(
     ...flowData.flatMap((x) => [x.incoming, x.outgoing])
   );
 
+  const kpiCards = [
+    {
+      key: "overview",
+      icon: "▦",
+      value: totals.incoming,
+      sub: `${totals.outgoing} kW`,
+      label: "All Overview",
+    },
+    {
+      key: "powerflow",
+      icon: "↯",
+      value: totals.outgoing,
+      sub: "Live Flow kW",
+      label: "Power Flow",
+    },
+    {
+      key: "efficiency",
+      icon: "◔",
+      value: `${totals.efficiency}%`,
+      sub: `${totals.loss} kW Loss`,
+      label: "Efficiency",
+    },
+    {
+      key: "energy",
+      icon: "⚡",
+      value: totals.today.toLocaleString(),
+      sub: "Today kWh",
+      label: "Energy",
+    },
+    {
+      key: "asset",
+      icon: "▣",
+      value: "8",
+      sub: "Assets Live",
+      label: "Asset Health",
+    },
+  ];
+
+  const taskBars = [
+    { name: "Source", value: 74, color: "#2E80B4" },
+    { name: "Feeder", value: 82, color: "#008B7C" },
+    { name: "TR Alert", value: 95, color: "#D7283A" },
+    { name: "Kiosk", value: 88, color: "#FF7A2F" },
+    { name: "Busbar", value: 62, color: "#079AA2" },
+  ];
+
   const Card = ({ children, className = "" }) => (
     <div
-      className={`rounded-[18px] bg-[#224da3] border border-cyan-300/10 shadow-[0_10px_24px_rgba(0,0,0,0.25)] overflow-hidden ${className}`}
+      className={`h-full rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden ${className}`}
     >
       {children}
     </div>
   );
 
   const Title = ({ children }) => (
-    <h3 className="text-[14px] font-bold text-blue-50 mb-2">{children}</h3>
+    <h3 className="text-center text-[14px] font-black text-[#132F2C] leading-none">
+      {children}
+    </h3>
   );
 
-  return (
-    <div className="min-h-screen w-full bg-[#151c55] text-white">
-      <header className="sticky top-0 z-50 h-[64px] bg-[#10194b] px-6 flex items-center justify-between border-b border-cyan-400/20">
+  const TopCard = ({ item }) => {
+    const active = activeView === item.key;
+
+    return (
+      <button
+        onClick={() => setActiveView(item.key)}
+        className={`relative h-[80px] rounded-2xl overflow-hidden border transition-all ${
+          active
+            ? "bg-[linear-gradient(135deg,#008577_0%,#15D4BD_50%,#00796D_100%)] text-white border-transparent shadow-md"
+            : "bg-white text-[#00796D] border-slate-200 shadow-sm hover:shadow-md"
+        }`}
+      >
         <div
-          onClick={() => navigate("/")}
-          className="flex items-center cursor-pointer"
+          className={`absolute left-4 top-4 h-9 w-9 rounded-full flex items-center justify-center text-[18px] ${
+            active ? "bg-white/15 text-white" : "bg-[#E8F5F2] text-[#008577]"
+          }`}
         >
+          {item.icon}
+        </div>
+
+        <div className="h-full flex flex-col items-center justify-center pl-8 pr-2">
+          <h2 className="text-[23px] font-light leading-none">{item.value}</h2>
+
+          <p className="mt-1 text-[10px] font-semibold opacity-90">
+            {item.sub}
+          </p>
+
+          <p
+            className={`mt-1 text-[10px] font-black ${
+              active ? "text-white" : "text-[#132F2C]"
+            }`}
+          >
+            {item.label}
+          </p>
+        </div>
+      </button>
+    );
+  };
+
+  const PowerFlowChart = ({ single = false }) => (
+    <Card className={single ? "p-6" : "p-4"}>
+      <Title>Power Flow Monitoring</Title>
+
+      <svg viewBox="0 0 820 360" className="mt-2 h-[calc(100%-22px)] w-full">
+        {[0, 1, 2, 3, 4, 5].map((i) => (
+          <g key={i}>
+            <line
+              x1="55"
+              x2="770"
+              y1={55 + i * 52}
+              y2={55 + i * 52}
+              stroke="#DCE9E6"
+            />
+            <text x="20" y={60 + i * 52} fontSize="12" fill="#4B6764">
+              {1200 - i * 240}
+            </text>
+          </g>
+        ))}
+
+        <text x="15" y="22" fontSize="13" fontWeight="700" fill="#132F2C">
+          kW
+        </text>
+
+        {flowData.map((item, i) => {
+          const x = 75 + i * 88;
+          const incomingH = (item.incoming / maxValue) * 210;
+          const outgoingH = (item.outgoing / maxValue) * 210;
+
+          return (
+            <g key={item.key}>
+              <rect
+                x={x}
+                y={300 - incomingH}
+                width="24"
+                height={incomingH}
+                rx="4"
+                fill="#9BDED5"
+                opacity="0.75"
+              />
+
+              <rect
+                x={x + 24}
+                y={300 - outgoingH}
+                width="24"
+                height={outgoingH}
+                rx="4"
+                fill={i >= 3 ? "#008577" : "#4FBDB2"}
+              />
+
+              <text
+                x={x + 24}
+                y="333"
+                textAnchor="middle"
+                fontSize="12"
+                fill="#243B3A"
+                fontWeight="800"
+              >
+                {item.short}
+              </text>
+            </g>
+          );
+        })}
+
+        <path
+          d="M76 165 C155 75 245 82 330 122 C430 172 525 240 625 245 C690 250 735 210 770 175"
+          fill="none"
+          stroke="#2085B5"
+          strokeWidth="4"
+          strokeLinecap="round"
+        />
+
+        <path
+          d="M76 165 C155 75 245 82 330 122 C430 172 525 240 625 245 C690 250 735 210 770 175 L770 300 L76 300 Z"
+          fill="#77D6E4"
+          opacity="0.2"
+        />
+
+        <g transform="translate(260 340)">
+          <rect x="0" y="0" width="14" height="14" rx="3" fill="#9BDED5" />
+          <text x="24" y="12" fontSize="13" fill="#132F2C">
+            Incoming
+          </text>
+
+          <rect x="130" y="0" width="14" height="14" rx="3" fill="#008577" />
+          <text x="154" y="12" fontSize="13" fill="#132F2C">
+            Outgoing
+          </text>
+
+          <line
+            x1="270"
+            x2="290"
+            y1="7"
+            y2="7"
+            stroke="#2085B5"
+            strokeWidth="3"
+          />
+          <text x="300" y="12" fontSize="13" fill="#132F2C">
+            Trend
+          </text>
+        </g>
+      </svg>
+    </Card>
+  );
+
+  const EfficiencyChart = ({ single = false }) => (
+    <Card className={single ? "p-6" : "p-4"}>
+      <Title>System Efficiency</Title>
+
+      <div className="h-[calc(100%-20px)] flex flex-col items-center justify-center">
+        <div
+          className={`relative rounded-full bg-[conic-gradient(#007D72_0_15%,#9BDED5_15%_100%)] shadow-[0_10px_25px_rgba(0,92,82,0.18)] ${
+            single ? "h-[300px] w-[300px]" : "h-[145px] w-[145px]"
+          }`}
+        >
+          <div
+            className={`absolute rounded-full bg-white flex items-center justify-center ${
+              single ? "inset-[58px]" : "inset-[27px]"
+            }`}
+          >
+            <h2
+              className={`${
+                single ? "text-[48px]" : "text-[31px]"
+              } font-light text-[#008577]`}
+            >
+              {totals.efficiency}%
+            </h2>
+          </div>
+        </div>
+
+        <div className="mt-3 w-[78%] space-y-2">
+          <div className="flex items-center justify-between text-[12px] font-semibold">
+            <span className="flex items-center gap-2">
+              <span className="h-2.5 w-2.5 rounded-full bg-[#008577]" />
+              Efficiency
+            </span>
+            <span>{totals.efficiency}%</span>
+          </div>
+
+          <div className="flex items-center justify-between text-[12px] font-semibold">
+            <span className="flex items-center gap-2">
+              <span className="h-2.5 w-2.5 rounded-full bg-[#9BDED5]" />
+              Loss
+            </span>
+            <span>{totals.loss} kW</span>
+          </div>
+        </div>
+      </div>
+    </Card>
+  );
+
+  const EnergyChart = ({ single = false }) => {
+    const months = ["J", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D"];
+
+    return (
+      <Card className={single ? "p-6" : "p-4"}>
+        <Title>Energy Performance</Title>
+
+        <div
+          className={`h-[calc(100%-20px)] flex items-end justify-center ${
+            single ? "gap-5" : "gap-2.5"
+          }`}
+        >
+          {months.map((m, i) => {
+            const mainH = single
+              ? 140 + ((i * 31) % 210)
+              : 45 + ((i * 31) % 92);
+            const subH = mainH * 0.48;
+
+            return (
+              <div key={m} className="flex flex-col items-center justify-end">
+                <div
+                  className={`${single ? "w-10" : "w-5"} relative bg-[#61CFC4]`}
+                  style={{ height: mainH }}
+                >
+                  <div
+                    className="absolute bottom-0 left-[4px] right-[4px] bg-[#E3FFF8]"
+                    style={{ height: subH }}
+                  />
+
+                  <div className="absolute left-0 right-0 bottom-[40%] h-[6px] bg-[#00998C]" />
+                </div>
+
+                <span className="mt-1 text-[10px] font-bold text-[#4B6764]">
+                  {m}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      </Card>
+    );
+  };
+
+  const RadarChart = ({ single = false }) => (
+    <Card className={single ? "p-6" : "p-4"}>
+      <Title>Asset Health</Title>
+
+      <div className="h-[calc(100%-20px)] flex items-center justify-center">
+        <svg
+          viewBox="0 0 420 360"
+          className={single ? "h-[430px] w-[470px]" : "h-[170px] w-[220px]"}
+        >
+          <polygon points="210,35 345,130 292,305 128,305 75,130" fill="none" stroke="#B7C4C1" />
+          <polygon points="210,85 294,148 260,255 160,255 126,148" fill="none" stroke="#D4DEDC" />
+          <polygon points="210,135 246,170 232,220 188,220 174,170" fill="none" stroke="#D4DEDC" />
+
+          <line x1="210" y1="35" x2="210" y2="305" stroke="#C4CFCD" />
+          <line x1="75" y1="130" x2="292" y2="305" stroke="#C4CFCD" />
+          <line x1="345" y1="130" x2="128" y2="305" stroke="#C4CFCD" />
+
+          <polygon
+            points="210,70 265,165 270,250 145,272 100,138"
+            fill="#18C7B2"
+            opacity="0.6"
+            stroke="#00A89C"
+            strokeWidth="3"
+          />
+
+          <polygon
+            points="210,92 332,132 275,240 155,250 132,190"
+            fill="#E896EA"
+            opacity="0.55"
+            stroke="#B775D6"
+            strokeWidth="3"
+          />
+
+          <text x="210" y="20" textAnchor="middle" fontSize="13" fill="#4B6764">
+            Reliability
+          </text>
+          <text x="355" y="130" fontSize="13" fill="#4B6764">
+            Performance
+          </text>
+          <text x="275" y="330" fontSize="13" fill="#4B6764">
+            Utilization
+          </text>
+          <text x="80" y="330" fontSize="13" fill="#4B6764">
+            Safety
+          </text>
+          <text x="10" y="130" fontSize="13" fill="#4B6764">
+            Maintenance
+          </text>
+        </svg>
+      </div>
+    </Card>
+  );
+
+  const TaskManager = ({ single = false }) => (
+    <Card className={single ? "p-6" : "p-5"}>
+      <Title>Task Manager</Title>
+
+      <div className={single ? "mt-10 space-y-10" : "mt-7 space-y-6"}>
+        {taskBars.map((item) => (
+          <div
+            key={item.name}
+            className="grid grid-cols-[78px_1fr_36px] items-center gap-3"
+          >
+            <span className="text-right text-[12px] font-bold text-[#4B6764]">
+              {item.name}
+            </span>
+
+            <div className="h-[21px] rounded-[6px] bg-[#D9F4EF] overflow-hidden">
+              <div
+                className="h-full rounded-[6px]"
+                style={{ width: `${item.value}%`, backgroundColor: item.color }}
+              />
+            </div>
+
+            <span className="text-[12px] font-bold text-[#4B6764]">
+              {item.value}%
+            </span>
+          </div>
+        ))}
+      </div>
+    </Card>
+  );
+
+  const LiveEquipment = () => (
+    <Card className="p-4">
+      <Title>Live Equipment</Title>
+
+      <div className="grid grid-cols-2 gap-2.5 mt-3">
+        {flowData.slice(0, 4).map((item) => (
+          <div
+            key={item.key}
+            className="rounded-xl bg-[#D9F4EF] p-2 text-center"
+          >
+            <p className="text-[10px] font-black text-[#008577]">
+              {item.short}
+            </p>
+
+            <h4 className="text-[21px] font-light text-[#132F2C]">
+              {item.outgoing}
+            </h4>
+
+            <p className="text-[9px] font-bold text-[#132F2C]">kW</p>
+          </div>
+        ))}
+      </div>
+    </Card>
+  );
+
+  const StatusCard = ({ type }) => (
+    <Card className="p-3 flex flex-col items-center justify-center text-center">
+      <div className="mb-2 h-10 w-10 rounded-full bg-[#D9F4EF] flex items-center justify-center text-[22px] text-[#008577]">
+        {type === "time" ? "◷" : "▣"}
+      </div>
+
+      <p className="text-[10px] font-black text-[#4B6764]">
+        {type === "time" ? "Last Updated" : "System"}
+      </p>
+
+      <h4 className="mt-1 text-[15px] text-[#008577] font-medium">
+        {type === "time" ? lastUpdated.toLocaleTimeString() : "HEALTHY"}
+      </h4>
+
+      <p className="mt-1 text-[9px] text-[#6B7E7B]">
+        {type === "time" ? "Live Refresh" : "All Systems Normal"}
+      </p>
+    </Card>
+  );
+
+  const AllOverview = () => (
+    <div className="h-full grid grid-cols-[2.8fr_1fr] grid-rows-1 gap-5 min-h-0">
+      <div className="grid grid-rows-[minmax(0,1.5fr)_minmax(0,1fr)] gap-5 min-h-0">
+        <div className="grid grid-cols-[2fr_1fr] gap-5 min-h-0">
+          <PowerFlowChart />
+          <EfficiencyChart />
+        </div>
+
+        <div className="grid grid-cols-3 gap-5 min-h-0">
+          <EnergyChart />
+          <RadarChart />
+          <LiveEquipment />
+        </div>
+      </div>
+
+      <div className="grid grid-rows-[minmax(0,1fr)_110px] gap-5 min-h-0">
+        <TaskManager />
+
+        <div className="grid grid-cols-2 gap-5 min-h-0">
+          <StatusCard type="time" />
+          <StatusCard type="system" />
+        </div>
+      </div>
+    </div>
+  );
+
+  const SingleView = () => {
+    switch (activeView) {
+      case "powerflow":
+        return <PowerFlowChart single />;
+
+      case "efficiency":
+        return <EfficiencyChart single />;
+
+      case "energy":
+        return <EnergyChart single />;
+
+      case "asset":
+        return <RadarChart single />;
+
+      default:
+        return <AllOverview />;
+    }
+  };
+
+  return (
+    <div className="h-screen w-full overflow-hidden bg-[#F4F7FA] text-[#0B3D38]">
+      <header className="h-[58px] px-8 flex items-center justify-between bg-[#006F66] text-white">
+        <div onClick={() => navigate("/")} className="flex items-center cursor-pointer">
           <div>
-            <h1 className="text-[22px] font-semibold tracking-[0.18em] uppercase leading-none">
-              ARCOT <span className="text-[#67E8F9]">IIOT 1.0</span>
+            <h1 className="text-[24px] font-black tracking-[0.2em] uppercase leading-none">
+              ARCOT <span className="text-[#30E6D3]">IIOT 1.0</span>
             </h1>
 
-            <p className="mt-2 text-[8px] tracking-[0.35em] uppercase text-cyan-200">
+            <p className="mt-1.5 text-[8px] tracking-[0.42em] uppercase text-white">
               Industrial Internet of Things
             </p>
           </div>
 
-          <div className="h-[46px] border-l border-cyan-300/30 mx-4" />
+          <div className="mx-5 h-[42px] border-l border-white/40" />
 
           <img
             src={prestigeLogo}
             alt="Prestige"
-            className="h-[48px] w-[95px] object-contain"
+            className="h-[46px] w-[90px] object-contain"
           />
         </div>
 
         <button
           onClick={() => navigate("/")}
-          className="rounded-full border border-cyan-300/60 px-6 py-2 text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100"
+          className="rounded-full border border-white/70 px-7 py-2.5 text-[11px] font-black uppercase tracking-[0.16em]"
         >
           Dashboard
         </button>
       </header>
 
-      <main className="w-full p-4">
-        <div className="grid w-full grid-cols-12 gap-4">
-          {/* LEFT */}
-          <div className="col-span-3 space-y-4">
-            <Card className="p-4 h-[140px]">
-              <div className="grid grid-cols-2 h-full">
-                <div className="flex flex-col justify-center">
-                  <h2 className="text-[34px] font-light leading-none">
-                    {totals.incoming}
-                  </h2>
-                  <p className="mt-3 text-[10px] text-cyan-300">Incoming kW</p>
-                </div>
+      <main className="relative w-full h-[calc(100vh-58px)] px-6 py-4 overflow-hidden">
+        <aside className="absolute left-0 top-0 bottom-0 w-[72px] bg-[#006F66] flex flex-col items-center justify-start pt-10 gap-7 text-white">
+          {[
+            ["overview", "▦"],
+            ["powerflow", "↯"],
+            ["efficiency", "◔"],
+            ["energy", "⚡"],
+            ["asset", "▣"],
+          ].map(([key, icon]) => (
+            <button
+              key={key}
+              onClick={() => setActiveView(key)}
+              className={`h-10 w-10 rounded-full flex items-center justify-center text-[22px] transition ${
+                activeView === key
+                  ? "bg-white/20 shadow-[0_0_18px_rgba(255,255,255,0.2)]"
+                  : "hover:bg-white/10"
+              }`}
+            >
+              {icon}
+            </button>
+          ))}
+        </aside>
 
-                <div className="border-l border-cyan-300/20 pl-5 flex flex-col justify-center">
-                  <h2 className="text-[34px] font-light leading-none">
-                    {totals.outgoing}
-                  </h2>
-                  <p className="mt-3 text-[10px] text-cyan-300">Outgoing kW</p>
-                </div>
-              </div>
-            </Card>
-
-            <Card className="p-4 h-[220px]">
-              <Title>Live Summary</Title>
-
-              <div className="grid h-[calc(100%-28px)] grid-cols-2 gap-4">
-                <div className="flex flex-col justify-center">
-                  <h2 className="text-[30px] font-light leading-none text-cyan-100">
-                    ↑ {totals.today.toLocaleString()}
-                  </h2>
-                  <p className="mt-3 text-[10px] text-cyan-300">
-                    Today Energy kWh
-                  </p>
-                </div>
-
-                <div className="flex flex-col justify-center">
-                  <h2 className="text-[30px] font-light leading-none text-yellow-300">
-                    ↓ {totals.loss}
-                  </h2>
-                  <p className="mt-3 text-[10px] text-cyan-300">Loss kW</p>
-                </div>
-              </div>
-            </Card>
-
-            <Card className="p-4 h-[220px]">
-              <Title>Equipment Load Bars</Title>
-
-              <div className="flex h-[calc(100%-28px)] flex-col justify-center gap-4">
-                {flowData.slice(0, 4).map((item) => (
-                  <div key={item.key}>
-                    <div className="mb-1 flex justify-between text-[10px] text-cyan-200">
-                      <span>{item.title}</span>
-                      <span>{item.outgoing} kW</span>
-                    </div>
-
-                    <div className="h-3 overflow-hidden rounded-full bg-[#173579]">
-                      <div
-                        className="h-full rounded-full bg-gradient-to-r from-cyan-400 to-yellow-300"
-                        style={{ width: `${(item.outgoing / maxValue) * 100}%` }}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </Card>
-
-            <Card className="p-4 h-[260px]">
-              <Title>Day Wise Energy Report</Title>
-
-              <div className="flex h-[calc(100%-28px)] items-end justify-between gap-3">
-                {["12 AM", "04 AM", "08 AM", "12 PM", "04 PM", "08 PM"].map(
-                  (label, i) => (
-                    <div
-                      key={label}
-                      className="flex flex-1 flex-col items-center justify-end"
-                    >
-                      <div className="flex h-[165px] items-end gap-1">
-                        <div
-                          className="w-4 rounded-t bg-cyan-400"
-                          style={{ height: `${82 + (i % 3) * 16}px` }}
-                        />
-
-                        <div
-                          className="w-4 rounded-t bg-yellow-400"
-                          style={{ height: `${72 + (i % 4) * 14}px` }}
-                        />
-                      </div>
-
-                      <p className="mt-2 text-[10px] text-cyan-100">{label}</p>
-                    </div>
-                  )
-                )}
-              </div>
-            </Card>
+        <section className="pl-[90px] w-full h-full flex flex-col min-h-0">
+          <div className="grid grid-cols-5 gap-5 w-full shrink-0">
+            {kpiCards.map((item) => (
+              <TopCard key={item.key} item={item} />
+            ))}
           </div>
 
-          {/* MIDDLE */}
-          <div className="col-span-3 space-y-4">
-            <Card className="p-4 h-[270px]">
-              <Title>System Efficiency</Title>
-
-              <div className="flex h-[calc(100%-28px)] flex-col items-center justify-center">
-                <div className="relative h-[155px] w-[155px] rounded-full bg-[conic-gradient(#35D8F5_0_65%,rgba(255,255,255,0.15)_65%_100%)]">
-                  <div className="absolute inset-[17px] rounded-full bg-[#224da3] flex items-center justify-center">
-                    <h2 className="text-[40px] font-light">
-                      {totals.efficiency}%
-                    </h2>
-                  </div>
-                </div>
-
-                <button className="mt-4 rounded-full bg-cyan-400 px-14 py-2 text-[#12306F] text-[12px] font-black">
-                  Healthy
-                </button>
-              </div>
-            </Card>
-
-            <Card className="p-4 h-[270px]">
-              <Title>Area Load Curve</Title>
-
-              <svg viewBox="0 0 330 160" className="w-full h-[210px]">
-                <polygon
-                  points="0,95 40,115 80,70 120,108 160,35 200,100 240,75 280,98 330,60 330,160 0,160"
-                  fill="#35D8F5"
-                  opacity="0.38"
-                />
-
-                <polygon
-                  points="0,125 40,85 80,145 120,75 160,150 200,82 240,140 280,95 330,120 330,160 0,160"
-                  fill="#F6B23F"
-                  opacity="0.78"
-                />
-              </svg>
-            </Card>
-
-            <Card className="p-4 h-[315px]">
-              <Title>Monthly Energy</Title>
-
-              <h2 className="text-[38px] font-light text-yellow-300 leading-none">
-                {totals.month.toLocaleString()}
-              </h2>
-
-              <p className="text-[11px] text-cyan-300 mt-2 mb-5">
-                kWh this month
-              </p>
-
-              <div className="space-y-4">
-                {[0.22, 0.25, 0.27, 0.26].map((v, i) => (
-                  <div key={i} className="flex items-center gap-3">
-                    <span className="w-12 text-[10px] text-cyan-200">
-                      Week {i + 1}
-                    </span>
-
-                    <div className="flex-1 h-4 rounded-full bg-[#173579] overflow-hidden">
-                      <div
-                        className="h-full bg-gradient-to-r from-yellow-300 via-cyan-400 to-blue-300"
-                        style={{ width: `${v * 100}%` }}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </Card>
+          <div className="mt-4 flex-1 min-h-0 overflow-hidden">
+            {activeView === "overview" ? <AllOverview /> : <SingleView />}
           </div>
-
-          {/* RIGHT */}
-          <div className="col-span-6 space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <Card className="p-4 h-[145px]">
-                <Title>Realtime Monitoring</Title>
-
-                <div className="grid grid-cols-2">
-                  <div>
-                    <h2 className="text-[32px] font-light">{totals.outgoing}</h2>
-                    <p className="text-[10px] text-cyan-300">Live Load kW</p>
-                  </div>
-
-                  <div>
-                    <h2 className="text-[20px] font-light text-yellow-300">
-                      {lastUpdated.toLocaleTimeString()}
-                    </h2>
-                    <p className="text-[10px] text-cyan-300">Last Updated</p>
-                  </div>
-                </div>
-              </Card>
-
-              <Card className="p-4 h-[145px]">
-                <Title>Power Load</Title>
-
-                <svg viewBox="0 0 330 115" className="w-full h-[95px]">
-                  <polyline
-                    points="30,70 70,80 110,52 150,90 190,30 230,72 270,55 310,82"
-                    fill="none"
-                    stroke="#F6B23F"
-                    strokeWidth="5"
-                  />
-
-                  <polyline
-                    points="30,74 70,82 110,60 150,94 190,30 230,68 270,52 310,78"
-                    fill="none"
-                    stroke="#35D8F5"
-                    strokeWidth="5"
-                  />
-                </svg>
-              </Card>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <Card className="p-4 h-[185px]">
-                <Title>Wing Distribution</Title>
-
-                <div className="flex items-center justify-around">
-                  {[
-                    ["Wing 1", totals.wing1],
-                    ["Wing 2", totals.wing2],
-                  ].map(([label, value]) => (
-                    <div key={label} className="text-center">
-                      <div className="relative h-[100px] w-[100px] rounded-full bg-[conic-gradient(#F6B23F_0_72%,#35D8F5_72%_100%)]">
-                        <div className="absolute inset-[13px] rounded-full bg-[#224da3] flex items-center justify-center">
-                          <h3 className="text-[22px] font-light">{value}</h3>
-                        </div>
-                      </div>
-
-                      <p className="mt-2 text-[11px] text-cyan-200">{label}</p>
-                    </div>
-                  ))}
-                </div>
-              </Card>
-
-              <Card className="p-4 h-[185px]">
-                <Title>System Status</Title>
-
-                <h2 className="text-[34px] font-light text-cyan-100">HEALTHY</h2>
-
-                <p className="text-[11px] text-cyan-300 mt-2">
-                  All equipment running normally
-                </p>
-
-                <div className="mt-5 h-3 rounded-full bg-[#173579] overflow-hidden">
-                  <div
-                    className="h-full rounded-full bg-gradient-to-r from-cyan-400 to-yellow-300"
-                    style={{ width: `${totals.efficiency}%` }}
-                  />
-                </div>
-              </Card>
-            </div>
-
-            <Card className="p-4 h-[250px]">
-              <Title>Power Trend Analysis</Title>
-
-              <svg viewBox="0 0 760 220" className="w-full h-[200px]">
-                {[0, 1, 2, 3, 4].map((i) => (
-                  <line
-                    key={i}
-                    x1="45"
-                    x2="720"
-                    y1={35 + i * 35}
-                    y2={35 + i * 35}
-                    stroke="rgba(255,255,255,0.12)"
-                  />
-                ))}
-
-                <polyline
-                  points={flowData
-                    .map(
-                      (d, i) =>
-                        `${60 + i * 90},${185 - (d.incoming / maxValue) * 140}`
-                    )
-                    .join(" ")}
-                  fill="none"
-                  stroke="#F6B23F"
-                  strokeWidth="4"
-                  strokeLinecap="round"
-                />
-
-                <polyline
-                  points={flowData
-                    .map(
-                      (d, i) =>
-                        `${60 + i * 90},${185 - (d.outgoing / maxValue) * 140}`
-                    )
-                    .join(" ")}
-                  fill="none"
-                  stroke="#35D8F5"
-                  strokeWidth="4"
-                  strokeLinecap="round"
-                />
-
-                {flowData.map((d, i) => {
-                  const x = 60 + i * 90;
-                  const y = 185 - (d.outgoing / maxValue) * 140;
-
-                  return (
-                    <g key={d.key}>
-                      <circle cx={x} cy={y} r="5" fill="#E9FFFF" />
-
-                      <text
-                        x={x}
-                        y="210"
-                        textAnchor="middle"
-                        fontSize="10"
-                        fill="#BCEEFF"
-                      >
-                        {d.short}
-                      </text>
-                    </g>
-                  );
-                })}
-              </svg>
-            </Card>
-
-            <Card className="p-4 h-[255px]">
-              <Title>Equipment Flow Overview</Title>
-
-              <div className="grid grid-cols-4 gap-3 h-[175px]">
-                {flowData.map((item) => (
-                  <div
-                    key={item.key}
-                    className="rounded-[12px] bg-[#173579] p-3 flex flex-col justify-center"
-                  >
-                    <p className="text-[10px] text-cyan-200">{item.short}</p>
-
-                    <h4 className="text-[20px] font-light">{item.outgoing}</h4>
-
-                    <p className="text-[9px] text-cyan-300">kW</p>
-                  </div>
-                ))}
-              </div>
-            </Card>
-          </div>
-        </div>
+        </section>
       </main>
     </div>
   );
