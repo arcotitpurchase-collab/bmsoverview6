@@ -2338,605 +2338,2167 @@
 
 
 
+// import React, { useEffect, useMemo, useState } from "react";
+// import { useNavigate } from "react-router-dom";
+// import prestigeLogo from "../assets/ser-removebg.png";
+
+// export default function OverviewPage() {
+//   const navigate = useNavigate();
+
+//   const initialFlow = [
+//     { key: "source", short: "SRC", incoming: 1120, outgoing: 1085, today: 18420 },
+//     { key: "feeder", short: "FDR", incoming: 1085, outgoing: 1040, today: 17680 },
+//     { key: "transformer", short: "TRF", incoming: 1040, outgoing: 980, today: 16940 },
+//     { key: "kiosk", short: "KSK", incoming: 980, outgoing: 935, today: 15720 },
+//     { key: "busbar", short: "BUS", incoming: 935, outgoing: 900, today: 14980 },
+//     { key: "pcc", short: "PCC", incoming: 900, outgoing: 850, today: 14160 },
+//     { key: "wing1", short: "W1", incoming: 425, outgoing: 402, today: 7080 },
+//     { key: "wing2", short: "W2", incoming: 425, outgoing: 410, today: 7420 },
+//   ];
+
+//   const [flowData, setFlowData] = useState(initialFlow);
+//   const [activeView, setActiveView] = useState("overview");
+//   const [lastUpdated, setLastUpdated] = useState(new Date());
+
+//   useEffect(() => {
+//     const timer = setInterval(() => {
+//       setFlowData((prev) =>
+//         prev.map((item) => {
+//           const incoming = Math.max(
+//             40,
+//             item.incoming + Math.floor(Math.random() * 15) - 7
+//           );
+
+//           const outgoing = Math.min(
+//             incoming - 5,
+//             Math.max(35, item.outgoing + Math.floor(Math.random() * 13) - 6)
+//           );
+
+//           return {
+//             ...item,
+//             incoming,
+//             outgoing,
+//             today: item.today + Math.floor(outgoing / 360),
+//           };
+//         })
+//       );
+
+//       setLastUpdated(new Date());
+//     }, 1000);
+
+//     return () => clearInterval(timer);
+//   }, []);
+
+//   const totals = useMemo(() => {
+//     const incoming = flowData[0].incoming;
+//     const wing1 = flowData.find((x) => x.key === "wing1")?.outgoing || 0;
+//     const wing2 = flowData.find((x) => x.key === "wing2")?.outgoing || 0;
+//     const outgoing = wing1 + wing2;
+//     const loss = incoming - outgoing;
+//     const efficiency = Math.round((outgoing / incoming) * 100);
+//     const today = flowData.reduce((sum, x) => sum + x.today, 0);
+
+//     return { incoming, outgoing, loss, efficiency, today };
+//   }, [flowData]);
+
+//   const maxValue = Math.max(
+//     ...flowData.flatMap((x) => [x.incoming, x.outgoing])
+//   );
+
+//   const kpiCards = [
+//     {
+//       key: "overview",
+//       icon: "▦",
+//       value: totals.incoming,
+//       sub: `${totals.outgoing} kW`,
+//       label: "All Overview",
+//     },
+//     {
+//       key: "powerflow",
+//       icon: "↯",
+//       value: totals.outgoing,
+//       sub: "Live Flow kW",
+//       label: "Power Flow",
+//     },
+//     {
+//       key: "efficiency",
+//       icon: "◔",
+//       value: `${totals.efficiency}%`,
+//       sub: `${totals.loss} kW Loss`,
+//       label: "Efficiency",
+//     },
+//     {
+//       key: "energy",
+//       icon: "⚡",
+//       value: totals.today.toLocaleString(),
+//       sub: "Today kWh",
+//       label: "Energy",
+//     },
+//     {
+//       key: "asset",
+//       icon: "▣",
+//       value: "8",
+//       sub: "Assets Live",
+//       label: "Asset Health",
+//     },
+//   ];
+
+//   const taskBars = [
+//     { name: "Source", value: 74, color: "#2E80B4" },
+//     { name: "Feeder", value: 82, color: "#008B7C" },
+//     { name: "TR Alert", value: 95, color: "#D7283A" },
+//     { name: "Kiosk", value: 88, color: "#FF7A2F" },
+//     { name: "Busbar", value: 62, color: "#079AA2" },
+//   ];
+
+//   const Card = ({ children, className = "" }) => (
+//     <div
+//       className={`h-full rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden ${className}`}
+//     >
+//       {children}
+//     </div>
+//   );
+
+//   const Title = ({ children }) => (
+//     <h3 className="text-center text-[14px] font-black text-[#132F2C] leading-none">
+//       {children}
+//     </h3>
+//   );
+
+//   const TopCard = ({ item }) => {
+//     const active = activeView === item.key;
+
+//     return (
+//       <button
+//         onClick={() => setActiveView(item.key)}
+//         className={`relative h-[80px] rounded-2xl overflow-hidden border transition-all ${
+//           active
+//             ? "bg-[linear-gradient(135deg,#008577_0%,#15D4BD_50%,#00796D_100%)] text-white border-transparent shadow-md"
+//             : "bg-white text-[#00796D] border-slate-200 shadow-sm hover:shadow-md"
+//         }`}
+//       >
+//         <div
+//           className={`absolute left-4 top-4 h-9 w-9 rounded-full flex items-center justify-center text-[18px] ${
+//             active ? "bg-white/15 text-white" : "bg-[#E8F5F2] text-[#008577]"
+//           }`}
+//         >
+//           {item.icon}
+//         </div>
+
+//         <div className="h-full flex flex-col items-center justify-center pl-8 pr-2">
+//           <h2 className="text-[23px] font-light leading-none">{item.value}</h2>
+
+//           <p className="mt-1 text-[10px] font-semibold opacity-90">
+//             {item.sub}
+//           </p>
+
+//           <p
+//             className={`mt-1 text-[10px] font-black ${
+//               active ? "text-white" : "text-[#132F2C]"
+//             }`}
+//           >
+//             {item.label}
+//           </p>
+//         </div>
+//       </button>
+//     );
+//   };
+
+//   const PowerFlowChart = ({ single = false }) => (
+//     <Card className={single ? "p-6" : "p-4"}>
+//       <Title>Power Flow Monitoring</Title>
+
+//       <svg viewBox="0 0 820 360" className="mt-2 h-[calc(100%-22px)] w-full">
+//         {[0, 1, 2, 3, 4, 5].map((i) => (
+//           <g key={i}>
+//             <line
+//               x1="55"
+//               x2="770"
+//               y1={55 + i * 52}
+//               y2={55 + i * 52}
+//               stroke="#DCE9E6"
+//             />
+//             <text x="20" y={60 + i * 52} fontSize="12" fill="#4B6764">
+//               {1200 - i * 240}
+//             </text>
+//           </g>
+//         ))}
+
+//         <text x="15" y="22" fontSize="13" fontWeight="700" fill="#132F2C">
+//           kW
+//         </text>
+
+//         {flowData.map((item, i) => {
+//           const x = 75 + i * 88;
+//           const incomingH = (item.incoming / maxValue) * 210;
+//           const outgoingH = (item.outgoing / maxValue) * 210;
+
+//           return (
+//             <g key={item.key}>
+//               <rect
+//                 x={x}
+//                 y={300 - incomingH}
+//                 width="24"
+//                 height={incomingH}
+//                 rx="4"
+//                 fill="#9BDED5"
+//                 opacity="0.75"
+//               />
+
+//               <rect
+//                 x={x + 24}
+//                 y={300 - outgoingH}
+//                 width="24"
+//                 height={outgoingH}
+//                 rx="4"
+//                 fill={i >= 3 ? "#008577" : "#4FBDB2"}
+//               />
+
+//               <text
+//                 x={x + 24}
+//                 y="333"
+//                 textAnchor="middle"
+//                 fontSize="12"
+//                 fill="#243B3A"
+//                 fontWeight="800"
+//               >
+//                 {item.short}
+//               </text>
+//             </g>
+//           );
+//         })}
+
+//         <path
+//           d="M76 165 C155 75 245 82 330 122 C430 172 525 240 625 245 C690 250 735 210 770 175"
+//           fill="none"
+//           stroke="#2085B5"
+//           strokeWidth="4"
+//           strokeLinecap="round"
+//         />
+
+//         <path
+//           d="M76 165 C155 75 245 82 330 122 C430 172 525 240 625 245 C690 250 735 210 770 175 L770 300 L76 300 Z"
+//           fill="#77D6E4"
+//           opacity="0.2"
+//         />
+
+//         <g transform="translate(260 340)">
+//           <rect x="0" y="0" width="14" height="14" rx="3" fill="#9BDED5" />
+//           <text x="24" y="12" fontSize="13" fill="#132F2C">
+//             Incoming
+//           </text>
+
+//           <rect x="130" y="0" width="14" height="14" rx="3" fill="#008577" />
+//           <text x="154" y="12" fontSize="13" fill="#132F2C">
+//             Outgoing
+//           </text>
+
+//           <line
+//             x1="270"
+//             x2="290"
+//             y1="7"
+//             y2="7"
+//             stroke="#2085B5"
+//             strokeWidth="3"
+//           />
+//           <text x="300" y="12" fontSize="13" fill="#132F2C">
+//             Trend
+//           </text>
+//         </g>
+//       </svg>
+//     </Card>
+//   );
+
+//   const EfficiencyChart = ({ single = false }) => (
+//     <Card className={single ? "p-6" : "p-4"}>
+//       <Title>System Efficiency</Title>
+
+//       <div className="h-[calc(100%-20px)] flex flex-col items-center justify-center">
+//         <div
+//           className={`relative rounded-full bg-[conic-gradient(#007D72_0_15%,#9BDED5_15%_100%)] shadow-[0_10px_25px_rgba(0,92,82,0.18)] ${
+//             single ? "h-[300px] w-[300px]" : "h-[145px] w-[145px]"
+//           }`}
+//         >
+//           <div
+//             className={`absolute rounded-full bg-white flex items-center justify-center ${
+//               single ? "inset-[58px]" : "inset-[27px]"
+//             }`}
+//           >
+//             <h2
+//               className={`${
+//                 single ? "text-[48px]" : "text-[31px]"
+//               } font-light text-[#008577]`}
+//             >
+//               {totals.efficiency}%
+//             </h2>
+//           </div>
+//         </div>
+
+//         <div className="mt-3 w-[78%] space-y-2">
+//           <div className="flex items-center justify-between text-[12px] font-semibold">
+//             <span className="flex items-center gap-2">
+//               <span className="h-2.5 w-2.5 rounded-full bg-[#008577]" />
+//               Efficiency
+//             </span>
+//             <span>{totals.efficiency}%</span>
+//           </div>
+
+//           <div className="flex items-center justify-between text-[12px] font-semibold">
+//             <span className="flex items-center gap-2">
+//               <span className="h-2.5 w-2.5 rounded-full bg-[#9BDED5]" />
+//               Loss
+//             </span>
+//             <span>{totals.loss} kW</span>
+//           </div>
+//         </div>
+//       </div>
+//     </Card>
+//   );
+
+//   const EnergyChart = ({ single = false }) => {
+//     const months = ["J", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D"];
+
+//     return (
+//       <Card className={single ? "p-6" : "p-4"}>
+//         <Title>Energy Performance</Title>
+
+//         <div
+//           className={`h-[calc(100%-20px)] flex items-end justify-center ${
+//             single ? "gap-5" : "gap-2.5"
+//           }`}
+//         >
+//           {months.map((m, i) => {
+//             const mainH = single
+//               ? 140 + ((i * 31) % 210)
+//               : 45 + ((i * 31) % 92);
+//             const subH = mainH * 0.48;
+
+//             return (
+//               <div key={m} className="flex flex-col items-center justify-end">
+//                 <div
+//                   className={`${single ? "w-10" : "w-5"} relative bg-[#61CFC4]`}
+//                   style={{ height: mainH }}
+//                 >
+//                   <div
+//                     className="absolute bottom-0 left-[4px] right-[4px] bg-[#E3FFF8]"
+//                     style={{ height: subH }}
+//                   />
+
+//                   <div className="absolute left-0 right-0 bottom-[40%] h-[6px] bg-[#00998C]" />
+//                 </div>
+
+//                 <span className="mt-1 text-[10px] font-bold text-[#4B6764]">
+//                   {m}
+//                 </span>
+//               </div>
+//             );
+//           })}
+//         </div>
+//       </Card>
+//     );
+//   };
+
+//   const RadarChart = ({ single = false }) => (
+//     <Card className={single ? "p-6" : "p-4"}>
+//       <Title>Asset Health</Title>
+
+//       <div className="h-[calc(100%-20px)] flex items-center justify-center">
+//         <svg
+//           viewBox="0 0 420 360"
+//           className={single ? "h-[430px] w-[470px]" : "h-[170px] w-[220px]"}
+//         >
+//           <polygon points="210,35 345,130 292,305 128,305 75,130" fill="none" stroke="#B7C4C1" />
+//           <polygon points="210,85 294,148 260,255 160,255 126,148" fill="none" stroke="#D4DEDC" />
+//           <polygon points="210,135 246,170 232,220 188,220 174,170" fill="none" stroke="#D4DEDC" />
+
+//           <line x1="210" y1="35" x2="210" y2="305" stroke="#C4CFCD" />
+//           <line x1="75" y1="130" x2="292" y2="305" stroke="#C4CFCD" />
+//           <line x1="345" y1="130" x2="128" y2="305" stroke="#C4CFCD" />
+
+//           <polygon
+//             points="210,70 265,165 270,250 145,272 100,138"
+//             fill="#18C7B2"
+//             opacity="0.6"
+//             stroke="#00A89C"
+//             strokeWidth="3"
+//           />
+
+//           <polygon
+//             points="210,92 332,132 275,240 155,250 132,190"
+//             fill="#E896EA"
+//             opacity="0.55"
+//             stroke="#B775D6"
+//             strokeWidth="3"
+//           />
+
+//           <text x="210" y="20" textAnchor="middle" fontSize="13" fill="#4B6764">
+//             Reliability
+//           </text>
+//           <text x="355" y="130" fontSize="13" fill="#4B6764">
+//             Performance
+//           </text>
+//           <text x="275" y="330" fontSize="13" fill="#4B6764">
+//             Utilization
+//           </text>
+//           <text x="80" y="330" fontSize="13" fill="#4B6764">
+//             Safety
+//           </text>
+//           <text x="10" y="130" fontSize="13" fill="#4B6764">
+//             Maintenance
+//           </text>
+//         </svg>
+//       </div>
+//     </Card>
+//   );
+
+//   const TaskManager = ({ single = false }) => (
+//     <Card className={single ? "p-6" : "p-5"}>
+//       <Title>Task Manager</Title>
+
+//       <div className={single ? "mt-10 space-y-10" : "mt-7 space-y-6"}>
+//         {taskBars.map((item) => (
+//           <div
+//             key={item.name}
+//             className="grid grid-cols-[78px_1fr_36px] items-center gap-3"
+//           >
+//             <span className="text-right text-[12px] font-bold text-[#4B6764]">
+//               {item.name}
+//             </span>
+
+//             <div className="h-[21px] rounded-[6px] bg-[#D9F4EF] overflow-hidden">
+//               <div
+//                 className="h-full rounded-[6px]"
+//                 style={{ width: `${item.value}%`, backgroundColor: item.color }}
+//               />
+//             </div>
+
+//             <span className="text-[12px] font-bold text-[#4B6764]">
+//               {item.value}%
+//             </span>
+//           </div>
+//         ))}
+//       </div>
+//     </Card>
+//   );
+
+//   const LiveEquipment = () => (
+//     <Card className="p-4">
+//       <Title>Live Equipment</Title>
+
+//       <div className="grid grid-cols-2 gap-2.5 mt-3">
+//         {flowData.slice(0, 4).map((item) => (
+//           <div
+//             key={item.key}
+//             className="rounded-xl bg-[#D9F4EF] p-2 text-center"
+//           >
+//             <p className="text-[10px] font-black text-[#008577]">
+//               {item.short}
+//             </p>
+
+//             <h4 className="text-[21px] font-light text-[#132F2C]">
+//               {item.outgoing}
+//             </h4>
+
+//             <p className="text-[9px] font-bold text-[#132F2C]">kW</p>
+//           </div>
+//         ))}
+//       </div>
+//     </Card>
+//   );
+
+//   const StatusCard = ({ type }) => (
+//     <Card className="p-3 flex flex-col items-center justify-center text-center">
+//       <div className="mb-2 h-10 w-10 rounded-full bg-[#D9F4EF] flex items-center justify-center text-[22px] text-[#008577]">
+//         {type === "time" ? "◷" : "▣"}
+//       </div>
+
+//       <p className="text-[10px] font-black text-[#4B6764]">
+//         {type === "time" ? "Last Updated" : "System"}
+//       </p>
+
+//       <h4 className="mt-1 text-[15px] text-[#008577] font-medium">
+//         {type === "time" ? lastUpdated.toLocaleTimeString() : "HEALTHY"}
+//       </h4>
+
+//       <p className="mt-1 text-[9px] text-[#6B7E7B]">
+//         {type === "time" ? "Live Refresh" : "All Systems Normal"}
+//       </p>
+//     </Card>
+//   );
+
+//   const AllOverview = () => (
+//     <div className="h-full grid grid-cols-[2.8fr_1fr] grid-rows-1 gap-5 min-h-0">
+//       <div className="grid grid-rows-[minmax(0,1.5fr)_minmax(0,1fr)] gap-5 min-h-0">
+//         <div className="grid grid-cols-[2fr_1fr] gap-5 min-h-0">
+//           <PowerFlowChart />
+//           <EfficiencyChart />
+//         </div>
+
+//         <div className="grid grid-cols-3 gap-5 min-h-0">
+//           <EnergyChart />
+//           <RadarChart />
+//           <LiveEquipment />
+//         </div>
+//       </div>
+
+//       <div className="grid grid-rows-[minmax(0,1fr)_110px] gap-5 min-h-0">
+//         <TaskManager />
+
+//         <div className="grid grid-cols-2 gap-5 min-h-0">
+//           <StatusCard type="time" />
+//           <StatusCard type="system" />
+//         </div>
+//       </div>
+//     </div>
+//   );
+
+//   const SingleView = () => {
+//     switch (activeView) {
+//       case "powerflow":
+//         return <PowerFlowChart single />;
+
+//       case "efficiency":
+//         return <EfficiencyChart single />;
+
+//       case "energy":
+//         return <EnergyChart single />;
+
+//       case "asset":
+//         return <RadarChart single />;
+
+//       default:
+//         return <AllOverview />;
+//     }
+//   };
+
+//   return (
+//     <div className="h-screen w-full overflow-hidden bg-[#F4F7FA] text-[#0B3D38]">
+//       <header className="h-[58px] px-8 flex items-center justify-between bg-[#006F66] text-white">
+//         <div onClick={() => navigate("/")} className="flex items-center cursor-pointer">
+//           <div>
+//             <h1 className="text-[24px] font-black tracking-[0.2em] uppercase leading-none">
+//               ARCOT <span className="text-[#30E6D3]">IIOT 1.0</span>
+//             </h1>
+
+//             <p className="mt-1.5 text-[8px] tracking-[0.42em] uppercase text-white">
+//               Industrial Internet of Things
+//             </p>
+//           </div>
+
+//           <div className="mx-5 h-[42px] border-l border-white/40" />
+
+//           <img
+//             src={prestigeLogo}
+//             alt="Prestige"
+//             className="h-[46px] w-[90px] object-contain"
+//           />
+//         </div>
+
+//         <button
+//           onClick={() => navigate("/")}
+//           className="rounded-full border border-white/70 px-7 py-2.5 text-[11px] font-black uppercase tracking-[0.16em]"
+//         >
+//           Dashboard
+//         </button>
+//       </header>
+
+//       <main className="relative w-full h-[calc(100vh-58px)] px-6 py-4 overflow-hidden">
+//         <aside className="absolute left-0 top-0 bottom-0 w-[72px] bg-[#006F66] flex flex-col items-center justify-start pt-10 gap-7 text-white">
+//           {[
+//             ["overview", "▦"],
+//             ["powerflow", "↯"],
+//             ["efficiency", "◔"],
+//             ["energy", "⚡"],
+//             ["asset", "▣"],
+//           ].map(([key, icon]) => (
+//             <button
+//               key={key}
+//               onClick={() => setActiveView(key)}
+//               className={`h-10 w-10 rounded-full flex items-center justify-center text-[22px] transition ${
+//                 activeView === key
+//                   ? "bg-white/20 shadow-[0_0_18px_rgba(255,255,255,0.2)]"
+//                   : "hover:bg-white/10"
+//               }`}
+//             >
+//               {icon}
+//             </button>
+//           ))}
+//         </aside>
+
+//         <section className="pl-[90px] w-full h-full flex flex-col min-h-0">
+//           <div className="grid grid-cols-5 gap-5 w-full shrink-0">
+//             {kpiCards.map((item) => (
+//               <TopCard key={item.key} item={item} />
+//             ))}
+//           </div>
+
+//           <div className="mt-4 flex-1 min-h-0 overflow-hidden">
+//             {activeView === "overview" ? <AllOverview /> : <SingleView />}
+//           </div>
+//         </section>
+//       </main>
+//     </div>
+//   );
+// }
+
+
+
+
+
 import React, { useEffect, useMemo, useState } from "react";
+
 import { useNavigate } from "react-router-dom";
+
 import prestigeLogo from "../assets/ser-removebg.png";
 
+
+
 export default function OverviewPage() {
+
   const navigate = useNavigate();
 
+
+
   const initialFlow = [
-    { key: "source", short: "SRC", incoming: 1120, outgoing: 1085, today: 18420 },
-    { key: "feeder", short: "FDR", incoming: 1085, outgoing: 1040, today: 17680 },
-    { key: "transformer", short: "TRF", incoming: 1040, outgoing: 980, today: 16940 },
-    { key: "kiosk", short: "KSK", incoming: 980, outgoing: 935, today: 15720 },
-    { key: "busbar", short: "BUS", incoming: 935, outgoing: 900, today: 14980 },
-    { key: "pcc", short: "PCC", incoming: 900, outgoing: 850, today: 14160 },
-    { key: "wing1", short: "W1", incoming: 425, outgoing: 402, today: 7080 },
-    { key: "wing2", short: "W2", incoming: 425, outgoing: 410, today: 7420 },
+
+    { key: "source", name: "33kV Source", short: "SRC", voltage: "33.1 kV", current: 420, pf: 0.99, incoming: 1120, outgoing: 1085, today: 18420, health: 98 },
+
+    { key: "feeder", name: "33kV Feeder", short: "FDR", voltage: "33.0 kV", current: 388, pf: 0.98, incoming: 1085, outgoing: 1040, today: 17680, health: 97 },
+
+    { key: "transformer", name: "Transformer", short: "TRF", voltage: "433 V", current: 430, pf: 0.97, incoming: 1040, outgoing: 980, today: 16940, health: 96 },
+
+    { key: "kiosk", name: "LT Kiosk", short: "KSK", voltage: "433 V", current: 410, pf: 0.97, incoming: 980, outgoing: 935, today: 15720, health: 95 },
+
+    { key: "busduct", name: "Busduct", short: "BUS", voltage: "433 V", current: 390, pf: 0.98, incoming: 935, outgoing: 900, today: 14980, health: 96 },
+
+    { key: "pcc", name: "PCC", short: "PCC", voltage: "433 V", current: 370, pf: 0.98, incoming: 900, outgoing: 850, today: 14160, health: 95 },
+
+    { key: "raising", name: "Raising Main", short: "RM", voltage: "433 V", current: 340, pf: 0.97, incoming: 850, outgoing: 812, today: 13280, health: 94 },
+
+    { key: "wing", name: "Wing", short: "WNG", voltage: "433 V", current: 320, pf: 0.96, incoming: 812, outgoing: 780, today: 12450, health: 93 },
+
   ];
+
+
 
   const [flowData, setFlowData] = useState(initialFlow);
+
   const [activeView, setActiveView] = useState("overview");
+
   const [lastUpdated, setLastUpdated] = useState(new Date());
 
+
+
   useEffect(() => {
-    const timer = setInterval(() => {
-      setFlowData((prev) =>
-        prev.map((item) => {
-          const incoming = Math.max(
-            40,
-            item.incoming + Math.floor(Math.random() * 15) - 7
-          );
 
-          const outgoing = Math.min(
-            incoming - 5,
-            Math.max(35, item.outgoing + Math.floor(Math.random() * 13) - 6)
-          );
+    const timer = setInterval(() => {
 
-          return {
-            ...item,
-            incoming,
-            outgoing,
-            today: item.today + Math.floor(outgoing / 360),
-          };
-        })
-      );
+      setFlowData((prev) =>
 
-      setLastUpdated(new Date());
-    }, 1000);
+        prev.map((item) => {
 
-    return () => clearInterval(timer);
+          const incoming = Math.max(
+
+            50,
+
+            item.incoming + Math.floor(Math.random() * 13) - 6
+
+          );
+
+
+
+          const outgoing = Math.min(
+
+            incoming - 5,
+
+            Math.max(45, item.outgoing + Math.floor(Math.random() * 11) - 5)
+
+          );
+
+
+
+          return {
+
+            ...item,
+
+            incoming,
+
+            outgoing,
+
+            current: Math.max(20, item.current + Math.floor(Math.random() * 7) - 3),
+
+            today: item.today + Math.floor(outgoing / 360),
+
+            health: Math.min(99, Math.max(88, item.health + Math.floor(Math.random() * 3) - 1)),
+
+          };
+
+        })
+
+      );
+
+
+
+      setLastUpdated(new Date());
+
+    }, 1000);
+
+
+
+    return () => clearInterval(timer);
+
   }, []);
 
-  const totals = useMemo(() => {
-    const incoming = flowData[0].incoming;
-    const wing1 = flowData.find((x) => x.key === "wing1")?.outgoing || 0;
-    const wing2 = flowData.find((x) => x.key === "wing2")?.outgoing || 0;
-    const outgoing = wing1 + wing2;
-    const loss = incoming - outgoing;
-    const efficiency = Math.round((outgoing / incoming) * 100);
-    const today = flowData.reduce((sum, x) => sum + x.today, 0);
 
-    return { incoming, outgoing, loss, efficiency, today };
+
+  const selectedItem = useMemo(
+
+    () => flowData.find((item) => item.key === activeView),
+
+    [activeView, flowData]
+
+  );
+
+
+
+  const totals = useMemo(() => {
+
+    const incoming = flowData[0].incoming;
+
+    const outgoing = flowData[flowData.length - 1].outgoing;
+
+    const loss = incoming - outgoing;
+
+    const efficiency = Math.round((outgoing / incoming) * 100);
+
+    const today = flowData.reduce((sum, item) => sum + item.today, 0);
+
+
+
+    return { incoming, outgoing, loss, efficiency, today };
+
   }, [flowData]);
 
-  const maxValue = Math.max(
-    ...flowData.flatMap((x) => [x.incoming, x.outgoing])
-  );
 
-  const kpiCards = [
-    {
-      key: "overview",
-      icon: "▦",
-      value: totals.incoming,
-      sub: `${totals.outgoing} kW`,
-      label: "All Overview",
-    },
-    {
-      key: "powerflow",
-      icon: "↯",
-      value: totals.outgoing,
-      sub: "Live Flow kW",
-      label: "Power Flow",
-    },
-    {
-      key: "efficiency",
-      icon: "◔",
-      value: `${totals.efficiency}%`,
-      sub: `${totals.loss} kW Loss`,
-      label: "Efficiency",
-    },
-    {
-      key: "energy",
-      icon: "⚡",
-      value: totals.today.toLocaleString(),
-      sub: "Today kWh",
-      label: "Energy",
-    },
-    {
-      key: "asset",
-      icon: "▣",
-      value: "8",
-      sub: "Assets Live",
-      label: "Asset Health",
-    },
+
+  const sideItems = [
+
+    { key: "overview", label: "Overview", icon: "▦" },
+
+    { key: "source", label: "Source", icon: "S" },
+
+    { key: "feeder", label: "Feeder", icon: "F" },
+
+    { key: "transformer", label: "Transformer", icon: "T" },
+
+    { key: "kiosk", label: "LT Kiosk", icon: "K" },
+
+    { key: "busduct", label: "Busduct", icon: "B" },
+
+    { key: "pcc", label: "PCC", icon: "P" },
+
+    { key: "raising", label: "Raising Main", icon: "R" },
+
+    { key: "wing", label: "Wing", icon: "W" },
+
   ];
 
-  const taskBars = [
-    { name: "Source", value: 74, color: "#2E80B4" },
-    { name: "Feeder", value: 82, color: "#008B7C" },
-    { name: "TR Alert", value: 95, color: "#D7283A" },
-    { name: "Kiosk", value: 88, color: "#FF7A2F" },
-    { name: "Busbar", value: 62, color: "#079AA2" },
-  ];
+
 
   const Card = ({ children, className = "" }) => (
-    <div
-      className={`h-full rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden ${className}`}
-    >
-      {children}
-    </div>
+
+    <div className={`bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden ${className}`}>
+
+      {children}
+
+    </div>
+
   );
 
-  const Title = ({ children }) => (
-    <h3 className="text-center text-[14px] font-black text-[#132F2C] leading-none">
-      {children}
-    </h3>
+
+
+  const DarkCard = ({ children, className = "" }) => (
+
+    <div className={`bg-[#061A2D] border border-[#173F55] rounded-2xl overflow-hidden ${className}`}>
+
+      {children}
+
+    </div>
+
   );
 
-  const TopCard = ({ item }) => {
-    const active = activeView === item.key;
 
-    return (
-      <button
-        onClick={() => setActiveView(item.key)}
-        className={`relative h-[80px] rounded-2xl overflow-hidden border transition-all ${
-          active
-            ? "bg-[linear-gradient(135deg,#008577_0%,#15D4BD_50%,#00796D_100%)] text-white border-transparent shadow-md"
-            : "bg-white text-[#00796D] border-slate-200 shadow-sm hover:shadow-md"
-        }`}
-      >
-        <div
-          className={`absolute left-4 top-4 h-9 w-9 rounded-full flex items-center justify-center text-[18px] ${
-            active ? "bg-white/15 text-white" : "bg-[#E8F5F2] text-[#008577]"
-          }`}
-        >
-          {item.icon}
-        </div>
 
-        <div className="h-full flex flex-col items-center justify-center pl-8 pr-2">
-          <h2 className="text-[23px] font-light leading-none">{item.value}</h2>
+  const MiniTrend = ({ height = 52 }) => (
 
-          <p className="mt-1 text-[10px] font-semibold opacity-90">
-            {item.sub}
-          </p>
+    <svg viewBox="0 0 180 52" className="w-full" style={{ height }}>
 
-          <p
-            className={`mt-1 text-[10px] font-black ${
-              active ? "text-white" : "text-[#132F2C]"
-            }`}
-          >
-            {item.label}
-          </p>
-        </div>
-      </button>
-    );
+      <path
+
+        d="M4 36 L22 30 L40 34 L58 22 L76 28 L94 16 L112 24 L130 15 L148 22 L176 18"
+
+        fill="none"
+
+        stroke="#00A997"
+
+        strokeWidth="3"
+
+        strokeLinecap="round"
+
+      />
+
+    </svg>
+
+  );
+
+
+
+  const PageHeader = ({ title, subtitle }) => (
+
+    <div className="h-[56px] px-5 flex items-center justify-between border-b border-[#173F55] bg-[#061A2D] text-white">
+
+      <button
+
+        onClick={() => setActiveView("overview")}
+
+        className="rounded-lg bg-[#00A997] px-4 py-2 text-[12px] font-black text-white"
+
+      >
+
+        ← Back
+
+      </button>
+
+
+
+      <div className="text-center">
+
+        <h2 className="text-[21px] font-black uppercase tracking-wide">{title}</h2>
+
+        <p className="text-[10px] text-slate-400">{subtitle}</p>
+
+      </div>
+
+
+
+      <p className="text-[12px] font-black text-[#30E6D3]">
+
+        ● LIVE {lastUpdated.toLocaleTimeString()}
+
+      </p>
+
+    </div>
+
+  );
+
+
+
+  const StatStrip = ({ items }) => (
+
+    <div
+
+      className="h-[86px] grid border-b border-[#173F55]"
+
+      style={{ gridTemplateColumns: `repeat(${items.length}, minmax(0, 1fr))` }}
+
+    >
+
+      {items.map((item) => (
+
+        <div
+
+          key={item.label}
+
+          className="px-4 flex flex-col justify-center border-r border-[#173F55] last:border-r-0"
+
+        >
+
+          <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.12em]">
+
+            {item.label}
+
+          </p>
+
+          <h3 className="mt-2 text-[23px] font-light text-white">{item.value}</h3>
+
+          <p className="text-[10px] font-black text-[#30E6D3]">{item.sub}</p>
+
+        </div>
+
+      ))}
+
+    </div>
+
+  );
+
+
+
+  const OverviewSource = ({ item }) => {
+
+    const inc1 = Math.round(item.incoming * 0.52);
+
+    const inc2 = item.incoming - inc1;
+
+    const meter = item.outgoing;
+
+
+
+    return (
+
+      <Card className="p-4 hover:border-[#00A997] hover:shadow-lg transition cursor-pointer" onClick={() => setActiveView(item.key)}>
+
+        <CardHead item={item} tag="FLOW" />
+
+
+
+        <div className="mt-4 grid grid-cols-[1fr_1fr] gap-3">
+
+          <MiniValue label="INC1" value={inc1} />
+
+          <MiniValue label="INC2" value={inc2} />
+
+        </div>
+
+
+
+        <FlowProgress label="Outgoing" value={item.incoming} max={item.incoming} />
+
+        <FlowProgress label="Meter" value={meter} max={item.incoming} />
+
+
+
+        <p className="mt-3 text-[11px] font-black text-[#647B78]">
+
+          INC1 + INC2 → OUT → METER
+
+        </p>
+
+      </Card>
+
+    );
+
   };
 
-  const PowerFlowChart = ({ single = false }) => (
-    <Card className={single ? "p-6" : "p-4"}>
-      <Title>Power Flow Monitoring</Title>
 
-      <svg viewBox="0 0 820 360" className="mt-2 h-[calc(100%-22px)] w-full">
-        {[0, 1, 2, 3, 4, 5].map((i) => (
-          <g key={i}>
-            <line
-              x1="55"
-              x2="770"
-              y1={55 + i * 52}
-              y2={55 + i * 52}
-              stroke="#DCE9E6"
-            />
-            <text x="20" y={60 + i * 52} fontSize="12" fill="#4B6764">
-              {1200 - i * 240}
-            </text>
-          </g>
-        ))}
 
-        <text x="15" y="22" fontSize="13" fontWeight="700" fill="#132F2C">
-          kW
-        </text>
+  const OverviewFeeder = ({ item }) => {
 
-        {flowData.map((item, i) => {
-          const x = 75 + i * 88;
-          const incomingH = (item.incoming / maxValue) * 210;
-          const outgoingH = (item.outgoing / maxValue) * 210;
+    const ogs = Array.from({ length: 6 }, (_, i) =>
 
-          return (
-            <g key={item.key}>
-              <rect
-                x={x}
-                y={300 - incomingH}
-                width="24"
-                height={incomingH}
-                rx="4"
-                fill="#9BDED5"
-                opacity="0.75"
-              />
+      Math.round(item.outgoing / 6 + (i - 2) * 8)
 
-              <rect
-                x={x + 24}
-                y={300 - outgoingH}
-                width="24"
-                height={outgoingH}
-                rx="4"
-                fill={i >= 3 ? "#008577" : "#4FBDB2"}
-              />
+    );
 
-              <text
-                x={x + 24}
-                y="333"
-                textAnchor="middle"
-                fontSize="12"
-                fill="#243B3A"
-                fontWeight="800"
-              >
-                {item.short}
-              </text>
-            </g>
-          );
-        })}
 
-        <path
-          d="M76 165 C155 75 245 82 330 122 C430 172 525 240 625 245 C690 250 735 210 770 175"
-          fill="none"
-          stroke="#2085B5"
-          strokeWidth="4"
-          strokeLinecap="round"
-        />
 
-        <path
-          d="M76 165 C155 75 245 82 330 122 C430 172 525 240 625 245 C690 250 735 210 770 175 L770 300 L76 300 Z"
-          fill="#77D6E4"
-          opacity="0.2"
-        />
+    return (
 
-        <g transform="translate(260 340)">
-          <rect x="0" y="0" width="14" height="14" rx="3" fill="#9BDED5" />
-          <text x="24" y="12" fontSize="13" fill="#132F2C">
-            Incoming
-          </text>
+      <Card className="p-4 hover:border-[#00A997] hover:shadow-lg transition cursor-pointer" onClick={() => setActiveView(item.key)}>
 
-          <rect x="130" y="0" width="14" height="14" rx="3" fill="#008577" />
-          <text x="154" y="12" fontSize="13" fill="#132F2C">
-            Outgoing
-          </text>
+        <CardHead item={item} tag="6 OG" />
 
-          <line
-            x1="270"
-            x2="290"
-            y1="7"
-            y2="7"
-            stroke="#2085B5"
-            strokeWidth="3"
-          />
-          <text x="300" y="12" fontSize="13" fill="#132F2C">
-            Trend
-          </text>
-        </g>
-      </svg>
-    </Card>
-  );
 
-  const EfficiencyChart = ({ single = false }) => (
-    <Card className={single ? "p-6" : "p-4"}>
-      <Title>System Efficiency</Title>
 
-      <div className="h-[calc(100%-20px)] flex flex-col items-center justify-center">
-        <div
-          className={`relative rounded-full bg-[conic-gradient(#007D72_0_15%,#9BDED5_15%_100%)] shadow-[0_10px_25px_rgba(0,92,82,0.18)] ${
-            single ? "h-[300px] w-[300px]" : "h-[145px] w-[145px]"
-          }`}
-        >
-          <div
-            className={`absolute rounded-full bg-white flex items-center justify-center ${
-              single ? "inset-[58px]" : "inset-[27px]"
-            }`}
-          >
-            <h2
-              className={`${
-                single ? "text-[48px]" : "text-[31px]"
-              } font-light text-[#008577]`}
-            >
-              {totals.efficiency}%
-            </h2>
-          </div>
-        </div>
+        <div className="mt-4 h-[150px] flex items-end gap-2">
 
-        <div className="mt-3 w-[78%] space-y-2">
-          <div className="flex items-center justify-between text-[12px] font-semibold">
-            <span className="flex items-center gap-2">
-              <span className="h-2.5 w-2.5 rounded-full bg-[#008577]" />
-              Efficiency
-            </span>
-            <span>{totals.efficiency}%</span>
-          </div>
+          {ogs.map((v, i) => (
 
-          <div className="flex items-center justify-between text-[12px] font-semibold">
-            <span className="flex items-center gap-2">
-              <span className="h-2.5 w-2.5 rounded-full bg-[#9BDED5]" />
-              Loss
-            </span>
-            <span>{totals.loss} kW</span>
-          </div>
-        </div>
-      </div>
-    </Card>
-  );
+            <Bar key={i} label={`OG${i + 1}`} value={v} max={Math.max(...ogs)} />
 
-  const EnergyChart = ({ single = false }) => {
-    const months = ["J", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D"];
+          ))}
 
-    return (
-      <Card className={single ? "p-6" : "p-4"}>
-        <Title>Energy Performance</Title>
+        </div>
 
-        <div
-          className={`h-[calc(100%-20px)] flex items-end justify-center ${
-            single ? "gap-5" : "gap-2.5"
-          }`}
-        >
-          {months.map((m, i) => {
-            const mainH = single
-              ? 140 + ((i * 31) % 210)
-              : 45 + ((i * 31) % 92);
-            const subH = mainH * 0.48;
+      </Card>
 
-            return (
-              <div key={m} className="flex flex-col items-center justify-end">
-                <div
-                  className={`${single ? "w-10" : "w-5"} relative bg-[#61CFC4]`}
-                  style={{ height: mainH }}
-                >
-                  <div
-                    className="absolute bottom-0 left-[4px] right-[4px] bg-[#E3FFF8]"
-                    style={{ height: subH }}
-                  />
+    );
 
-                  <div className="absolute left-0 right-0 bottom-[40%] h-[6px] bg-[#00998C]" />
-                </div>
-
-                <span className="mt-1 text-[10px] font-bold text-[#4B6764]">
-                  {m}
-                </span>
-              </div>
-            );
-          })}
-        </div>
-      </Card>
-    );
   };
 
-  const RadarChart = ({ single = false }) => (
-    <Card className={single ? "p-6" : "p-4"}>
-      <Title>Asset Health</Title>
 
-      <div className="h-[calc(100%-20px)] flex items-center justify-center">
-        <svg
-          viewBox="0 0 420 360"
-          className={single ? "h-[430px] w-[470px]" : "h-[170px] w-[220px]"}
-        >
-          <polygon points="210,35 345,130 292,305 128,305 75,130" fill="none" stroke="#B7C4C1" />
-          <polygon points="210,85 294,148 260,255 160,255 126,148" fill="none" stroke="#D4DEDC" />
-          <polygon points="210,135 246,170 232,220 188,220 174,170" fill="none" stroke="#D4DEDC" />
 
-          <line x1="210" y1="35" x2="210" y2="305" stroke="#C4CFCD" />
-          <line x1="75" y1="130" x2="292" y2="305" stroke="#C4CFCD" />
-          <line x1="345" y1="130" x2="128" y2="305" stroke="#C4CFCD" />
+  const OverviewTransformer = ({ item }) => {
 
-          <polygon
-            points="210,70 265,165 270,250 145,272 100,138"
-            fill="#18C7B2"
-            opacity="0.6"
-            stroke="#00A89C"
-            strokeWidth="3"
-          />
+    const loads = [68, 62, 71, 65, 74, 60];
 
-          <polygon
-            points="210,92 332,132 275,240 155,250 132,190"
-            fill="#E896EA"
-            opacity="0.55"
-            stroke="#B775D6"
-            strokeWidth="3"
-          />
 
-          <text x="210" y="20" textAnchor="middle" fontSize="13" fill="#4B6764">
-            Reliability
-          </text>
-          <text x="355" y="130" fontSize="13" fill="#4B6764">
-            Performance
-          </text>
-          <text x="275" y="330" fontSize="13" fill="#4B6764">
-            Utilization
-          </text>
-          <text x="80" y="330" fontSize="13" fill="#4B6764">
-            Safety
-          </text>
-          <text x="10" y="130" fontSize="13" fill="#4B6764">
-            Maintenance
-          </text>
-        </svg>
-      </div>
-    </Card>
-  );
 
-  const TaskManager = ({ single = false }) => (
-    <Card className={single ? "p-6" : "p-5"}>
-      <Title>Task Manager</Title>
+    return (
 
-      <div className={single ? "mt-10 space-y-10" : "mt-7 space-y-6"}>
-        {taskBars.map((item) => (
-          <div
-            key={item.name}
-            className="grid grid-cols-[78px_1fr_36px] items-center gap-3"
-          >
-            <span className="text-right text-[12px] font-bold text-[#4B6764]">
-              {item.name}
-            </span>
+      <Card className="p-4 hover:border-[#00A997] hover:shadow-lg transition cursor-pointer" onClick={() => setActiveView(item.key)}>
 
-            <div className="h-[21px] rounded-[6px] bg-[#D9F4EF] overflow-hidden">
-              <div
-                className="h-full rounded-[6px]"
-                style={{ width: `${item.value}%`, backgroundColor: item.color }}
-              />
-            </div>
+        <CardHead item={item} tag="6 TR" />
 
-            <span className="text-[12px] font-bold text-[#4B6764]">
-              {item.value}%
-            </span>
-          </div>
-        ))}
-      </div>
-    </Card>
-  );
 
-  const LiveEquipment = () => (
-    <Card className="p-4">
-      <Title>Live Equipment</Title>
 
-      <div className="grid grid-cols-2 gap-2.5 mt-3">
-        {flowData.slice(0, 4).map((item) => (
-          <div
-            key={item.key}
-            className="rounded-xl bg-[#D9F4EF] p-2 text-center"
-          >
-            <p className="text-[10px] font-black text-[#008577]">
-              {item.short}
-            </p>
+        <div className="mt-4 grid grid-cols-3 gap-3">
 
-            <h4 className="text-[21px] font-light text-[#132F2C]">
-              {item.outgoing}
-            </h4>
+          {loads.map((load, i) => (
 
-            <p className="text-[9px] font-bold text-[#132F2C]">kW</p>
-          </div>
-        ))}
-      </div>
-    </Card>
-  );
+            <div key={i} className="rounded-xl bg-[#F4FAF9] p-3 text-center">
 
-  const StatusCard = ({ type }) => (
-    <Card className="p-3 flex flex-col items-center justify-center text-center">
-      <div className="mb-2 h-10 w-10 rounded-full bg-[#D9F4EF] flex items-center justify-center text-[22px] text-[#008577]">
-        {type === "time" ? "◷" : "▣"}
-      </div>
+              <div className="mx-auto h-12 w-12 rounded-full bg-[conic-gradient(#00A997_0_70%,#E8F5F2_70%_100%)] flex items-center justify-center">
 
-      <p className="text-[10px] font-black text-[#4B6764]">
-        {type === "time" ? "Last Updated" : "System"}
-      </p>
+                <div className="h-8 w-8 rounded-full bg-white flex items-center justify-center text-[9px] font-black text-[#00796D]">
 
-      <h4 className="mt-1 text-[15px] text-[#008577] font-medium">
-        {type === "time" ? lastUpdated.toLocaleTimeString() : "HEALTHY"}
-      </h4>
+                  {load}%
 
-      <p className="mt-1 text-[9px] text-[#6B7E7B]">
-        {type === "time" ? "Live Refresh" : "All Systems Normal"}
-      </p>
-    </Card>
-  );
+                </div>
 
-  const AllOverview = () => (
-    <div className="h-full grid grid-cols-[2.8fr_1fr] grid-rows-1 gap-5 min-h-0">
-      <div className="grid grid-rows-[minmax(0,1.5fr)_minmax(0,1fr)] gap-5 min-h-0">
-        <div className="grid grid-cols-[2fr_1fr] gap-5 min-h-0">
-          <PowerFlowChart />
-          <EfficiencyChart />
-        </div>
+              </div>
 
-        <div className="grid grid-cols-3 gap-5 min-h-0">
-          <EnergyChart />
-          <RadarChart />
-          <LiveEquipment />
-        </div>
-      </div>
+              <p className="mt-2 text-[9px] font-black text-[#647B78]">TR-{i + 1}</p>
 
-      <div className="grid grid-rows-[minmax(0,1fr)_110px] gap-5 min-h-0">
-        <TaskManager />
+            </div>
 
-        <div className="grid grid-cols-2 gap-5 min-h-0">
-          <StatusCard type="time" />
-          <StatusCard type="system" />
-        </div>
-      </div>
-    </div>
-  );
+          ))}
 
-  const SingleView = () => {
-    switch (activeView) {
-      case "powerflow":
-        return <PowerFlowChart single />;
+        </div>
 
-      case "efficiency":
-        return <EfficiencyChart single />;
+      </Card>
 
-      case "energy":
-        return <EnergyChart single />;
+    );
 
-      case "asset":
-        return <RadarChart single />;
-
-      default:
-        return <AllOverview />;
-    }
   };
+
+
+
+  const OverviewKiosk = ({ item }) => {
+
+    const loads = [168, 154, 162, 149, 158, 144];
+
+
+
+    return (
+
+      <Card className="p-4 hover:border-[#00A997] hover:shadow-lg transition cursor-pointer" onClick={() => setActiveView(item.key)}>
+
+        <CardHead item={item} tag="433V" />
+
+
+
+        <div className="mt-4 space-y-2.5">
+
+          {loads.map((v, i) => (
+
+            <FlowProgress key={i} label={`KIOSK-${i + 1}`} value={v} max={180} small />
+
+          ))}
+
+        </div>
+
+      </Card>
+
+    );
+
+  };
+
+
+
+  const OverviewBusduct = ({ item }) => {
+
+    const phases = [
+
+      ["R", 88],
+
+      ["Y", 82],
+
+      ["B", 86],
+
+    ];
+
+
+
+    return (
+
+      <Card className="p-4 hover:border-[#00A997] hover:shadow-lg transition cursor-pointer" onClick={() => setActiveView(item.key)}>
+
+        <CardHead item={item} tag="R/Y/B" />
+
+
+
+        <div className="mt-5 h-[145px] flex items-end gap-5 px-8">
+
+          {phases.map(([p, v]) => (
+
+            <Bar key={p} label={p} value={v} max={100} suffix="%" />
+
+          ))}
+
+        </div>
+
+      </Card>
+
+    );
+
+  };
+
+
+
+  const OverviewPcc = ({ item }) => {
+
+    const wing1 = Math.round(item.outgoing * 0.48);
+
+    const wing2 = item.outgoing - wing1;
+
+
+
+    return (
+
+      <Card className="p-4 hover:border-[#00A997] hover:shadow-lg transition cursor-pointer" onClick={() => setActiveView(item.key)}>
+
+        <CardHead item={item} tag="WINGS" />
+
+
+
+        <div className="mt-5 grid grid-cols-[1fr_80px_1fr] gap-3 items-center">
+
+          <MiniValue label="WING 1" value={wing1} />
+
+          <div className="h-20 w-20 rounded-full bg-[#061A2D] flex flex-col items-center justify-center text-white">
+
+            <p className="text-[9px]">PCC</p>
+
+            <h4 className="text-[20px]">{item.outgoing}</h4>
+
+          </div>
+
+          <MiniValue label="WING 2" value={wing2} />
+
+        </div>
+
+
+
+        <div className="mt-5 h-3 bg-[#E8F5F2] rounded-full overflow-hidden">
+
+          <div className="h-full bg-[#00A997] rounded-full" style={{ width: "48%" }} />
+
+        </div>
+
+      </Card>
+
+    );
+
+  };
+
+
+
+  const OverviewRaising = ({ item }) => (
+
+    <Card className="p-4 hover:border-[#00A997] hover:shadow-lg transition cursor-pointer" onClick={() => setActiveView(item.key)}>
+
+      <CardHead item={item} tag="FLOORS" />
+
+
+
+      <div className="mt-5 h-[150px] flex items-end gap-1">
+
+        {Array.from({ length: 16 }).map((_, i) => {
+
+          const h = 35 + ((item.outgoing + i * 9) % 95);
+
+          return <div key={i} className="flex-1 rounded-t bg-[#00A997]" style={{ height: h }} />;
+
+        })}
+
+      </div>
+
+    </Card>
+
+  );
+
+
+
+  const OverviewWing = ({ item }) => (
+
+    <Card className="p-4 hover:border-[#00A997] hover:shadow-lg transition cursor-pointer" onClick={() => setActiveView(item.key)}>
+
+      <CardHead item={item} tag="HEATMAP" />
+
+
+
+      <div className="mt-5 grid grid-cols-5 grid-rows-4 gap-2 h-[150px]">
+
+        {Array.from({ length: 20 }).map((_, i) => {
+
+          const opacity = [0.25, 0.45, 0.7, 1][(i + item.health) % 4];
+
+          return <div key={i} className="rounded-lg bg-[#00A997]" style={{ opacity }} />;
+
+        })}
+
+      </div>
+
+    </Card>
+
+  );
+
+
+
+  const CardHead = ({ item, tag }) => (
+
+    <div className="flex items-start justify-between">
+
+      <div>
+
+        <p className="text-[10px] text-[#00A997] font-black tracking-[0.16em] uppercase">
+
+          {item.short}
+
+        </p>
+
+        <h3 className="text-[17px] font-black text-[#132F2C]">{item.name}</h3>
+
+      </div>
+
+
+
+      <span className="px-3 py-1 rounded-full bg-[#E8F5F2] text-[#00A997] text-[10px] font-black">
+
+        {tag}
+
+      </span>
+
+    </div>
+
+  );
+
+
+
+  const MiniValue = ({ label, value }) => (
+
+    <div className="rounded-xl bg-[#F4FAF9] p-3 text-center">
+
+      <p className="text-[9px] font-black text-[#647B78]">{label}</p>
+
+      <h4 className="text-[22px] font-light text-[#00796D]">{value}</h4>
+
+    </div>
+
+  );
+
+
+
+  const FlowProgress = ({ label, value, max, small = false }) => (
+
+    <div className={`${small ? "mt-0" : "mt-4"}`}>
+
+      <div className="flex justify-between text-[10px] font-black text-[#647B78]">
+
+        <span>{label}</span>
+
+        <span>{value} kW</span>
+
+      </div>
+
+      <div className="h-3 mt-1 bg-[#E8F5F2] rounded-full overflow-hidden">
+
+        <div
+
+          className="h-full bg-[#00A997] rounded-full"
+
+          style={{ width: `${Math.min(100, (value / max) * 100)}%` }}
+
+        />
+
+      </div>
+
+    </div>
+
+  );
+
+
+
+  const Bar = ({ label, value, max, suffix = "" }) => (
+
+    <div className="flex-1 flex flex-col items-center justify-end">
+
+      <p className="text-[10px] font-black text-[#132F2C] mb-2">
+
+        {value}{suffix}
+
+      </p>
+
+      <div
+
+        className="w-full rounded-t-lg bg-gradient-to-t from-[#00796D] to-[#30E6D3]"
+
+        style={{ height: `${Math.max(35, (value / max) * 110)}px` }}
+
+      />
+
+      <p className="mt-2 text-[9px] font-black text-[#647B78]">{label}</p>
+
+    </div>
+
+  );
+
+
+
+  const OverviewCard = ({ item }) => {
+
+    if (item.key === "source") return <OverviewSource item={item} />;
+
+    if (item.key === "feeder") return <OverviewFeeder item={item} />;
+
+    if (item.key === "transformer") return <OverviewTransformer item={item} />;
+
+    if (item.key === "kiosk") return <OverviewKiosk item={item} />;
+
+    if (item.key === "busduct") return <OverviewBusduct item={item} />;
+
+    if (item.key === "pcc") return <OverviewPcc item={item} />;
+
+    if (item.key === "raising") return <OverviewRaising item={item} />;
+
+    if (item.key === "wing") return <OverviewWing item={item} />;
+
+    return null;
+
+  };
+
+
+
+  const AllOverview = () => {
+
+    const kpis = [
+
+      { label: "Main Incoming", value: `${totals.incoming} kW`, sub: "33kV source input" },
+
+      { label: "Final Output", value: `${totals.outgoing} kW`, sub: "wing delivery" },
+
+      { label: "Loss", value: `${totals.loss} kW`, sub: "overall loss" },
+
+      { label: "Efficiency", value: `${totals.efficiency}%`, sub: "source to wing" },
+
+      { label: "Today Energy", value: totals.today.toLocaleString(), sub: "kWh total" },
+
+    ];
+
+
+
+    return (
+
+      <div className="h-full grid grid-rows-[104px_1fr] gap-4 min-h-0">
+
+        <div className="grid grid-cols-5 gap-4">
+
+          {kpis.map((item) => (
+
+            <DarkCard key={item.label} className="relative px-5 py-4">
+
+              <div className="absolute right-[-30px] top-[-30px] h-24 w-24 rounded-full bg-[#30E6D3]/10" />
+
+              <p className="text-[10px] font-black text-[#30E6D3] uppercase tracking-[0.16em]">
+
+                {item.label}
+
+              </p>
+
+              <h2 className="mt-2 text-[26px] font-light text-white">{item.value}</h2>
+
+              <p className="mt-1 text-[10px] font-bold text-slate-300">{item.sub}</p>
+
+            </DarkCard>
+
+          ))}
+
+        </div>
+
+
+
+        <div className="grid grid-cols-4 grid-rows-2 gap-4 min-h-0">
+
+          {flowData.map((item) => (
+
+            <OverviewCard key={item.key} item={item} />
+
+          ))}
+
+        </div>
+
+      </div>
+
+    );
+
+  };
+
+
+
+  const SourceDashboard = ({ item }) => {
+
+    const inc1 = Math.round(item.incoming * 0.52);
+
+    const inc2 = item.incoming - inc1;
+
+    const meter = item.outgoing;
+
+    const feeder = item.outgoing - 8;
+
+    const loss = item.incoming - feeder;
+
+    const efficiency = ((feeder / item.incoming) * 100).toFixed(1);
+
+
+
+    return (
+
+      <DashboardShell
+
+        title="33kV Source Analytical Dashboard"
+
+        subtitle="INC1 + INC2 → Outgoing → Meter → Feeder"
+
+        stats={[
+
+          { label: "INC1", value: `${inc1} kW`, sub: "source input" },
+
+          { label: "INC2", value: `${inc2} kW`, sub: "source input" },
+
+          { label: "Outgoing", value: `${item.incoming} kW`, sub: "combined" },
+
+          { label: "Meter", value: `${meter} kW`, sub: "meter reading" },
+
+          { label: "Feeder", value: `${feeder} kW`, sub: "final output" },
+
+          { label: "Loss", value: `${loss} kW`, sub: `${efficiency}% efficient` },
+
+        ]}
+
+      >
+
+        <section className="p-5 border-r border-[#173F55]">
+
+          <SectionTitle title="Flow Comparison" />
+
+          <div className="h-[calc(100%-32px)] flex items-end gap-5">
+
+            {[
+
+              ["INC1", inc1],
+
+              ["INC2", inc2],
+
+              ["OUT", item.incoming],
+
+              ["METER", meter],
+
+              ["FEEDER", feeder],
+
+            ].map(([label, value]) => (
+
+              <DashBar key={label} label={label} value={value} max={item.incoming} />
+
+            ))}
+
+          </div>
+
+        </section>
+
+
+
+        <section className="p-5 border-r border-[#173F55]">
+
+          <SectionTitle title="Live Power Trend" />
+
+          <LargeLineChart />
+
+        </section>
+
+
+
+        <section className="grid grid-rows-2">
+
+          <div className="p-5 border-b border-[#173F55]">
+
+            <SectionTitle title="Incoming Share" />
+
+            <Donut center={item.incoming} />
+
+          </div>
+
+
+
+          <div className="p-5">
+
+            <SectionTitle title="Electrical Values" />
+
+            <ParameterRows rows={[
+
+              ["Voltage", item.voltage],
+
+              ["Current", `${item.current} A`],
+
+              ["PF", item.pf],
+
+              ["Today", `${item.today.toLocaleString()} kWh`],
+
+            ]} />
+
+          </div>
+
+        </section>
+
+      </DashboardShell>
+
+    );
+
+  };
+
+
+
+  const FeederDashboard = ({ item }) => {
+
+    const ogs = Array.from({ length: 6 }, (_, i) => ({
+
+      name: `OG-${i + 1}`,
+
+      value: Math.round(item.outgoing / 6 + (i - 2) * 8),
+
+    }));
+
+
+
+    return (
+
+      <DashboardShell
+
+        title="33kV Feeder Analytical Dashboard"
+
+        subtitle="1 Incoming feeder → 6 outgoing feeders"
+
+        stats={[
+
+          { label: "Incoming", value: `${item.incoming} kW`, sub: "input" },
+
+          { label: "Outgoing", value: `${item.outgoing} kW`, sub: "OG total" },
+
+          { label: "Loss", value: `${item.incoming - item.outgoing} kW`, sub: "feeder loss" },
+
+          { label: "Voltage", value: item.voltage, sub: "stable" },
+
+          { label: "Current", value: `${item.current} A`, sub: "live" },
+
+          { label: "PF", value: item.pf, sub: "healthy" },
+
+        ]}
+
+      >
+
+        <section className="p-6 border-r border-[#173F55] col-span-2">
+
+          <SectionTitle title="OG1 - OG6 Outgoing Load" />
+
+          <div className="h-[calc(100%-35px)] flex items-end gap-8">
+
+            {ogs.map((x) => (
+
+              <DashBar key={x.name} label={x.name} value={x.value} max={Math.max(...ogs.map((o) => o.value))} />
+
+            ))}
+
+          </div>
+
+        </section>
+
+
+
+        <section className="grid grid-rows-2">
+
+          <div className="p-6 border-b border-[#173F55]">
+
+            <SectionTitle title="Feeder Trend" />
+
+            <MiniTrend height={170} />
+
+          </div>
+
+          <Insight text="OG feeders are balanced. No outgoing feeder is overloaded. Feeder loss is within normal range." />
+
+        </section>
+
+      </DashboardShell>
+
+    );
+
+  };
+
+
+
+  const TransformerDashboard = ({ item }) => {
+
+    const transformers = [
+
+      ["TR-1", 68, 54, 61],
+
+      ["TR-2", 62, 52, 59],
+
+      ["TR-3", 71, 55, 60],
+
+      ["TR-4", 65, 53, 58],
+
+      ["TR-5", 74, 56, 63],
+
+      ["TR-6", 60, 51, 57],
+
+    ];
+
+
+
+    return (
+
+      <DashboardShell
+
+        title="Transformer Analytical Dashboard"
+
+        subtitle="Transformer load, oil temperature, winding temperature and relay health"
+
+        stats={[
+
+          { label: "Input", value: `${item.incoming} kW`, sub: "33kV side" },
+
+          { label: "Output", value: `${item.outgoing} kW`, sub: "433V side" },
+
+          { label: "Avg Load", value: "66.7%", sub: "normal" },
+
+          { label: "Max Oil", value: "56°C", sub: "safe" },
+
+          { label: "Max Winding", value: "63°C", sub: "safe" },
+
+          { label: "Relay", value: "Healthy", sub: "buchholz" },
+
+        ]}
+
+      >
+
+        <section className="p-5 border-r border-[#173F55] col-span-2">
+
+          <SectionTitle title="Transformer Load Profile" />
+
+          <div className="grid grid-cols-3 gap-4">
+
+            {transformers.map(([name, load, oil, winding]) => (
+
+              <div key={name} className="bg-[#071D33] border border-[#173F55] rounded-2xl p-4">
+
+                <div className="flex justify-between">
+
+                  <h4 className="font-black">{name}</h4>
+
+                  <span className="text-[#30E6D3] text-[10px] font-black">LIVE</span>
+
+                </div>
+
+
+
+                <div className="mt-4 mx-auto h-20 w-20 rounded-full bg-[conic-gradient(#00A997_0_70%,#173F55_70%_100%)] flex items-center justify-center">
+
+                  <div className="h-14 w-14 rounded-full bg-[#061A2D] flex items-center justify-center font-black text-[#30E6D3]">
+
+                    {load}%
+
+                  </div>
+
+                </div>
+
+
+
+                <div className="mt-3 text-[10px] space-y-1.5">
+
+                  <p className="flex justify-between"><span className="text-slate-400">Oil</span><b>{oil}°C</b></p>
+
+                  <p className="flex justify-between"><span className="text-slate-400">Winding</span><b>{winding}°C</b></p>
+
+                </div>
+
+              </div>
+
+            ))}
+
+          </div>
+
+        </section>
+
+
+
+        <section className="p-6">
+
+          <SectionTitle title="Temperature Trend" />
+
+          <LargeLineChart />
+
+          <p className="mt-3 text-[13px] text-slate-300">
+
+            All transformers are operating within safe temperature and load limits.
+
+          </p>
+
+        </section>
+
+      </DashboardShell>
+
+    );
+
+  };
+
+
+
+  const DistributionDashboard = ({ item, title, subtitle, blocks = 6 }) => {
+
+    const loads = Array.from({ length: blocks }, (_, i) =>
+
+      Math.round(item.outgoing / blocks + (i - 2) * 9)
+
+    );
+
+
+
+    return (
+
+      <DashboardShell
+
+        title={title}
+
+        subtitle={subtitle}
+
+        stats={[
+
+          { label: "Incoming", value: `${item.incoming} kW`, sub: "input" },
+
+          { label: "Outgoing", value: `${item.outgoing} kW`, sub: "output" },
+
+          { label: "Loss", value: `${item.incoming - item.outgoing} kW`, sub: "loss" },
+
+          { label: "Voltage", value: item.voltage, sub: "stable" },
+
+          { label: "Current", value: `${item.current} A`, sub: "live" },
+
+          { label: "PF", value: item.pf, sub: "healthy" },
+
+        ]}
+
+      >
+
+        <section className="p-6 border-r border-[#173F55] col-span-2">
+
+          <SectionTitle title="Load Distribution" />
+
+          <div className="h-[calc(100%-35px)] flex items-end gap-5">
+
+            {loads.map((v, i) => (
+
+              <DashBar key={i} label={`#${i + 1}`} value={v} max={Math.max(...loads)} />
+
+            ))}
+
+          </div>
+
+        </section>
+
+
+
+        <section className="grid grid-rows-2">
+
+          <div className="p-6 border-b border-[#173F55]">
+
+            <SectionTitle title="Consumption Trend" />
+
+            <MiniTrend height={170} />
+
+          </div>
+
+          <Insight text="Distribution is balanced. No abnormal load deviation is detected in this section." />
+
+        </section>
+
+      </DashboardShell>
+
+    );
+
+  };
+
+
+
+  const WingDashboard = ({ item }) => (
+
+    <DashboardShell
+
+      title="Wing Analytical Dashboard"
+
+      subtitle="Floor, zone and client consumption heatmap"
+
+      stats={[
+
+        { label: "Incoming", value: `${item.incoming} kW`, sub: "wing input" },
+
+        { label: "Output", value: `${item.outgoing} kW`, sub: "usage" },
+
+        { label: "Floors", value: "20", sub: "active" },
+
+        { label: "Zones", value: "40", sub: "monitored" },
+
+        { label: "Today", value: `${item.today.toLocaleString()} kWh`, sub: "energy" },
+
+        { label: "Health", value: `${item.health}%`, sub: "normal" },
+
+      ]}
+
+    >
+
+      <section className="p-6 border-r border-[#173F55] col-span-2">
+
+        <SectionTitle title="Zone Heatmap" />
+
+        <div className="grid grid-cols-8 grid-rows-5 gap-3 h-[calc(100%-35px)]">
+
+          {Array.from({ length: 40 }).map((_, i) => {
+
+            const opacity = [0.25, 0.42, 0.66, 1][(i + item.health) % 4];
+
+            return (
+
+              <div key={i} className="rounded-xl bg-[#00A997] flex items-center justify-center text-[10px] font-black" style={{ opacity }}>
+
+                {i + 1}
+
+              </div>
+
+            );
+
+          })}
+
+        </div>
+
+      </section>
+
+
+
+      <section className="p-6">
+
+        <SectionTitle title="Floor Consumption" />
+
+        <div className="h-[300px] flex items-end gap-2">
+
+          {Array.from({ length: 20 }).map((_, i) => {
+
+            const h = 50 + ((item.outgoing + i * 11) % 230);
+
+            return <div key={i} className="flex-1 rounded-t bg-[#00A997]" style={{ height: h }} />;
+
+          })}
+
+        </div>
+
+      </section>
+
+    </DashboardShell>
+
+  );
+
+
+
+  const DashboardShell = ({ title, subtitle, stats, children }) => (
+
+    <div className="h-full bg-[#061A2D] text-white overflow-hidden">
+
+      <PageHeader title={title} subtitle={subtitle} />
+
+      <StatStrip items={stats} />
+
+      <div className="h-[calc(100%-142px)] grid grid-cols-[36%_36%_28%]">
+
+        {children}
+
+      </div>
+
+    </div>
+
+  );
+
+
+
+  const SectionTitle = ({ title }) => (
+
+    <h3 className="text-[13px] font-black mb-4 uppercase tracking-[0.08em]">{title}</h3>
+
+  );
+
+
+
+  const DashBar = ({ label, value, max }) => (
+
+    <div className="flex-1 flex flex-col items-center justify-end">
+
+      <p className="text-[11px] font-black mb-2">{value}</p>
+
+      <div
+
+        className="w-full rounded-t-2xl bg-gradient-to-t from-[#00796D] to-[#30E6D3]"
+
+        style={{ height: `${Math.max(55, (value / max) * 320)}px` }}
+
+      />
+
+      <p className="mt-3 text-[10px] text-slate-300 font-black">{label}</p>
+
+    </div>
+
+  );
+
+
+
+  const LargeLineChart = () => (
+
+    <svg viewBox="0 0 720 400" className="w-full h-[calc(100%-34px)]">
+
+      {[80, 160, 240, 320].map((y) => (
+
+        <line key={y} x1="40" x2="700" y1={y} y2={y} stroke="#173F55" />
+
+      ))}
+
+      <path d="M40 310 C130 280,220 210,310 130 C420 65,535 85,625 145 C670 180,690 240,705 300" fill="none" stroke="#30E6D3" strokeWidth="5" />
+
+      <path d="M40 345 C130 320,220 260,310 190 C420 135,535 150,625 205 C670 240,690 295,705 340" fill="none" stroke="#00A997" strokeWidth="4" />
+
+      <path d="M40 370 C130 350,220 310,310 250 C420 205,535 215,625 265 C670 300,690 340,705 370" fill="none" stroke="#00796D" strokeWidth="4" />
+
+    </svg>
+
+  );
+
+
+
+  const Donut = ({ center }) => (
+
+    <div className="flex items-center justify-center">
+
+      <div className="h-[170px] w-[170px] rounded-full bg-[conic-gradient(#30E6D3_0_52%,#00796D_52%_100%)] flex items-center justify-center">
+
+        <div className="h-[108px] w-[108px] rounded-full bg-[#061A2D] border border-[#173F55] flex flex-col items-center justify-center">
+
+          <p className="text-[10px] text-slate-400">TOTAL</p>
+
+          <h3 className="text-[28px] font-light">{center}</h3>
+
+          <p className="text-[10px] text-slate-400">kW</p>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  );
+
+
+
+  const ParameterRows = ({ rows }) => (
+
+    <div>
+
+      {rows.map(([label, value]) => (
+
+        <div key={label} className="flex justify-between border-b border-[#173F55] py-3">
+
+          <span className="text-slate-400 text-[11px]">{label}</span>
+
+          <span className="font-black">{value}</span>
+
+        </div>
+
+      ))}
+
+    </div>
+
+  );
+
+
+
+  const Insight = ({ text }) => (
+
+    <div className="p-6">
+
+      <SectionTitle title="Insight" />
+
+      <p className="text-[13px] text-slate-300 leading-relaxed">{text}</p>
+
+      <h2 className="mt-6 text-[30px] font-light text-[#30E6D3]">HEALTHY</h2>
+
+    </div>
+
+  );
+
+
+
+  const ComponentDetail = () => {
+
+    if (!selectedItem) return null;
+
+
+
+    if (selectedItem.key === "source") return <SourceDashboard item={selectedItem} />;
+
+    if (selectedItem.key === "feeder") return <FeederDashboard item={selectedItem} />;
+
+    if (selectedItem.key === "transformer") return <TransformerDashboard item={selectedItem} />;
+
+    if (selectedItem.key === "kiosk") return <DistributionDashboard item={selectedItem} title="LT Kiosk Analytical Dashboard" subtitle="Kiosk-wise 433V distribution analytics" />;
+
+    if (selectedItem.key === "busduct") return <DistributionDashboard item={selectedItem} title="Busduct Analytical Dashboard" subtitle="Busduct phase and load analytics" />;
+
+    if (selectedItem.key === "pcc") return <DistributionDashboard item={selectedItem} title="PCC Analytical Dashboard" subtitle="PCC to wing split and outgoing analytics" blocks={4} />;
+
+    if (selectedItem.key === "raising") return <DistributionDashboard item={selectedItem} title="Raising Main Analytical Dashboard" subtitle="Floor-wise rising main consumption analytics" blocks={10} />;
+
+    if (selectedItem.key === "wing") return <WingDashboard item={selectedItem} />;
+
+
+
+    return null;
+
+  };
+
+
 
   return (
-    <div className="h-screen w-full overflow-hidden bg-[#F4F7FA] text-[#0B3D38]">
-      <header className="h-[58px] px-8 flex items-center justify-between bg-[#006F66] text-white">
-        <div onClick={() => navigate("/")} className="flex items-center cursor-pointer">
-          <div>
-            <h1 className="text-[24px] font-black tracking-[0.2em] uppercase leading-none">
-              ARCOT <span className="text-[#30E6D3]">IIOT 1.0</span>
-            </h1>
 
-            <p className="mt-1.5 text-[8px] tracking-[0.42em] uppercase text-white">
-              Industrial Internet of Things
-            </p>
-          </div>
+    <div className="h-screen w-full overflow-hidden bg-[#F4F7FA] text-[#0B3D38]">
 
-          <div className="mx-5 h-[42px] border-l border-white/40" />
+      <header className="h-[58px] px-8 flex items-center justify-between bg-[#006F66] text-white">
 
-          <img
-            src={prestigeLogo}
-            alt="Prestige"
-            className="h-[46px] w-[90px] object-contain"
-          />
-        </div>
+        <div onClick={() => navigate("/")} className="flex items-center cursor-pointer">
 
-        <button
-          onClick={() => navigate("/")}
-          className="rounded-full border border-white/70 px-7 py-2.5 text-[11px] font-black uppercase tracking-[0.16em]"
-        >
-          Dashboard
-        </button>
-      </header>
+          <div>
 
-      <main className="relative w-full h-[calc(100vh-58px)] px-6 py-4 overflow-hidden">
-        <aside className="absolute left-0 top-0 bottom-0 w-[72px] bg-[#006F66] flex flex-col items-center justify-start pt-10 gap-7 text-white">
-          {[
-            ["overview", "▦"],
-            ["powerflow", "↯"],
-            ["efficiency", "◔"],
-            ["energy", "⚡"],
-            ["asset", "▣"],
-          ].map(([key, icon]) => (
-            <button
-              key={key}
-              onClick={() => setActiveView(key)}
-              className={`h-10 w-10 rounded-full flex items-center justify-center text-[22px] transition ${
-                activeView === key
-                  ? "bg-white/20 shadow-[0_0_18px_rgba(255,255,255,0.2)]"
-                  : "hover:bg-white/10"
-              }`}
-            >
-              {icon}
-            </button>
-          ))}
-        </aside>
+            <h1 className="text-[24px] font-black tracking-[0.2em] uppercase leading-none">
 
-        <section className="pl-[90px] w-full h-full flex flex-col min-h-0">
-          <div className="grid grid-cols-5 gap-5 w-full shrink-0">
-            {kpiCards.map((item) => (
-              <TopCard key={item.key} item={item} />
-            ))}
-          </div>
+              ARCOT <span className="text-[#30E6D3]">IIOT 1.0</span>
 
-          <div className="mt-4 flex-1 min-h-0 overflow-hidden">
-            {activeView === "overview" ? <AllOverview /> : <SingleView />}
-          </div>
-        </section>
-      </main>
-    </div>
+            </h1>
+
+            <p className="mt-1.5 text-[8px] tracking-[0.42em] uppercase text-white">
+
+              Industrial Internet of Things
+
+            </p>
+
+          </div>
+
+
+
+          <div className="mx-5 h-[42px] border-l border-white/40" />
+
+
+
+          <img src={prestigeLogo} alt="Prestige" className="h-[46px] w-[90px] object-contain" />
+
+        </div>
+
+
+
+        <button
+
+          onClick={() => navigate("/")}
+
+          className="rounded-full border border-white/70 px-7 py-2.5 text-[11px] font-black uppercase tracking-[0.16em]"
+
+        >
+
+          Dashboard
+
+        </button>
+
+      </header>
+
+
+
+      <main className="relative w-full h-[calc(100vh-58px)] overflow-hidden">
+
+        <aside className="absolute left-0 top-0 bottom-0 w-[210px] bg-[#006F66] px-3 py-5 text-white">
+
+          <div className="mb-5 px-3">
+
+            <p className="text-[10px] font-black tracking-[0.22em] uppercase text-white/70">
+
+              Components
+
+            </p>
+
+          </div>
+
+
+
+          <div className="flex flex-col gap-2">
+
+            {sideItems.map((item) => (
+
+              <button
+
+                key={item.key}
+
+                onClick={() => setActiveView(item.key)}
+
+                className={`h-11 w-full rounded-xl flex items-center gap-3 px-3 text-left transition ${
+
+                  activeView === item.key
+
+                    ? "bg-white text-[#006F66] shadow-md"
+
+                    : "text-white hover:bg-white/10"
+
+                }`}
+
+              >
+
+                <span
+
+                  className={`h-7 w-7 rounded-lg flex items-center justify-center text-[12px] font-black ${
+
+                    activeView === item.key
+
+                      ? "bg-[#E8F5F2] text-[#006F66]"
+
+                      : "bg-white/10 text-white"
+
+                  }`}
+
+                >
+
+                  {item.icon}
+
+                </span>
+
+
+
+                <span className="text-[12px] font-black">{item.label}</span>
+
+              </button>
+
+            ))}
+
+          </div>
+
+        </aside>
+
+
+
+<section
+
+  className={`ml-[210px] w-[calc(100%-210px)] h-full overflow-hidden ${
+
+    activeView === "overview" ? "px-6 py-4 bg-[#F4F7FA]" : "p-0 bg-[#061A2D]"
+
+  }`}
+
+>          {activeView === "overview" ? <AllOverview /> : <ComponentDetail />}
+
+        </section>
+
+      </main>
+
+    </div>
+
   );
+
 }
