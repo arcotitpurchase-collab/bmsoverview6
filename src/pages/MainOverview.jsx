@@ -1242,162 +1242,80 @@ const sourceAnalytics = {
     health: 94,
     status: "Stable",
   },
+
   outAnalytics: {
-    title: "OUT Main Busbar",
-    subtitle: "Main Outgoing Distribution",
-    kwh: "2,460",
-    kvh: "2,310",
-    current: "810 A",
+    title: "Outgoing Busbar",
+    subtitle: "Outgoing Distribution Supply",
+    kwh: "1,560",
+    kvh: "1,430",
+    current: "460 A",
     voltage: "33.0 kV",
-    pf: "0.97",
+    pf: "0.99",
     load: 86,
-    health: 91,
-    status: "Active",
+    health: 96,
+    status: "Stable",
   },
+
   inc2Analytics: {
     title: "INC2 Incoming Feeder",
     subtitle: "Secondary Incoming Supply",
-    kwh: "1,180",
-    kvh: "1,115",
+    kwh: "1,110",
+    kvh: "1,020",
     current: "390 A",
     voltage: "33.0 kV",
-    pf: "0.96",
+    pf: "0.97",
     load: 72,
     health: 92,
-    status: "Healthy",
+    status: "Stable",
   },
-};
 
-const SourceBox = ({ title, subtitle, icon, onClick }) => {
-  return (
-    <div
-      onClick={onClick}
-      className={`relative h-[132px] w-full bg-[#081F5C] border-2 border-[#004AAD] text-white shadow-none overflow-hidden ${
-        onClick ? "cursor-pointer hover:border-cyan-400 transition-all" : ""
-      }`}
-    >
-      <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
-        {icon && (
-          <div className="bg-[#05143C] p-2 border border-blue-900 mb-2">
-            <Zap className="h-4 w-4 text-emerald-400" />
-          </div>
-        )}
+  meterAnalytics: {
+    title: "Metering Unit",
+    subtitle: "33kV Energy Monitoring Meter",
+    kwh: "1,420",
+    kvh: "1,300",
+    current: "435 A",
+    voltage: "33.0 kV",
+    pf: "0.98",
+    load: 81,
+    health: 95,
+    status: "Stable",
+  },
 
-        <h4 className="text-[15px] font-semibold tracking-wide leading-none">
-          {title}
-        </h4>
-
-        <span className="mt-2 text-[9px] font-medium text-blue-300 tracking-[0.12em] leading-none">
-          {subtitle}
-        </span>
-
-        {onClick && (
-          <span className="mt-3 text-[9px] text-cyan-300 font-medium tracking-wide">
-            Click Analytics
-          </span>
-        )}
-      </div>
-    </div>
-  );
-};
-
-const FlowBar = () => (
-  <div className="h-[4px] w-full bg-cyan-400 relative overflow-hidden">
-    <div className="flow-pulse-horizontal" />
-  </div>
-);
-
-const VerticalFlow = ({ height = "h-8" }) => (
-  <div className={`flex justify-center ${height}`}>
-    <div className="flow-line-vertical h-full">
-      <div className="flow-pulse-vertical" />
-    </div>
-  </div>
-);
-
-const SourcePopup = ({ setActivePopup }) => {
-  return (
-    <PopupShell title="33kV Source → 2 Incoming / 1 Outgoing">
-      <div className="max-w-6xl mx-auto pt-2 pb-4">
-        <div className="flex justify-center">
-          <div className="w-[320px]">
-            <SourceBox
-              title="33kV SOURCE"
-              subtitle="CENTRAL CONTROL PANEL"
-              icon
-            />
-          </div>
-        </div>
-
-        <VerticalFlow />
-
-        <div className="relative h-[4px] w-[760px] mx-auto bg-cyan-400 overflow-hidden">
-          <div className="flow-pulse-horizontal" />
-        </div>
-
-        <div className="relative h-10 w-[760px] mx-auto">
-          <div className="absolute left-0 top-0 h-full">
-            <div className="flow-line-vertical h-full">
-              <div className="flow-pulse-vertical" />
-            </div>
-          </div>
-
-          <div className="absolute right-0 top-0 h-full">
-            <div className="flow-line-vertical h-full">
-              <div className="flow-pulse-vertical" />
-            </div>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-[300px_55px_300px_55px_300px] items-center justify-center mx-auto">
-          <SourceBox
-            title="INC1"
-            subtitle="FEEDER BREAKER"
-            onClick={() => setActivePopup("inc1Analytics")}
-          />
-
-          <FlowBar />
-
-          <SourceBox
-            title="OUT"
-            subtitle="OUTGOING BUSBAR"
-            onClick={() => setActivePopup("outAnalytics")}
-          />
-
-          <FlowBar />
-
-          <SourceBox
-            title="INC2"
-            subtitle="FEEDER BREAKER"
-            onClick={() => setActivePopup("inc2Analytics")}
-          />
-        </div>
-
-        <VerticalFlow />
-
-        <div className="flex justify-center">
-          <div className="w-[320px]">
-            <SourceBox title="METER" subtitle="METERING UNIT" />
-          </div>
-        </div>
-
-        <VerticalFlow />
-
-        <div className="flex justify-center">
-          <div className="w-[320px]">
-            <SourceBox
-              title="33kV FEEDER"
-              subtitle="FEEDER SWITCHGEAR PANEL"
-            />
-          </div>
-        </div>
-      </div>
-    </PopupShell>
-  );
+  feederAnalytics: {
+    title: "33kV Feeder",
+    subtitle: "Feeder Switchgear Panel",
+    kwh: "1,385",
+    kvh: "1,260",
+    current: "410 A",
+    voltage: "33.0 kV",
+    pf: "0.97",
+    load: 76,
+    health: 93,
+    status: "Stable",
+  },
 };
 
 const IndividualSourceAnalytics = ({ type, onBack }) => {
   const data = sourceAnalytics[type];
+
+  if (!data) {
+    return (
+      <div className="fixed inset-0 z-[99999] bg-[#020B24] text-white flex items-center justify-center">
+        <div className="bg-[#081F5C] border border-cyan-400/40 p-6 text-center">
+          <h2 className="text-xl font-semibold">Analytics data not found</h2>
+
+          <button
+            type="button"
+            onClick={onBack}
+            className="mt-4 px-5 py-2 border border-cyan-400/40 text-cyan-300"
+          >
+            ← Back
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   const graphValues =
     type === "outAnalytics"
@@ -1411,7 +1329,7 @@ const IndividualSourceAnalytics = ({ type, onBack }) => {
   );
 
   return (
-    <div className="fixed inset-0 z-[9999] bg-[#020B24] text-white overflow-auto">
+    <div className="fixed inset-0 z-[99999] bg-[#020B24] text-white overflow-auto">
       <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(0,74,173,0.22),transparent_35%),radial-gradient(circle_at_top_right,rgba(34,211,238,0.1),transparent_30%)] p-8">
         <div className="max-w-7xl mx-auto">
           <button
@@ -1422,16 +1340,12 @@ const IndividualSourceAnalytics = ({ type, onBack }) => {
             ← Back to Source
           </button>
 
-          <div className="relative overflow-hidden bg-white/8 border border-white/10 shadow-none p-7">
+          <div className="relative overflow-hidden bg-white/8 border border-white/10 shadow-none p-4">
             <div className="absolute top-0 left-0 right-0 h-[3px] bg-cyan-400" />
 
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-[10px] text-cyan-300 font-semibold tracking-[0.18em]">
-                  ARCOT IIoT Live Electrical Analytics
-                </p>
-
-                <h2 className="mt-2 text-3xl font-bold tracking-wide">
+                <h2 className="mt-2 text-3xl font-normal tracking-wide">
                   {data.title}
                 </h2>
 
@@ -1441,7 +1355,7 @@ const IndividualSourceAnalytics = ({ type, onBack }) => {
               </div>
 
               <div className="text-right">
-                <span className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-400/10 border border-emerald-400/30 text-emerald-300 text-[11px] font-semibold tracking-wide">
+                <span className="inline-flex items-center gap-2 px-4 py-1 bg-emerald-400/10 border border-emerald-400/30 text-emerald-300 text-[11px] font-semibold tracking-wide">
                   <span className="h-2 w-2 rounded-full bg-emerald-400" />
                   Live
                 </span>
@@ -1453,7 +1367,7 @@ const IndividualSourceAnalytics = ({ type, onBack }) => {
             </div>
           </div>
 
-          <div className="grid grid-cols-5 gap-4 mt-5">
+          <div className="grid grid-cols-5 gap-4 mt-3">
             {[
               ["Energy", data.kwh, "kWh"],
               ["Reactive", data.kvh, "kVh"],
@@ -1463,37 +1377,36 @@ const IndividualSourceAnalytics = ({ type, onBack }) => {
             ].map(([label, value, unit]) => (
               <div
                 key={label}
-                className="bg-white/7 border border-white/10 p-5 shadow-none"
+                className="bg-white/7 border border-white/10 p-3 shadow-none"
               >
-                <p className="text-[11px] font-medium text-slate-400">
+                <p className="text-[15px] font-bold uppercase tracking-[0.12em] text-white">
                   {label}
                 </p>
 
-                <h3 className="mt-2 text-[24px] font-semibold">
-                  {value}
-                  <span className="ml-1 text-[11px] font-medium text-cyan-300">
-                    {unit}
+                <div className="mt-1 flex items-end gap-2">
+                  <span className="text-[13px] font-normal text-slate-300">
+                    {value}
                   </span>
-                </h3>
+
+                  {unit && (
+                    <span className="pb-[2px] text-[10px] font-medium uppercase tracking-[0.08em] text-cyan-300">
+                      {unit}
+                    </span>
+                  )}
+                </div>
               </div>
             ))}
           </div>
 
-          <div className="grid grid-cols-[1.2fr_0.8fr] gap-5 mt-5">
+          <div className="grid grid-cols-[1.2fr_0.8fr] gap-5 mt-3">
             <div className="bg-white/7 border border-white/10 p-6 shadow-none">
               <div className="flex items-center justify-between mb-6">
-                <div>
-                  <h3 className="text-[15px] font-semibold tracking-wide">
-                    Load Consumption Graph
-                  </h3>
-
-                  <p className="text-[10px] text-slate-400 mt-1">
-                    Last 10 live samples
-                  </p>
-                </div>
+                <h3 className="text-[15px] font-semibold tracking-wide">
+                  Load Consumption Graph
+                </h3>
 
                 <div className="text-right">
-                  <p className="text-[10px] text-slate-400">Average</p>
+                  <p className="text-[12px] text-slate-400">Average</p>
                   <h4 className="text-lg font-semibold text-cyan-300">
                     {avg}%
                   </h4>
@@ -1517,28 +1430,22 @@ const IndividualSourceAnalytics = ({ type, onBack }) => {
 
               <div className="grid grid-cols-3 gap-3 mt-5">
                 <div className="bg-[#06184A]/70 border border-white/10 p-4 shadow-none">
-                  <p className="text-[10px] font-medium text-slate-400">
-                    Peak Load
-                  </p>
-                  <h4 className="text-lg font-semibold">
+                  <p className="text-[14px] font-medium">Peak Load</p>
+                  <h4 className="text-[13px] font-semibold text-slate-400">
                     {Math.max(...graphValues)}%
                   </h4>
                 </div>
 
                 <div className="bg-[#06184A]/70 border border-white/10 p-4 shadow-none">
-                  <p className="text-[10px] font-medium text-slate-400">
-                    Minimum
-                  </p>
-                  <h4 className="text-lg font-semibold">
+                  <p className="text-[14px] font-medium">Minimum</p>
+                  <h4 className="text-[13px] font-semibold text-slate-400">
                     {Math.min(...graphValues)}%
                   </h4>
                 </div>
 
                 <div className="bg-[#06184A]/70 border border-white/10 p-4 shadow-none">
-                  <p className="text-[10px] font-medium text-slate-400">
-                    Status
-                  </p>
-                  <h4 className="text-lg font-semibold text-emerald-300">
+                  <p className="text-[14px] font-medium">Status</p>
+                  <h4 className="text-[13px] font-semibold text-emerald-200">
                     {data.status}
                   </h4>
                 </div>
@@ -1555,10 +1462,11 @@ const IndividualSourceAnalytics = ({ type, onBack }) => {
                   <div className="absolute inset-[-18px] rounded-full border-[18px] border-cyan-400 border-r-transparent border-b-transparent rotate-45" />
 
                   <div className="text-center">
-                    <span className="block text-[42px] font-semibold">
+                    <span className="block text-[30px] font-normal">
                       {data.load}%
                     </span>
-                    <span className="text-[11px] font-medium text-cyan-300 tracking-wide">
+
+                    <span className="text-[13px] font-medium text-cyan-300 tracking-wide">
                       Load
                     </span>
                   </div>
@@ -1576,6 +1484,7 @@ const IndividualSourceAnalytics = ({ type, onBack }) => {
                       <span className="text-blue-100 font-medium">
                         {label}
                       </span>
+
                       <span className="text-cyan-300 font-semibold">
                         {Math.round(value)}%
                       </span>
@@ -1584,23 +1493,11 @@ const IndividualSourceAnalytics = ({ type, onBack }) => {
                     <div className="h-2 bg-white/10 overflow-hidden">
                       <div
                         className="h-full bg-cyan-400 shadow-none"
-                        style={{ width: `${value}%` }}
+                        style={{ width: `${Math.min(value, 100)}%` }}
                       />
                     </div>
                   </div>
                 ))}
-              </div>
-
-              <div className="mt-7 bg-[#06184A]/70 border border-white/10 p-5 shadow-none">
-                <p className="text-[10px] font-medium text-slate-400 tracking-wide">
-                  Live Remark
-                </p>
-
-                <p className="mt-3 text-xs text-blue-100 leading-relaxed font-normal">
-                  {type === "outAnalytics"
-                    ? "Outgoing busbar is distributing combined incoming power with stable power factor and balanced active load."
-                    : "Incoming feeder is operating in stable condition with healthy voltage, current, and load percentage."}
-                </p>
               </div>
             </div>
           </div>
@@ -1610,219 +1507,551 @@ const IndividualSourceAnalytics = ({ type, onBack }) => {
   );
 };
 
+const SourceBox = ({
+  id,
+  title,
+  subtitle,
+  icon,
+  hoverMonitor = false,
+  openedBoxes,
+  setOpenedBoxes,
+  onClick,
+}) => {
+  const monitorData = [
+    ["kWh", "1,280"],
+    ["kVh", "1,195"],
+    ["PF", "0.98"],
+    ["Voltage", "33.0 kV"],
+    ["Current", "420 A"],
+  ];
+
+  const showMonitor = hoverMonitor && openedBoxes.includes(id);
+
+  const handleHover = () => {
+    if (!hoverMonitor) return;
+    setOpenedBoxes((prev) => (prev.includes(id) ? prev : [...prev, id]));
+  };
+
+  const handleClick = (event) => {
+    event.stopPropagation();
+    if (onClick) onClick();
+  };
+
+  return (
+    <div
+      onMouseEnter={handleHover}
+      onClick={handleClick}
+      className="relative h-[135px] w-full bg-[#081F5C] border-2 border-[#004AAD] text-white shadow-xl panel-active-glow overflow-hidden cursor-pointer"
+    >
+      {!showMonitor ? (
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
+          {icon && (
+            <div className="bg-[#05143C] p-2 border border-blue-900 mb-2">
+              <Zap className="h-4 w-4 text-emerald-400" />
+            </div>
+          )}
+
+          <h4 className="text-[16px] font-bold uppercase tracking-[0.05em] leading-none">
+            {title}
+          </h4>
+
+          <span className="mt-2 text-[8px] font-black text-blue-300 tracking-[0.18em] uppercase leading-none">
+            {subtitle}
+          </span>
+        </div>
+      ) : (
+        <div
+          onClick={handleClick}
+          className="absolute inset-0 z-20 bg-[#081F5C] px-5 py-2.5"
+        >
+          <div className="text-center border-b border-[#2B5DA8] pb-1.5 mb-1.5">
+            <h4 className="text-[11px] font-black text-white uppercase tracking-[0.14em] leading-none">
+              {title}
+            </h4>
+          </div>
+
+          <div className="flex items-center justify-between mb-1.5">
+            <span className="text-[7px] font-bold text-blue-300 uppercase">
+              {subtitle}
+            </span>
+
+            <span className="flex items-center gap-1 text-[7px] font-bold text-emerald-400 uppercase">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.9)]" />
+              Live
+            </span>
+          </div>
+
+          <div className="px-2 space-y-[2px]">
+            {monitorData.map(([label, value]) => (
+              <div
+                key={label}
+                className="flex items-center justify-between px-2"
+              >
+                <span className="text-[9px] font-medium text-slate-300 tracking-wide">
+                  {label}
+                </span>
+
+                <span className="text-[10px] font-bold text-white tabular-nums tracking-wide">
+                  {value}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+const SourcePopup = () => {
+  const [openedBoxes, setOpenedBoxes] = React.useState([]);
+  const [activeSourceAnalytics, setActiveSourceAnalytics] =
+    React.useState(null);
+
+  return (
+    <>
+      <PopupShell title="33kV Source → 2 Incoming / 1 Outgoing">
+        <div className="max-w-6xl mx-auto pt-2 pb-4">
+          <div className="flex justify-center">
+            <div className="w-[320px]">
+              <SourceBox
+                id="source"
+                title="33kV SOURCE"
+                subtitle="CENTRAL CONTROL PANEL"
+                icon
+                openedBoxes={openedBoxes}
+                setOpenedBoxes={setOpenedBoxes}
+              />
+            </div>
+          </div>
+
+          <div className="flex justify-center h-8">
+            <div className="flow-line-vertical h-full">
+              <div className="flow-pulse-vertical" />
+            </div>
+          </div>
+
+          <div className="relative h-[4px] w-[760px] mx-auto bg-cyan-400 overflow-hidden">
+            <div className="flow-pulse-horizontal" />
+          </div>
+
+          <div className="relative h-10 w-[760px] mx-auto">
+            <div className="absolute left-0 top-0 h-full">
+              <div className="flow-line-vertical h-full">
+                <div className="flow-pulse-vertical" />
+              </div>
+            </div>
+
+            <div className="absolute right-0 top-0 h-full">
+              <div className="flow-line-vertical h-full">
+                <div className="flow-pulse-vertical" />
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-[300px_55px_300px_55px_300px] items-center justify-center mx-auto">
+            <SourceBox
+              id="inc1"
+              title="INC1"
+              subtitle="FEEDER BREAKER"
+              hoverMonitor
+              openedBoxes={openedBoxes}
+              setOpenedBoxes={setOpenedBoxes}
+              onClick={() => setActiveSourceAnalytics("inc1Analytics")}
+            />
+
+            <div className="h-[4px] w-full bg-cyan-400 relative overflow-hidden">
+              <div className="flow-pulse-horizontal" />
+            </div>
+
+            <SourceBox
+              id="out"
+              title="OUT"
+              subtitle="OUTGOING BUSBAR"
+              hoverMonitor
+              openedBoxes={openedBoxes}
+              setOpenedBoxes={setOpenedBoxes}
+              onClick={() => setActiveSourceAnalytics("outAnalytics")}
+            />
+
+            <div className="h-[4px] w-full bg-cyan-400 relative overflow-hidden">
+              <div className="flow-pulse-horizontal" />
+            </div>
+
+            <SourceBox
+              id="inc2"
+              title="INC2"
+              subtitle="FEEDER BREAKER"
+              hoverMonitor
+              openedBoxes={openedBoxes}
+              setOpenedBoxes={setOpenedBoxes}
+              onClick={() => setActiveSourceAnalytics("inc2Analytics")}
+            />
+          </div>
+
+          <div className="flex justify-center h-8">
+            <div className="flow-line-vertical h-full">
+              <div className="flow-pulse-vertical" />
+            </div>
+          </div>
+
+          <div className="flex justify-center">
+            <div className="w-[320px]">
+            <SourceBox
+  id="meter"
+  title="METER"
+  subtitle="METERING UNIT"
+  hoverMonitor
+  openedBoxes={openedBoxes}
+  setOpenedBoxes={setOpenedBoxes}
+  onClick={() => setActiveSourceAnalytics("meterAnalytics")}
+/>
+            </div>
+          </div>
+
+          <div className="flex justify-center h-8">
+            <div className="flow-line-vertical h-full">
+              <div className="flow-pulse-vertical" />
+            </div>
+          </div>
+
+          <div className="flex justify-center">
+            <div className="w-[320px]">
+             <SourceBox
+  id="feeder"
+  title="33kV FEEDER"
+  subtitle="FEEDER SWITCHGEAR PANEL"
+  hoverMonitor
+  openedBoxes={openedBoxes}
+  setOpenedBoxes={setOpenedBoxes}
+  onClick={() => setActiveSourceAnalytics("feederAnalytics")}
+/>
+            </div>
+          </div>
+
+          
+        </div>
+      </PopupShell>
+
+      {activeSourceAnalytics && (
+        <IndividualSourceAnalytics
+          type={activeSourceAnalytics}
+          onBack={() => setActiveSourceAnalytics(null)}
+        />
+      )}
+    </>
+  );
+};
+
+
 const feederAnalytics = {
-  incoming: {
+  incomingFeederAnalytics: {
     title: "Incoming Feeder 1",
-    subtitle: "33kV Incoming Supply",
-    kwh: "4,860",
-    kvh: "4,520",
-    current: "920 A",
+    subtitle: "33kV Incoming Feeder Supply",
+    kwh: "1,480",
+    kvh: "1,360",
+    current: "430 A",
     voltage: "33.0 kV",
     pf: "0.98",
     load: 82,
     health: 95,
-    status: "CONNECTED",
+    status: "Stable",
   },
-  og1: {
-    title: "OG-1 Feeder",
-    subtitle: "Outgoing to Transformer 1",
-    kwh: "820",
-    kvh: "765",
-    current: "150 A",
+
+  og1Analytics: {
+    title: "OG 1 Feeder",
+    subtitle: "Outgoing Feeder to Transformer",
+    kwh: "980",
+    kvh: "910",
+    current: "280 A",
     voltage: "33.0 kV",
     pf: "0.97",
-    load: 74,
-    health: 94,
-    status: "ON",
-  },
-  og2: {
-    title: "OG-2 Feeder",
-    subtitle: "Outgoing to Transformer 2",
-    kwh: "790",
-    kvh: "740",
-    current: "142 A",
-    voltage: "33.0 kV",
-    pf: "0.96",
-    load: 71,
-    health: 93,
-    status: "ON",
-  },
-  og3: {
-    title: "OG-3 Feeder",
-    subtitle: "Outgoing to Transformer 3",
-    kwh: "860",
-    kvh: "815",
-    current: "158 A",
-    voltage: "33.0 kV",
-    pf: "0.98",
-    load: 77,
-    health: 96,
-    status: "ON",
-  },
-  og4: {
-    title: "OG-4 Feeder",
-    subtitle: "Outgoing to Transformer 4",
-    kwh: "780",
-    kvh: "735",
-    current: "138 A",
-    voltage: "33.0 kV",
-    pf: "0.96",
-    load: 69,
+    load: 68,
     health: 92,
     status: "ON",
   },
-  og5: {
-    title: "OG-5 Feeder",
-    subtitle: "Outgoing to Transformer 5",
-    kwh: "810",
-    kvh: "760",
-    current: "148 A",
+
+  og2Analytics: {
+    title: "OG 2 Feeder",
+    subtitle: "Outgoing Feeder to Transformer",
+    kwh: "1,020",
+    kvh: "960",
+    current: "295 A",
     voltage: "33.0 kV",
-    pf: "0.97",
-    load: 73,
-    health: 94,
-    status: "ON",
-  },
-  og6: {
-    title: "OG-6 Feeder",
-    subtitle: "Outgoing to Transformer 6",
-    kwh: "800",
-    kvh: "750",
-    current: "145 A",
-    voltage: "33.0 kV",
-    pf: "0.97",
+    pf: "0.98",
     load: 72,
     health: 94,
     status: "ON",
   },
+
+  og3Analytics: {
+    title: "OG 3 Feeder",
+    subtitle: "Outgoing Feeder to Transformer",
+    kwh: "1,120",
+    kvh: "1,040",
+    current: "310 A",
+    voltage: "33.0 kV",
+    pf: "0.98",
+    load: 76,
+    health: 95,
+    status: "ON",
+  },
+
+  og4Analytics: {
+    title: "OG 4 Feeder",
+    subtitle: "Outgoing Feeder to Transformer",
+    kwh: "940",
+    kvh: "870",
+    current: "265 A",
+    voltage: "33.0 kV",
+    pf: "0.96",
+    load: 64,
+    health: 91,
+    status: "ON",
+  },
+
+  og5Analytics: {
+    title: "OG 5 Feeder",
+    subtitle: "Outgoing Feeder to Transformer",
+    kwh: "1,080",
+    kvh: "990",
+    current: "300 A",
+    voltage: "33.0 kV",
+    pf: "0.98",
+    load: 74,
+    health: 93,
+    status: "ON",
+  },
+
+  og6Analytics: {
+    title: "OG 6 Feeder",
+    subtitle: "Outgoing Feeder to Transformer",
+    kwh: "1,150",
+    kvh: "1,080",
+    current: "325 A",
+    voltage: "33.0 kV",
+    pf: "0.99",
+    load: 79,
+    health: 96,
+    status: "ON",
+  },
 };
 
-const FeederAnalyticsView = ({ data, onBack }) => {
-  const graphValues = [45, 52, 59, 64, 70, data.load, 75, 79, 76, data.load];
+const FeederAnalyticsView = ({ type, data, onBack }) => {
+  const analyticsData = data || feederAnalytics[type];
+
+  if (!analyticsData) {
+    return (
+      <div className="fixed inset-0 z-[99999] bg-[#020B24] text-white flex items-center justify-center">
+        <div className="bg-[#081F5C] border border-cyan-400/40 p-6 text-center">
+          <h2 className="text-xl font-semibold">Feeder analytics not found</h2>
+
+          <button
+            type="button"
+            onClick={onBack}
+            className="mt-4 px-5 py-2 border border-cyan-400/40 text-cyan-300"
+          >
+            ← Back
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const graphValues = [
+    45,
+    52,
+    59,
+    64,
+    70,
+    analyticsData.load,
+    75,
+    79,
+    76,
+    analyticsData.load,
+  ];
+
+  const avg = Math.round(
+    graphValues.reduce((a, b) => a + b, 0) / graphValues.length
+  );
 
   return (
     <div className="fixed inset-0 z-[99999] bg-[#020B24] text-white overflow-auto">
-      <div className="min-h-screen p-8">
-        <button
-          onClick={onBack}
-          className="mb-6 px-5 py-2.5 bg-white/5 border border-cyan-400/40 text-cyan-200 text-[12px] font-medium"
-        >
-          ← Back to Feeder Panel
-        </button>
+      <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(0,74,173,0.22),transparent_35%),radial-gradient(circle_at_top_right,rgba(34,211,238,0.1),transparent_30%)] p-8">
+        <div className="max-w-7xl mx-auto">
+          <button
+            type="button"
+            onClick={onBack}
+            className="mb-6 px-5 py-2.5 bg-white/5 border border-cyan-400/40 text-cyan-200 text-[12px] font-medium tracking-wide hover:bg-cyan-400/10 transition shadow-none"
+          >
+            ← Back to Feeder Panel
+          </button>
 
-        <div className="bg-white/8 border border-white/10 p-7">
-          <p className="text-[10px] text-cyan-300 font-semibold tracking-[0.18em]">
-            ARCOT IIoT Feeder Flow Analytics
-          </p>
+          <div className="relative overflow-hidden bg-white/8 border border-white/10 shadow-none p-4">
+            <div className="absolute top-0 left-0 right-0 h-[3px] bg-cyan-400" />
 
-          <div className="flex items-center justify-between mt-2">
-            <div>
-              <h2 className="text-3xl font-bold tracking-wide">
-                {data.title}
-              </h2>
-              <p className="text-[13px] font-medium text-blue-300 mt-1">
-                {data.subtitle}
-              </p>
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="mt-2 text-3xl font-normal tracking-wide">
+                  {analyticsData.title}
+                </h2>
+
+                <p className="mt-1 text-[13px] font-medium text-blue-300 tracking-wide">
+                  {analyticsData.subtitle}
+                </p>
+              </div>
+
+              <div className="text-right">
+                <span className="inline-flex items-center gap-2 px-4 py-1 bg-emerald-400/10 border border-emerald-400/30 text-emerald-300 text-[11px] font-semibold tracking-wide">
+                  <span className="h-2 w-2 rounded-full bg-emerald-400" />
+                  {analyticsData.status}
+                </span>
+
+                <p className="mt-3 text-[10px] text-slate-400 tracking-wide">
+                  Status: {analyticsData.status}
+                </p>
+              </div>
             </div>
-
-            <span className="px-4 py-2 bg-emerald-400/10 border border-emerald-400/30 text-emerald-300 text-[11px] font-semibold">
-              {data.status}
-            </span>
           </div>
-        </div>
 
-        <div className="grid grid-cols-5 gap-4 mt-5">
-          {[
-            ["Energy", data.kwh, "kWh"],
-            ["Reactive", data.kvh, "kVh"],
-            ["Current", data.current, ""],
-            ["Voltage", data.voltage, ""],
-            ["PF", data.pf, ""],
-          ].map(([label, value, unit]) => (
-            <div key={label} className="bg-white/7 border border-white/10 p-5">
-              <p className="text-[11px] font-medium text-slate-400">
-                {label}
-              </p>
-              <h3 className="mt-2 text-[24px] font-semibold">
-                {value}{" "}
-                <span className="text-[11px] text-cyan-300">{unit}</span>
-              </h3>
-            </div>
-          ))}
-        </div>
+          <div className="grid grid-cols-5 gap-4 mt-3">
+            {[
+              ["Energy", analyticsData.kwh, "kWh"],
+              ["Reactive", analyticsData.kvh, "kVh"],
+              ["Current", analyticsData.current, ""],
+              ["Voltage", analyticsData.voltage, ""],
+              ["Power Factor", analyticsData.pf, ""],
+            ].map(([label, value, unit]) => (
+              <div
+                key={label}
+                className="bg-white/7 border border-white/10 p-3 shadow-none"
+              >
+                <p className="text-[15px] font-bold uppercase tracking-[0.12em] text-white">
+                  {label}
+                </p>
 
-        <div className="grid grid-cols-[1.2fr_0.8fr] gap-5 mt-5">
-          <div className="bg-white/7 border border-white/10 p-6">
-            <h3 className="text-[15px] font-semibold mb-6">
-              Power Flow Graph
-            </h3>
-
-            <div className="flex items-end gap-3 h-[280px] border-b border-white/10 pb-3">
-              {graphValues.map((value, index) => (
-                <div key={index} className="flex-1 flex flex-col justify-end">
-                  <div
-                    className="bg-cyan-400"
-                    style={{ height: `${value * 2.5}px` }}
-                  />
-                  <span className="text-[8px] text-center mt-2 text-blue-200">
-                    {index + 1}
+                <div className="mt-1 flex items-end gap-2">
+                  <span className="text-[13px] font-normal text-slate-300">
+                    {value}
                   </span>
+
+                  {unit && (
+                    <span className="pb-[2px] text-[10px] font-medium uppercase tracking-[0.08em] text-cyan-300">
+                      {unit}
+                    </span>
+                  )}
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
 
-          <div className="bg-white/7 border border-white/10 p-6">
-            <h3 className="text-[15px] font-semibold mb-6">
-              Live Flow Status
-            </h3>
+          <div className="grid grid-cols-[1.2fr_0.8fr] gap-5 mt-3">
+            <div className="bg-white/7 border border-white/10 p-6 shadow-none">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-[15px] font-semibold tracking-wide">
+                  Power Flow Graph
+                </h3>
 
-            <div className="flex justify-center">
-              <div className="relative h-48 w-48 rounded-full border-[18px] border-white/10 flex items-center justify-center">
-                <div className="absolute inset-[-18px] rounded-full border-[18px] border-cyan-400 border-r-transparent border-b-transparent rotate-45" />
-                <div className="text-center">
-                  <span className="block text-[42px] font-semibold">
-                    {data.load}%
-                  </span>
-                  <span className="text-[11px] font-medium text-cyan-300">
-                    Flow Load
-                  </span>
+                <div className="text-right">
+                  <p className="text-[12px] text-slate-400">Average</p>
+
+                  <h4 className="text-lg font-semibold text-cyan-300">
+                    {avg}%
+                  </h4>
+                </div>
+              </div>
+
+              <div className="flex items-end gap-3 h-[280px] border-b border-white/10 pb-3">
+                {graphValues.map((value, index) => (
+                  <div key={index} className="flex-1 flex flex-col justify-end">
+                    <div
+                      className="bg-cyan-400/90 shadow-none"
+                      style={{ height: `${value * 2.5}px` }}
+                    />
+
+                    <span className="text-[8px] text-center mt-2 text-blue-200">
+                      {index + 1}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="grid grid-cols-3 gap-3 mt-5">
+                <div className="bg-[#06184A]/70 border border-white/10 p-4 shadow-none">
+                  <p className="text-[14px] font-medium">Peak Load</p>
+
+                  <h4 className="text-[13px] font-semibold text-slate-400">
+                    {Math.max(...graphValues)}%
+                  </h4>
+                </div>
+
+                <div className="bg-[#06184A]/70 border border-white/10 p-4 shadow-none">
+                  <p className="text-[14px] font-medium">Minimum</p>
+
+                  <h4 className="text-[13px] font-semibold text-slate-400">
+                    {Math.min(...graphValues)}%
+                  </h4>
+                </div>
+
+                <div className="bg-[#06184A]/70 border border-white/10 p-4 shadow-none">
+                  <p className="text-[14px] font-medium">Status</p>
+
+                  <h4 className="text-[13px] font-semibold text-emerald-200">
+                    {analyticsData.status}
+                  </h4>
                 </div>
               </div>
             </div>
 
-            <div className="mt-8 space-y-5">
-              {[
-                ["Load", data.load],
-                ["Power Factor", Number(data.pf) * 100],
-                ["Feeder Health", data.health],
-              ].map(([label, value]) => (
-                <div key={label}>
-                  <div className="flex justify-between text-xs mb-2">
-                    <span className="text-blue-100 font-medium">{label}</span>
-                    <span className="text-cyan-300 font-semibold">
-                      {Math.round(value)}%
+            <div className="bg-white/7 border border-white/10 p-6 shadow-none">
+              <h3 className="text-[15px] font-semibold tracking-wide mb-6">
+                Live Flow Status
+              </h3>
+
+              <div className="flex justify-center">
+                <div className="relative h-48 w-48 rounded-full border-[18px] border-white/10 flex items-center justify-center shadow-none">
+                  <div className="absolute inset-[-18px] rounded-full border-[18px] border-cyan-400 border-r-transparent border-b-transparent rotate-45" />
+
+                  <div className="text-center">
+                    <span className="block text-[30px] font-normal">
+                      {analyticsData.load}%
+                    </span>
+
+                    <span className="text-[13px] font-medium text-cyan-300 tracking-wide">
+                      Flow Load
                     </span>
                   </div>
-
-                  <div className="h-2 bg-white/10 overflow-hidden">
-                    <div
-                      className="h-full bg-cyan-400"
-                      style={{ width: `${value}%` }}
-                    />
-                  </div>
                 </div>
-              ))}
-            </div>
+              </div>
 
-            <div className="mt-7 bg-[#06184A]/70 border border-white/10 p-5">
-              <p className="text-[10px] font-medium text-slate-400">
-                Live Remark
-              </p>
-              <p className="mt-3 text-xs text-blue-100 leading-relaxed">
-                {data.title} is carrying stable power flow with healthy voltage,
-                current, and power factor.
-              </p>
+              <div className="mt-8 space-y-5">
+                {[
+                  ["Load", analyticsData.load],
+                  ["Power Factor", Number(analyticsData.pf) * 100],
+                  ["Feeder Health", analyticsData.health],
+                ].map(([label, value]) => (
+                  <div key={label}>
+                    <div className="flex justify-between text-[12px] mb-2">
+                      <span className="text-blue-100 font-medium">
+                        {label}
+                      </span>
+
+                      <span className="text-cyan-300 font-semibold text-[12px]">
+                        {Math.round(value)}%
+                      </span>
+                    </div>
+
+                    <div className="h-2 bg-white/10 overflow-hidden">
+                      <div
+                        className="h-full bg-cyan-400 shadow-none"
+                        style={{ width: `${Math.min(value, 100)}%` }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+           
             </div>
           </div>
         </div>
@@ -1832,226 +2061,455 @@ const FeederAnalyticsView = ({ data, onBack }) => {
 };
 
 const FeederPopup = () => {
-  const [activeFeeder, setActiveFeeder] = React.useState(null);
-
-  if (activeFeeder) {
-    return (
-      <FeederAnalyticsView
-        data={feederAnalytics[activeFeeder]}
-        onBack={() => setActiveFeeder(null)}
-      />
-    );
-  }
+  const [activeFeederAnalytics, setActiveFeederAnalytics] =
+    React.useState(null);
 
   return (
-    <PopupShell title="33kV Feeder Panel">
-      <div className="w-full max-w-5xl mx-auto my-4 bg-[#081F5C] border-2 border-[#004AAD] p-6 text-white relative rounded-md">
-        <div className="text-center pb-4 mb-4 border-b border-blue-900/60">
-          <span className="text-[10px] font-medium text-blue-300 tracking-[0.18em] block">
-            FEEDER SWITCHGEAR PANEL
-          </span>
-          <h3 className="text-[20px] font-semibold text-white tracking-wide mt-1">
-            33kV Feeder Panel
-          </h3>
-        </div>
-
-        <div className="mb-4">
-          <button
-            type="button"
-            onClick={() => setActiveFeeder("incoming")}
-            className="max-w-xs w-full mx-auto bg-[#05143C] border border-[#004AAD] p-4 text-center rounded relative block hover:border-cyan-400 transition"
-          >
-            <span className="text-[9px] font-medium text-blue-300 tracking-wide block">
-              INCOMING FEEDER
+    <>
+      <PopupShell title="33kV Feeder Panel">
+        <div className="w-full max-w-5xl mx-auto my-4 bg-[#081F5C] border-2 border-[#004AAD] p-6 text-white shadow-lg relative panel-active-glow rounded-md">
+          <div className="text-center pb-4 mb-4 border-b border-blue-900/60">
+            <span className="text-[10px] font-black text-blue-300 tracking-[0.2em] block uppercase">
+              FEEDER SWITCHGEAR PANEL
             </span>
-            <strong className="text-[14px] font-semibold text-white mt-1 block">
-              Incoming Feeder 1
-            </strong>
-            <div className="mt-2 flex items-center justify-center gap-1.5 text-emerald-400 text-[12px] font-medium">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-              Connected / Active
+
+            <h3 className="text-xl font-black text-white tracking-widest mt-1">
+              33kV FEEDER PANEL
+            </h3>
+          </div>
+
+          <div className="mb-4">
+            <div
+              onClick={() =>
+                setActiveFeederAnalytics("incomingFeederAnalytics")
+              }
+              className="max-w-xs mx-auto bg-[#05143C] border border-[#004AAD] p-4 text-center rounded relative cursor-pointer hover:bg-[#07205A] transition"
+            >
+              <span className="text-[9px] font-black text-blue-300 tracking-wider block uppercase">
+                INCOMING FEEDER
+              </span>
+
+              <strong className="text-sm font-black text-white mt-1 block">
+                INCOMING FEEDER 1
+              </strong>
+
+              <div className="mt-2 flex items-center justify-center gap-1.5 text-emerald-400 text-xs font-bold">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                CONNECTED / ACTIVE
+              </div>
             </div>
-            <p className="mt-2 text-[9px] text-cyan-300 font-medium">
-              Click Analytics
-            </p>
-          </button>
-        </div>
+          </div>
 
-        <div className="w-full h-12 relative my-2">
-          <svg
-            className="w-full h-full overflow-visible"
-            viewBox="0 0 960 48"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <defs>
-              <marker
-                id="arrow-cyan-small-popup"
-                viewBox="0 0 10 10"
-                refX="6"
-                refY="5"
-                markerWidth="5"
-                markerHeight="5"
-                orient="auto-start-reverse"
-              >
-                <path d="M 0 2 L 6 5 L 0 8 z" fill="#00E5FF" />
-              </marker>
-            </defs>
+          <div className="w-full h-12 relative my-2">
+            <svg
+              className="w-full h-full overflow-visible"
+              viewBox="0 0 960 48"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <defs>
+                <marker
+                  id="arrow-cyan-small-popup"
+                  viewBox="0 0 10 10"
+                  refX="6"
+                  refY="5"
+                  markerWidth="5"
+                  markerHeight="5"
+                  orient="auto-start-reverse"
+                >
+                  <path d="M 0 2 L 6 5 L 0 8 z" fill="#00E5FF" />
+                </marker>
+              </defs>
 
-            <path
-              d="M 480 0 V 16 H 80 V 48 M 80 16 H 240 V 48 M 240 16 H 400 V 48 M 400 16 H 560 V 48 M 560 16 H 720 V 48 M 720 16 H 880 V 48"
-              stroke="#004AAD"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-
-            {[80, 240, 400, 560, 720, 880].map((x, i) => (
               <path
-                key={x}
-                d={`M 480 0 V 16 H ${x} V 48`}
-                stroke="#00E5FF"
+                d="M 480 0 V 16 H 80 V 48 M 80 16 H 240 V 48 M 240 16 H 400 V 48 M 400 16 H 560 V 48 M 560 16 H 720 V 48 M 720 16 H 880 V 48"
+                stroke="#004AAD"
                 strokeWidth="2.5"
-                className={i < 3 ? "flow-path-left" : "flow-path-right"}
-                markerEnd="url(#arrow-cyan-small-popup)"
+                strokeLinecap="round"
+                strokeLinejoin="round"
               />
-            ))}
-          </svg>
-        </div>
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-6 mt-2">
-          {outgoing.map((item, index) => {
-            const feederKey = `og${index + 1}`;
+              {[80, 240, 400, 560, 720, 880].map((x, i) => (
+                <path
+                  key={x}
+                  d={`M 480 0 V 16 H ${x} V 48`}
+                  stroke="#00E5FF"
+                  strokeWidth="2.5"
+                  className={i < 3 ? "flow-path-left" : "flow-path-right"}
+                  markerEnd="url(#arrow-cyan-small-popup)"
+                />
+              ))}
+            </svg>
+          </div>
 
-            return (
-              <button
-                type="button"
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-6 mt-2">
+            {outgoing.map((item, index) => (
+              <div
                 key={item.name}
-                onClick={() => setActiveFeeder(feederKey)}
-                className="bg-[#05143C] border border-[#004AAD] p-4 text-center text-white rounded hover:border-cyan-400 transition"
+                onClick={() =>
+                  setActiveFeederAnalytics(`og${index + 1}Analytics`)
+                }
+                className="bg-[#05143C] border border-[#004AAD] p-4 text-center text-white shadow rounded cursor-pointer hover:bg-[#07205A] transition"
               >
-                <span className="text-[9px] font-medium text-blue-300 block">
+                <span className="text-[9px] font-bold text-blue-300 block">
                   FEEDER
                 </span>
 
-                <strong className="text-[17px] font-semibold block tracking-wide mt-1">
+                <strong className="text-lg font-black block tracking-wider mt-1">
                   {item.name}
                 </strong>
 
-                <p className="text-[10px] text-blue-100 font-medium mt-1">
+                <p className="text-[10px] text-blue-100 font-bold mt-1">
                   To {item.transformer}
                 </p>
 
                 <div className="mt-3 flex items-center justify-center gap-1.5 text-emerald-400">
-                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-400" />
-                  <span className="text-[12px] font-medium">ON</span>
-                </div>
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_4px_#34d399]" />
 
-                <p className="mt-2 text-[9px] text-cyan-300 font-medium">
-                  Click Analytics
-                </p>
-              </button>
-            );
-          })}
+                  <span className="text-xs font-black">ON</span>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
-    </PopupShell>
+      </PopupShell>
+
+      {activeFeederAnalytics && (
+        <FeederAnalyticsView
+          type={activeFeederAnalytics}
+          onBack={() => setActiveFeederAnalytics(null)}
+        />
+      )}
+    </>
   );
 };
 
-  const TransformersPopup = () => (
-    <PopupShell title="33 / 0.433kV Transformers">
-      <div className="flex justify-center w-full my-3">
-        <div onClick={() => setTransformersExpanded(!transformersExpanded)} className="w-[90%] md:w-[70%] lg:w-[45%] h-32 max-w-xl bg-[#081F5C] border-2 border-[#004AAD] text-white shadow-lg rounded-md cursor-pointer hover:bg-[#0A276E] transition-colors">
-          <div className="h-full flex flex-col items-center justify-center text-center">
-            {/* <svg className="w-16 h-10 text-blue-300 mb-2" viewBox="0 0 60 30" fill="none">
-              <circle cx="20" cy="15" r="12" stroke="currentColor" strokeWidth="2.5" />
-              <circle cx="40" cy="15" r="12" stroke="currentColor" strokeWidth="2.5" />
-            </svg> */}
-  <svg
-  className="w-16 h-10 text-blue-300"
-  viewBox="0 0 80 40"
-  fill="none"
->
-  {/* 33kV Side - Larger */}
-  <circle
-    cx="30"
-    cy="20"
-    r="12"
-    stroke="currentColor"
-    strokeWidth="2.5"
-  />
+ const TransformerAnalyticsView = ({ data, onBack }) => {
+  if (!data) return null;
 
-  {/* 433V Side - Smaller & Overlapping */}
-  <circle
-    cx="46"
-    cy="20"
-    r="8"
-    stroke="currentColor"
-    strokeWidth="2.5"
-  />
-</svg>
-            <span className="text-[10px] font-black text-blue-300 tracking-[0.2em] uppercase">STEP-DOWN SUBSTATION</span>
-            <h3 className="text-lg font-black text-white tracking-wider mt-1">33 / 0.433kV TRANSFORMERS</h3>
+  const loadNumber = Number(String(data.load).replace("%", "")) || 0;
+  const oilTemp = Number(String(data.oilTemp).replace("°C", "")) || 0;
+  const windingTemp = Number(String(data.windingTemp).replace("°C", "")) || 0;
+
+  const graphValues = [
+    42,
+    48,
+    54,
+    61,
+    66,
+    loadNumber,
+    72,
+    76,
+    74,
+    loadNumber,
+  ];
+
+  const avg = Math.round(
+    graphValues.reduce((a, b) => a + b, 0) / graphValues.length
+  );
+
+  return (
+    <div className="fixed inset-0 z-[99999] bg-[#020B24] text-white overflow-auto">
+      <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(0,74,173,0.22),transparent_35%),radial-gradient(circle_at_top_right,rgba(34,211,238,0.1),transparent_30%)] p-8">
+        <div className="max-w-7xl mx-auto">
+          <button
+            type="button"
+            onClick={onBack}
+            className="mb-6 px-5 py-2.5 bg-white/5 border border-cyan-400/40 text-cyan-200 text-[12px] font-medium tracking-wide hover:bg-cyan-400/10 transition shadow-none"
+          >
+            ← Back to Transformers
+          </button>
+
+          <div className="relative overflow-hidden bg-white/8 border border-white/10 shadow-none p-4">
+            <div className="absolute top-0 left-0 right-0 h-[3px] bg-cyan-400" />
+
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="mt-2 text-3xl font-normal tracking-wide">
+                  {data.id} Transformer Analytics
+                </h2>
+
+                <p className="mt-1 text-[13px] font-medium text-blue-300 tracking-wide">
+                  33kV / 433V Step-Down Transformer Live Performance
+                </p>
+              </div>
+
+              <div className="text-right">
+                <span className="inline-flex items-center gap-2 px-4 py-1 bg-emerald-400/10 border border-emerald-400/30 text-emerald-300 text-[11px] font-semibold tracking-wide">
+                  <span className="h-2 w-2 rounded-full bg-emerald-400" />
+                  {data.buchholz}
+                </span>
+
+                <p className="mt-3 text-[10px] text-slate-400 tracking-wide">
+                  Relay Status: {data.buchholz}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-5 gap-4 mt-3">
+            {[
+              ["Oil Temp", data.oilTemp, ""],
+              ["Winding Temp", data.windingTemp, ""],
+              ["Load", data.load, ""],
+              ["Relay", data.buchholz, ""],
+              ["Voltage", "433", "V"],
+            ].map(([label, value, unit]) => (
+              <div
+                key={label}
+                className="bg-white/7 border border-white/10 p-3 shadow-none"
+              >
+                <p className="text-[15px] font-bold uppercase tracking-[0.12em] text-white">
+                  {label}
+                </p>
+
+                <div className="mt-1 flex items-end gap-2">
+                  <span className="text-[13px] font-normal text-slate-300">
+                    {value}
+                  </span>
+
+                  {unit && (
+                    <span className="pb-[2px] text-[10px] font-medium uppercase tracking-[0.08em] text-cyan-300">
+                      {unit}
+                    </span>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="grid grid-cols-[1.2fr_0.8fr] gap-5 mt-3">
+            <div className="bg-white/7 border border-white/10 p-6 shadow-none">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-[15px] font-semibold tracking-wide">
+                  Transformer Load Graph
+                </h3>
+
+                <div className="text-right">
+                  <p className="text-[12px] text-slate-400">Average</p>
+
+                  <h4 className="text-lg font-semibold text-cyan-300">
+                    {avg}%
+                  </h4>
+                </div>
+              </div>
+
+              <div className="flex items-end gap-3 h-[280px] border-b border-white/10 pb-3">
+                {graphValues.map((value, index) => (
+                  <div key={index} className="flex-1 flex flex-col justify-end">
+                    <div
+                      className="bg-cyan-400/90 shadow-none"
+                      style={{ height: `${value * 2.5}px` }}
+                    />
+
+                    <span className="text-[8px] text-center mt-2 text-blue-200">
+                      {index + 1}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="grid grid-cols-3 gap-3 mt-5">
+                <div className="bg-[#06184A]/70 border border-white/10 p-4 shadow-none">
+                  <p className="text-[14px] font-medium">Peak Load</p>
+
+                  <h4 className="text-[13px] font-semibold text-slate-400">
+                    {Math.max(...graphValues)}%
+                  </h4>
+                </div>
+
+                <div className="bg-[#06184A]/70 border border-white/10 p-4 shadow-none">
+                  <p className="text-[14px] font-medium">Minimum</p>
+
+                  <h4 className="text-[13px] font-semibold text-slate-400">
+                    {Math.min(...graphValues)}%
+                  </h4>
+                </div>
+
+                <div className="bg-[#06184A]/70 border border-white/10 p-4 shadow-none">
+                  <p className="text-[14px] font-medium">Relay</p>
+
+                  <h4 className="text-[13px] font-semibold text-emerald-200">
+                    {data.buchholz}
+                  </h4>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white/7 border border-white/10 p-6 shadow-none">
+              <h3 className="text-[15px] font-semibold tracking-wide mb-6">
+                Live Transformer Status
+              </h3>
+
+              <div className="flex justify-center">
+                <div className="relative h-48 w-48 rounded-full border-[18px] border-white/10 flex items-center justify-center shadow-none">
+                  <div className="absolute inset-[-18px] rounded-full border-[18px] border-cyan-400 border-r-transparent border-b-transparent rotate-45" />
+
+                  <div className="text-center">
+                    <span className="block text-[30px] font-normal">
+                      {loadNumber}%
+                    </span>
+
+                    <span className="text-[13px] font-medium text-cyan-300 tracking-wide">
+                      TX Load
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-8 space-y-5">
+                {[
+                  ["Load", loadNumber],
+                  ["Oil Temperature", oilTemp],
+                  ["Winding Temperature", windingTemp],
+                ].map(([label, value]) => (
+                  <div key={label}>
+                    <div className="flex justify-between text-[12px] mb-2">
+                      <span className="text-blue-100 font-medium">
+                        {label}
+                      </span>
+
+                      <span className="text-cyan-300 font-semibold text-[12px]">
+                        {Math.round(value)}%
+                      </span>
+                    </div>
+
+                    <div className="h-2 bg-white/10 overflow-hidden">
+                      <div
+                        className="h-full bg-cyan-400 shadow-none"
+                        style={{ width: `${Math.min(value, 100)}%` }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              
+            </div>
           </div>
         </div>
       </div>
-      {transformersExpanded && (
-        <>
-          <div className="flex justify-center h-10"><div className="flow-line-vertical h-full"><div className="flow-pulse-vertical" /></div></div>
-          <div className="max-w-7xl mx-auto px-4">
-            <div className="mx-auto w-[84%] h-[2px] bg-cyan-400 relative overflow-hidden"><div className="flow-pulse-horizontal" /></div>
-            <div className="grid grid-cols-6 gap-4">
-              {transformers.map((tf) => (
-                <div key={tf.id} className="flex flex-col items-center">
-                  <div className="flow-line-vertical h-8"><div className="flow-pulse-vertical" /></div>
-                  <div className="w-full bg-[#081F5C] border-2 border-[#004AAD] p-4 text-white shadow-md flex flex-col justify-between rounded relative panel-active-glow min-h-[200px]">
-                    <div>
-                      <div className="mb-3 flex justify-center items-center">
-                        {/* <svg className="w-14 h-8 text-blue-300" viewBox="0 0 60 30" fill="none"><circle cx="20" cy="15" r="12" stroke="currentColor" strokeWidth="2.5" /><circle cx="40" cy="15" r="12" stroke="currentColor" strokeWidth="2.5" /></svg> */}
- <svg
-  className="w-16 h-10 text-blue-300"
-  viewBox="0 0 80 40"
-  fill="none"
->
-  {/* 33kV Side - Larger */}
-  <circle
-    cx="30"
-    cy="20"
-    r="12"
-    stroke="currentColor"
-    strokeWidth="2.5"
-  />
+    </div>
+  );
+};
 
-  {/* 433V Side - Smaller & Overlapping */}
-  <circle
-    cx="46"
-    cy="20"
-    r="8"
-    stroke="currentColor"
-    strokeWidth="2.5"
-  />
-</svg>
-                      </div>
-                      <strong className="text-base font-black block text-center tracking-widest">{tf.id}</strong>
-                      <span className="text-[9px] font-bold text-blue-300 text-center block uppercase">33kV / 433V TX</span>
-                    </div>
-                    <div className="mt-4 space-y-2 border-t border-blue-900 pt-3">
-                      <div className="flex justify-between items-center text-[10px]"><span className="text-blue-200">Oil Temp:</span><span className="font-extrabold text-white">{tf.oilTemp}</span></div>
-                      <div className="flex justify-between items-center text-[10px]"><span className="text-blue-200">Wind Temp:</span><span className="font-extrabold text-white">{tf.windingTemp}</span></div>
-                      <div className="flex justify-between items-center text-[10px]"><span className="text-blue-200">Relay:</span><span className="font-extrabold text-emerald-400">{tf.buchholz}</span></div>
-                      <div className="flex justify-between items-center text-[10px]"><span className="text-blue-200">Load:</span><span className="font-extrabold text-white">{tf.load}</span></div>
-                    </div>
-                  </div>
-                </div>
-              ))}
+const TransformersPopup = () => {
+  const [activeTransformerAnalytics, setActiveTransformerAnalytics] =
+    React.useState(null);
+
+  return (
+    <>
+      <PopupShell title="33 / 0.433kV Transformers">
+        <div className="flex justify-center w-full my-3">
+          <div
+            onClick={() => setTransformersExpanded(!transformersExpanded)}
+            className="w-[90%] md:w-[70%] lg:w-[45%] h-32 max-w-xl bg-[#081F5C] border-2 border-[#004AAD] text-white shadow-lg rounded-md cursor-pointer hover:bg-[#0A276E] transition-colors"
+          >
+            <div className="h-full flex flex-col items-center justify-center text-center">
+              <svg className="w-16 h-10 text-blue-300" viewBox="0 0 80 40" fill="none">
+                <circle cx="30" cy="20" r="12" stroke="currentColor" strokeWidth="2.5" />
+                <circle cx="46" cy="20" r="8" stroke="currentColor" strokeWidth="2.5" />
+              </svg>
+
+              <span className="text-[10px] font-black text-blue-300 tracking-[0.2em] uppercase">
+                STEP-DOWN SUBSTATION
+              </span>
+
+              <h3 className="text-lg font-black text-white tracking-wider mt-1">
+                33 / 0.433kV TRANSFORMERS
+              </h3>
             </div>
           </div>
-        </>
-      )}
-    </PopupShell>
-  );
+        </div>
 
+        {transformersExpanded && (
+          <>
+            <div className="flex justify-center h-10">
+              <div className="flow-line-vertical h-full">
+                <div className="flow-pulse-vertical" />
+              </div>
+            </div>
+
+            <div className="max-w-7xl mx-auto px-4">
+              <div className="mx-auto w-[84%] h-[2px] bg-cyan-400 relative overflow-hidden">
+                <div className="flow-pulse-horizontal" />
+              </div>
+
+              <div className="grid grid-cols-6 gap-4">
+                {transformers.map((tf) => (
+                  <div key={tf.id} className="flex flex-col items-center">
+                    <div className="flow-line-vertical h-8">
+                      <div className="flow-pulse-vertical" />
+                    </div>
+
+                    <div
+                      onClick={() => setActiveTransformerAnalytics(tf)}
+                      className="w-full bg-[#081F5C] border-2 border-[#004AAD] p-4 text-white shadow-md flex flex-col justify-between rounded relative panel-active-glow min-h-[200px] cursor-pointer hover:bg-[#0A276E] transition-colors"
+                    >
+                      <div>
+                        <div className="mb-3 flex justify-center items-center">
+                          <svg className="w-16 h-10 text-blue-300" viewBox="0 0 80 40" fill="none">
+                            <circle cx="30" cy="20" r="12" stroke="currentColor" strokeWidth="2.5" />
+                            <circle cx="46" cy="20" r="8" stroke="currentColor" strokeWidth="2.5" />
+                          </svg>
+                        </div>
+
+                        <strong className="text-base font-black block text-center tracking-widest">
+                          {tf.id}
+                        </strong>
+
+                        <span className="text-[9px] font-bold text-blue-300 text-center block uppercase">
+                          33kV / 433V TX
+                        </span>
+                      </div>
+
+                      <div className="mt-4 space-y-2 border-t border-blue-900 pt-3">
+                        <div className="flex justify-between items-center text-[10px]">
+                          <span className="text-blue-200">Oil Temp:</span>
+                          <span className="font-extrabold text-white">
+                            {tf.oilTemp}
+                          </span>
+                        </div>
+
+                        <div className="flex justify-between items-center text-[10px]">
+                          <span className="text-blue-200">Wind Temp:</span>
+                          <span className="font-extrabold text-white">
+                            {tf.windingTemp}
+                          </span>
+                        </div>
+
+                        <div className="flex justify-between items-center text-[10px]">
+                          <span className="text-blue-200">Relay:</span>
+                          <span className="font-extrabold text-emerald-400">
+                            {tf.buchholz}
+                          </span>
+                        </div>
+
+                        <div className="flex justify-between items-center text-[10px]">
+                          <span className="text-blue-200">Load:</span>
+                          <span className="font-extrabold text-white">
+                            {tf.load}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
+      </PopupShell>
+
+      {activeTransformerAnalytics && (
+        <TransformerAnalyticsView
+          data={activeTransformerAnalytics}
+          onBack={() => setActiveTransformerAnalytics(null)}
+        />
+      )}
+    </>
+  );
+};
   // const KioskPopup = () => (
   //   <PopupShell title="LT Kiosk">
   //     <div className="flex justify-center w-full my-3">
@@ -2085,12 +2543,220 @@ const FeederPopup = () => {
   //   </PopupShell>
   // );
 
+const KioskAnalyticsView = ({ data, onBack }) => {
+  if (!data) return null;
+
+  const loadNumber = Number(String(data.load).replace("%", "")) || 0;
+
+  const graphValues = [
+    42,
+    48,
+    54,
+    60,
+    66,
+    loadNumber,
+    72,
+    76,
+    74,
+    loadNumber,
+  ];
+
+  const avg = Math.round(
+    graphValues.reduce((a, b) => a + b, 0) / graphValues.length
+  );
+
+  return (
+    <div className="fixed inset-0 z-[99999] bg-[#020B24] text-white overflow-auto">
+      <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(0,74,173,0.22),transparent_35%),radial-gradient(circle_at_top_right,rgba(34,211,238,0.1),transparent_30%)] p-8">
+        <div className="max-w-7xl mx-auto">
+          <button
+            type="button"
+            onClick={onBack}
+            className="mb-6 px-5 py-2.5 bg-white/5 border border-cyan-400/40 text-cyan-200 text-[12px] font-medium tracking-wide hover:bg-cyan-400/10 transition shadow-none"
+          >
+            ← Back to LT Kiosk
+          </button>
+
+          <div className="relative overflow-hidden bg-white/8 border border-white/10 shadow-none p-4">
+            <div className="absolute top-0 left-0 right-0 h-[3px] bg-cyan-400" />
+
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="mt-2 text-3xl font-normal tracking-wide">
+                  {data.title} Analytics
+                </h2>
+
+                <p className="mt-1 text-[13px] font-medium text-blue-300 tracking-wide">
+                  433V LT Kiosk Live Electrical Performance
+                </p>
+              </div>
+
+              <div className="text-right">
+                <span className="inline-flex items-center gap-2 px-4 py-1 bg-emerald-400/10 border border-emerald-400/30 text-emerald-300 text-[11px] font-semibold tracking-wide">
+                  <span className="h-2 w-2 rounded-full bg-emerald-400" />
+                  {data.status}
+                </span>
+
+                <p className="mt-3 text-[10px] text-slate-400 tracking-wide">
+                  Status: {data.status}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-5 gap-4 mt-3">
+            {[
+              ["Energy", data.kwh, "kWh"],
+              ["Reactive", data.kvh, "kVh"],
+              ["Current", data.current, ""],
+              ["Voltage", data.voltage, ""],
+              ["Power Factor", data.pf, ""],
+            ].map(([label, value, unit]) => (
+              <div
+                key={label}
+                className="bg-white/7 border border-white/10 p-3 shadow-none"
+              >
+                <p className="text-[15px] font-bold uppercase tracking-[0.12em] text-white">
+                  {label}
+                </p>
+
+                <div className="mt-1 flex items-end gap-2">
+                  <span className="text-[13px] font-normal text-slate-300">
+                    {value}
+                  </span>
+
+                  {unit && (
+                    <span className="pb-[2px] text-[10px] font-medium uppercase tracking-[0.08em] text-cyan-300">
+                      {unit}
+                    </span>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="grid grid-cols-[1.2fr_0.8fr] gap-5 mt-3">
+            <div className="bg-white/7 border border-white/10 p-6 shadow-none">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-[15px] font-semibold tracking-wide">
+                  Kiosk Load Graph
+                </h3>
+
+                <div className="text-right">
+                  <p className="text-[12px] text-slate-400">Average</p>
+
+                  <h4 className="text-lg font-semibold text-cyan-300">
+                    {avg}%
+                  </h4>
+                </div>
+              </div>
+
+              <div className="flex items-end gap-3 h-[280px] border-b border-white/10 pb-3">
+                {graphValues.map((value, index) => (
+                  <div key={index} className="flex-1 flex flex-col justify-end">
+                    <div
+                      className="bg-cyan-400/90 shadow-none"
+                      style={{ height: `${value * 2.5}px` }}
+                    />
+
+                    <span className="text-[8px] text-center mt-2 text-blue-200">
+                      {index + 1}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="grid grid-cols-3 gap-3 mt-5">
+                <div className="bg-[#06184A]/70 border border-white/10 p-4 shadow-none">
+                  <p className="text-[14px] font-medium">Peak Load</p>
+
+                  <h4 className="text-[13px] font-semibold text-slate-400">
+                    {Math.max(...graphValues)}%
+                  </h4>
+                </div>
+
+                <div className="bg-[#06184A]/70 border border-white/10 p-4 shadow-none">
+                  <p className="text-[14px] font-medium">Minimum</p>
+
+                  <h4 className="text-[13px] font-semibold text-slate-400">
+                    {Math.min(...graphValues)}%
+                  </h4>
+                </div>
+
+                <div className="bg-[#06184A]/70 border border-white/10 p-4 shadow-none">
+                  <p className="text-[14px] font-medium">Status</p>
+
+                  <h4 className="text-[13px] font-semibold text-emerald-200">
+                    {data.status}
+                  </h4>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white/7 border border-white/10 p-6 shadow-none">
+              <h3 className="text-[15px] font-semibold tracking-wide mb-6">
+                Live Kiosk Status
+              </h3>
+
+              <div className="flex justify-center">
+                <div className="relative h-48 w-48 rounded-full border-[18px] border-white/10 flex items-center justify-center shadow-none">
+                  <div className="absolute inset-[-18px] rounded-full border-[18px] border-cyan-400 border-r-transparent border-b-transparent rotate-45" />
+
+                  <div className="text-center">
+                    <span className="block text-[30px] font-normal">
+                      {loadNumber}%
+                    </span>
+
+                    <span className="text-[13px] font-medium text-cyan-300 tracking-wide">
+                      Kiosk Load
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-8 space-y-5">
+                {[
+                  ["Load", loadNumber],
+                  ["Power Factor", Number(data.pf) * 100],
+                  ["Kiosk Health", data.health],
+                ].map(([label, value]) => (
+                  <div key={label}>
+                    <div className="flex justify-between text-[12px] mb-2">
+                      <span className="text-blue-100 font-medium">
+                        {label}
+                      </span>
+
+                      <span className="text-cyan-300 font-semibold text-[12px]">
+                        {Math.round(value)}%
+                      </span>
+                    </div>
+
+                    <div className="h-2 bg-white/10 overflow-hidden">
+                      <div
+                        className="h-full bg-cyan-400 shadow-none"
+                        style={{ width: `${Math.min(value, 100)}%` }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const KioskMonitorBox = ({
   id,
   title,
   subtitle,
   openedKiosks,
   setOpenedKiosks,
+  onClick,
 }) => {
   const monitorData = [
     ["kWh", "1,280"],
@@ -2109,9 +2775,15 @@ const KioskMonitorBox = ({
     });
   };
 
+  const handleClick = (event) => {
+    event.stopPropagation();
+    if (onClick) onClick();
+  };
+
   return (
     <div
       onMouseEnter={handleHover}
+      onClick={handleClick}
       className="w-full bg-[#081F5C] border-2 border-[#004AAD] text-white shadow-md rounded relative panel-active-glow h-[175px] overflow-hidden cursor-pointer"
     >
       {!showMonitor ? (
@@ -2129,7 +2801,10 @@ const KioskMonitorBox = ({
           </span>
         </div>
       ) : (
-        <div className="absolute inset-0 z-20 bg-[#081F5C] px-4 py-3">
+        <div
+          onClick={handleClick}
+          className="absolute inset-0 z-20 bg-[#081F5C] px-4 py-3"
+        >
           <div className="text-center border-b border-[#2B5DA8] pb-2 mb-2">
             <h4 className="text-[12px] font-black text-white uppercase tracking-[0.12em] leading-none">
               {title}
@@ -2175,64 +2850,88 @@ const KioskMonitorBox = ({
 
 const KioskPopup = () => {
   const [openedKiosks, setOpenedKiosks] = React.useState([]);
+  const [activeKioskAnalytics, setActiveKioskAnalytics] =
+    React.useState(null);
 
   return (
-    <PopupShell title="LT Kiosk">
-      <div className="flex justify-center w-full my-3">
-        <div
-          onClick={() => setKiosksExpanded(!kiosksExpanded)}
-          className="w-[90%] md:w-[70%] lg:w-[45%] h-32 max-w-xl bg-[#081F5C] border-2 border-[#004AAD] text-white shadow-lg rounded-md cursor-pointer hover:bg-[#0A276E] transition-colors"
-        >
-          <div className="h-full flex flex-col items-center justify-center text-center">
-            <span className="text-[10px] font-black text-blue-300 tracking-[0.2em] uppercase">
-              STEP-DOWN COMBINER PANEL
-            </span>
+    <>
+      <PopupShell title="LT Kiosk">
+        <div className="flex justify-center w-full my-3">
+          <div
+            onClick={() => setKiosksExpanded(!kiosksExpanded)}
+            className="w-[90%] md:w-[70%] lg:w-[45%] h-32 max-w-xl bg-[#081F5C] border-2 border-[#004AAD] text-white shadow-lg rounded-md cursor-pointer hover:bg-[#0A276E] transition-colors"
+          >
+            <div className="h-full flex flex-col items-center justify-center text-center">
+              <span className="text-[10px] font-black text-blue-300 tracking-[0.2em] uppercase">
+                STEP-DOWN COMBINER PANEL
+              </span>
 
-            <h3 className="text-lg font-black text-white tracking-wider mt-1">
-              LT KIOSK
-            </h3>
+              <h3 className="text-lg font-black text-white tracking-wider mt-1">
+                LT KIOSK
+              </h3>
+            </div>
           </div>
         </div>
-      </div>
 
-      {kiosksExpanded && (
-        <>
-          <div className="flex justify-center h-10">
-            <div className="flow-line-vertical h-full">
-              <div className="flow-pulse-vertical" />
-            </div>
-          </div>
-
-          <div className="max-w-7xl mx-auto px-4">
-            <div className="mx-auto w-[84%] h-[2px] bg-cyan-400 relative overflow-hidden">
-              <div className="flow-pulse-horizontal" />
+        {kiosksExpanded && (
+          <>
+            <div className="flex justify-center h-10">
+              <div className="flow-line-vertical h-full">
+                <div className="flow-pulse-vertical" />
+              </div>
             </div>
 
-            <div className="grid grid-cols-6 gap-4">
-              {Array.from({ length: 6 }).map((_, index) => {
-                const kioskId = `kiosk-${index + 1}`;
+            <div className="max-w-7xl mx-auto px-4">
+              <div className="mx-auto w-[84%] h-[2px] bg-cyan-400 relative overflow-hidden">
+                <div className="flow-pulse-horizontal" />
+              </div>
 
-                return (
-                  <div key={kioskId} className="flex flex-col items-center">
-                    <div className="flow-line-vertical h-8">
-                      <div className="flow-pulse-vertical" />
+              <div className="grid grid-cols-6 gap-4">
+                {Array.from({ length: 6 }).map((_, index) => {
+                  const kioskData = {
+                    id: `kiosk-${index + 1}`,
+                    title: `KIOSK-${index + 1}`,
+                    subtitle: "433V PANEL",
+                    kwh: `${1280 + index * 60}`,
+                    kvh: `${1195 + index * 55}`,
+                    current: `${420 + index * 8} A`,
+                    voltage: "433 V",
+                    pf: index % 2 === 0 ? "0.98" : "0.97",
+                    load: 70 + index * 3,
+                    health: 92 + index,
+                    status: "Stable",
+                  };
+
+                  return (
+                    <div key={kioskData.id} className="flex flex-col items-center">
+                      <div className="flow-line-vertical h-8">
+                        <div className="flow-pulse-vertical" />
+                      </div>
+
+                      <KioskMonitorBox
+                        id={kioskData.id}
+                        title={kioskData.title}
+                        subtitle={kioskData.subtitle}
+                        openedKiosks={openedKiosks}
+                        setOpenedKiosks={setOpenedKiosks}
+                        onClick={() => setActiveKioskAnalytics(kioskData)}
+                      />
                     </div>
-
-                    <KioskMonitorBox
-                      id={kioskId}
-                      title={`KIOSK-${index + 1}`}
-                      subtitle="433V PANEL"
-                      openedKiosks={openedKiosks}
-                      setOpenedKiosks={setOpenedKiosks}
-                    />
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
-          </div>
-        </>
+          </>
+        )}
+      </PopupShell>
+
+      {activeKioskAnalytics && (
+        <KioskAnalyticsView
+          data={activeKioskAnalytics}
+          onBack={() => setActiveKioskAnalytics(null)}
+        />
       )}
-    </PopupShell>
+    </>
   );
 };
 
@@ -2271,11 +2970,226 @@ const KioskPopup = () => {
   //   </PopupShell>
   // );
 
+const BusbarAnalyticsView = ({ data, onBack }) => {
+  if (!data) return null;
+
+  const tempNumber = Number(String(data.temp).replace("°C", "")) || 0;
+  const loadNumber = Number(data.load) || 0;
+
+  const graphValues = [
+    40,
+    46,
+    52,
+    58,
+    64,
+    loadNumber,
+    70,
+    74,
+    72,
+    loadNumber,
+  ];
+
+  const avg = Math.round(
+    graphValues.reduce((a, b) => a + b, 0) / graphValues.length
+  );
+
+  return (
+    <div className="fixed inset-0 z-[99999] bg-[#020B24] text-white overflow-auto">
+      <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(0,74,173,0.22),transparent_35%),radial-gradient(circle_at_top_right,rgba(34,211,238,0.1),transparent_30%)] p-8">
+        <div className="max-w-7xl mx-auto">
+          <button
+            type="button"
+            onClick={onBack}
+            className="mb-6 px-5 py-2.5 bg-white/5 border border-cyan-400/40 text-cyan-200 text-[12px] font-medium tracking-wide hover:bg-cyan-400/10 transition shadow-none"
+          >
+            ← Back to Busbar
+          </button>
+
+          <div className="relative overflow-hidden bg-white/8 border border-white/10 shadow-none p-4">
+            <div className="absolute top-0 left-0 right-0 h-[3px] bg-cyan-400" />
+
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="mt-2 text-3xl font-normal tracking-wide">
+                  {data.title} Analytics
+                </h2>
+
+                <p className="mt-1 text-[13px] font-medium text-blue-300 tracking-wide">
+                  433V LT Busduct / Busbar Health Monitoring
+                </p>
+              </div>
+
+              <div className="text-right">
+                <span className="inline-flex items-center gap-2 px-4 py-1 bg-emerald-400/10 border border-emerald-400/30 text-emerald-300 text-[11px] font-semibold tracking-wide">
+                  <span className="h-2 w-2 rounded-full bg-emerald-400" />
+                  {data.health}
+                </span>
+
+                <p className="mt-3 text-[10px] text-slate-400 tracking-wide">
+                  Status: {data.health}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-5 gap-4 mt-3">
+            {[
+              ["Temperature", data.temp, ""],
+              ["Vibration", data.vibration, ""],
+              ["Health", data.health, ""],
+              ["Voltage", data.voltage, ""],
+              ["Load", `${data.load}%`, ""],
+            ].map(([label, value, unit]) => (
+              <div
+                key={label}
+                className="bg-white/7 border border-white/10 p-3 shadow-none"
+              >
+                <p className="text-[15px] font-bold uppercase tracking-[0.12em] text-white">
+                  {label}
+                </p>
+
+                <div className="mt-1 flex items-end gap-2">
+                  <span className="text-[13px] font-normal text-slate-300">
+                    {value}
+                  </span>
+
+                  {unit && (
+                    <span className="pb-[2px] text-[10px] font-medium uppercase tracking-[0.08em] text-cyan-300">
+                      {unit}
+                    </span>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="grid grid-cols-[1.2fr_0.8fr] gap-5 mt-3">
+            <div className="bg-white/7 border border-white/10 p-6 shadow-none">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-[15px] font-semibold tracking-wide">
+                  Busbar Load Graph
+                </h3>
+
+                <div className="text-right">
+                  <p className="text-[12px] text-slate-400">Average</p>
+
+                  <h4 className="text-lg font-semibold text-cyan-300">
+                    {avg}%
+                  </h4>
+                </div>
+              </div>
+
+              <div className="flex items-end gap-3 h-[280px] border-b border-white/10 pb-3">
+                {graphValues.map((value, index) => (
+                  <div key={index} className="flex-1 flex flex-col justify-end">
+                    <div
+                      className="bg-cyan-400/90 shadow-none"
+                      style={{ height: `${value * 2.5}px` }}
+                    />
+
+                    <span className="text-[8px] text-center mt-2 text-blue-200">
+                      {index + 1}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="grid grid-cols-3 gap-3 mt-5">
+                <div className="bg-[#06184A]/70 border border-white/10 p-4 shadow-none">
+                  <p className="text-[14px] font-medium">Peak Load</p>
+
+                  <h4 className="text-[13px] font-semibold text-slate-400">
+                    {Math.max(...graphValues)}%
+                  </h4>
+                </div>
+
+                <div className="bg-[#06184A]/70 border border-white/10 p-4 shadow-none">
+                  <p className="text-[14px] font-medium">Temperature</p>
+
+                  <h4 className="text-[13px] font-semibold text-slate-400">
+                    {tempNumber}°C
+                  </h4>
+                </div>
+
+                <div className="bg-[#06184A]/70 border border-white/10 p-4 shadow-none">
+                  <p className="text-[14px] font-medium">Health</p>
+
+                  <h4 className="text-[13px] font-semibold text-emerald-200">
+                    {data.health}
+                  </h4>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white/7 border border-white/10 p-6 shadow-none">
+              <h3 className="text-[15px] font-semibold tracking-wide mb-6">
+                Live Busbar Status
+              </h3>
+
+              <div className="flex justify-center">
+                <div className="relative h-48 w-48 rounded-full border-[18px] border-white/10 flex items-center justify-center shadow-none">
+                  <div className="absolute inset-[-18px] rounded-full border-[18px] border-cyan-400 border-r-transparent border-b-transparent rotate-45" />
+
+                  <div className="text-center">
+                    <span className="block text-[30px] font-normal">
+                      {loadNumber}%
+                    </span>
+
+                    <span className="text-[13px] font-medium text-cyan-300 tracking-wide">
+                      Bus Load
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-8 space-y-5">
+                {[
+                  ["Load", loadNumber],
+                  ["Temperature", tempNumber],
+                  ["Busbar Health", data.health === "ON" ? 96 : 70],
+                ].map(([label, value]) => (
+                  <div key={label}>
+                    <div className="flex justify-between text-[12px] mb-2">
+                      <span className="text-blue-100 font-medium">
+                        {label}
+                      </span>
+
+                      <span className="text-cyan-300 font-semibold text-[12px]">
+                        {typeof value === "number" ? `${Math.round(value)}%` : value}
+                      </span>
+                    </div>
+
+                    <div className="h-2 bg-white/10 overflow-hidden">
+                      <div
+                        className="h-full bg-cyan-400 shadow-none"
+                        style={{
+                          width: `${
+                            typeof value === "number"
+                              ? Math.min(value, 100)
+                              : 96
+                          }%`,
+                        }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const BusbarMonitorBox = ({
   id,
   title,
   openedBusbars,
   setOpenedBusbars,
+  onClick,
 }) => {
   const monitorData = [
     ["Temp", "42°C"],
@@ -2286,14 +3200,18 @@ const BusbarMonitorBox = ({
   const showMonitor = openedBusbars.includes(id);
 
   const handleHover = () => {
-    setOpenedBusbars((prev) =>
-      prev.includes(id) ? prev : [...prev, id]
-    );
+    setOpenedBusbars((prev) => (prev.includes(id) ? prev : [...prev, id]));
+  };
+
+  const handleClick = (event) => {
+    event.stopPropagation();
+    if (onClick) onClick();
   };
 
   return (
     <div
       onMouseEnter={handleHover}
+      onClick={handleClick}
       className="w-full h-[165px] bg-[#081F5C] border-2 border-[#004AAD] text-white shadow-md rounded relative panel-active-glow overflow-hidden cursor-pointer"
     >
       {!showMonitor ? (
@@ -2311,7 +3229,10 @@ const BusbarMonitorBox = ({
           </span>
         </div>
       ) : (
-        <div className="absolute inset-0 z-20 bg-[#081F5C] px-4 py-3">
+        <div
+          onClick={handleClick}
+          className="absolute inset-0 z-20 bg-[#081F5C] px-4 py-3"
+        >
           <div className="text-center border-b border-[#2B5DA8] pb-2 mb-2">
             <h4 className="text-[12px] font-black text-white uppercase tracking-[0.12em] leading-none">
               {title}
@@ -2365,65 +3286,85 @@ const BusbarMonitorBox = ({
 
 const BusbarPopup = () => {
   const [openedBusbars, setOpenedBusbars] = React.useState([]);
+  const [activeBusbarAnalytics, setActiveBusbarAnalytics] =
+    React.useState(null);
 
   return (
-    <PopupShell title="LT Busduct / Busbar">
-      <div className="flex justify-center w-full my-3">
-        <div
-          onClick={() => setBusbarsExpanded(!busbarsExpanded)}
-          className="w-[90%] md:w-[70%] lg:w-[45%] h-32 max-w-xl bg-[#081F5C] border-2 border-[#004AAD] text-white shadow-lg rounded-md cursor-pointer hover:bg-[#0A276E] transition-colors"
-        >
-          <div className="h-full flex flex-col items-center justify-center text-center">
-            <span className="text-[10px] font-black text-blue-300 tracking-[0.2em] uppercase">
-              POWER DISTRIBUTION
-            </span>
+    <>
+      <PopupShell title="LT Busduct / Busbar">
+        <div className="flex justify-center w-full my-3">
+          <div
+            onClick={() => setBusbarsExpanded(!busbarsExpanded)}
+            className="w-[90%] md:w-[70%] lg:w-[45%] h-32 max-w-xl bg-[#081F5C] border-2 border-[#004AAD] text-white shadow-lg rounded-md cursor-pointer hover:bg-[#0A276E] transition-colors"
+          >
+            <div className="h-full flex flex-col items-center justify-center text-center">
+              <span className="text-[10px] font-black text-blue-300 tracking-[0.2em] uppercase">
+                POWER DISTRIBUTION
+              </span>
 
-            <h3 className="text-lg font-black text-white tracking-wider mt-1">
-              LT BUSDUCT / BUSBAR
-            </h3>
+              <h3 className="text-lg font-black text-white tracking-wider mt-1">
+                LT BUSDUCT / BUSBAR
+              </h3>
 
-            <span className="text-xs text-blue-300 mt-1">433V</span>
+              <span className="text-xs text-blue-300 mt-1">433V</span>
+            </div>
           </div>
         </div>
-      </div>
 
-      {busbarsExpanded && (
-        <>
-          <div className="flex justify-center h-10">
-            <div className="flow-line-vertical h-full">
-              <div className="flow-pulse-vertical" />
-            </div>
-          </div>
-
-          <div className="max-w-7xl mx-auto px-4">
-            <div className="mx-auto w-[84%] h-[2px] bg-cyan-400 relative overflow-hidden">
-              <div className="flow-pulse-horizontal" />
+        {busbarsExpanded && (
+          <>
+            <div className="flex justify-center h-10">
+              <div className="flow-line-vertical h-full">
+                <div className="flow-pulse-vertical" />
+              </div>
             </div>
 
-            <div className="grid grid-cols-6 gap-4">
-              {Array.from({ length: 6 }).map((_, index) => {
-                const busbarId = `bus-${index + 1}`;
+            <div className="max-w-7xl mx-auto px-4">
+              <div className="mx-auto w-[84%] h-[2px] bg-cyan-400 relative overflow-hidden">
+                <div className="flow-pulse-horizontal" />
+              </div>
 
-                return (
-                  <div key={busbarId} className="flex flex-col items-center">
-                    <div className="flow-line-vertical h-8">
-                      <div className="flow-pulse-vertical" />
+              <div className="grid grid-cols-6 gap-4">
+                {Array.from({ length: 6 }).map((_, index) => {
+                  const busbarData = {
+                    id: `bus-${index + 1}`,
+                    title: `BUS-${index + 1}`,
+                    temp: `${42 + index}°C`,
+                    vibration: "Normal",
+                    health: "ON",
+                    voltage: "433 V",
+                    load: 68 + index * 3,
+                  };
+
+                  return (
+                    <div key={busbarData.id} className="flex flex-col items-center">
+                      <div className="flow-line-vertical h-8">
+                        <div className="flow-pulse-vertical" />
+                      </div>
+
+                      <BusbarMonitorBox
+                        id={busbarData.id}
+                        title={busbarData.title}
+                        openedBusbars={openedBusbars}
+                        setOpenedBusbars={setOpenedBusbars}
+                        onClick={() => setActiveBusbarAnalytics(busbarData)}
+                      />
                     </div>
-
-                    <BusbarMonitorBox
-                      id={busbarId}
-                      title={`BUS-${index + 1}`}
-                      openedBusbars={openedBusbars}
-                      setOpenedBusbars={setOpenedBusbars}
-                    />
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
-          </div>
-        </>
+          </>
+        )}
+      </PopupShell>
+
+      {activeBusbarAnalytics && (
+        <BusbarAnalyticsView
+          data={activeBusbarAnalytics}
+          onBack={() => setActiveBusbarAnalytics(null)}
+        />
       )}
-    </PopupShell>
+    </>
   );
 };
 
@@ -2595,8 +3536,213 @@ const BusbarPopup = () => {
 // );
 
 
+const PccPanelAnalyticsView = ({ data, onBack }) => {
+  if (!data) return null;
+
+  const graphValues = [42, 48, 55, 61, 66, data.load, 72, 76, 74, data.load];
+
+  const avg = Math.round(
+    graphValues.reduce((a, b) => a + b, 0) / graphValues.length
+  );
+
+  return (
+    <div className="fixed inset-0 z-[99999] bg-[#020B24] text-white overflow-auto">
+      <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(0,74,173,0.22),transparent_35%),radial-gradient(circle_at_top_right,rgba(34,211,238,0.1),transparent_30%)] p-8">
+        <div className="max-w-7xl mx-auto">
+          <button
+            type="button"
+            onClick={onBack}
+            className="mb-6 px-5 py-2.5 bg-white/5 border border-cyan-400/40 text-cyan-200 text-[12px] font-medium tracking-wide hover:bg-cyan-400/10 transition shadow-none"
+          >
+            ← Back to PCC Panel
+          </button>
+
+          <div className="relative overflow-hidden bg-white/8 border border-white/10 shadow-none p-4">
+            <div className="absolute top-0 left-0 right-0 h-[3px] bg-cyan-400" />
+
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="mt-2 text-3xl font-normal tracking-wide">
+                  {data.title}
+                </h2>
+
+                <p className="mt-1 text-[13px] font-medium text-blue-300 tracking-wide">
+                  {data.subtitle}
+                </p>
+              </div>
+
+              <div className="text-right">
+                <span className="inline-flex items-center gap-2 px-4 py-1 bg-emerald-400/10 border border-emerald-400/30 text-emerald-300 text-[11px] font-semibold tracking-wide">
+                  <span className="h-2 w-2 rounded-full bg-emerald-400" />
+                  {data.status}
+                </span>
+
+                <p className="mt-3 text-[10px] text-slate-400 tracking-wide">
+                  Status: {data.status}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-5 gap-4 mt-3">
+            {[
+              ["Energy", data.kwh, "kWh"],
+              ["Reactive", data.kvh, "kVh"],
+              ["Current", data.current, ""],
+              ["Voltage", data.voltage, ""],
+              ["Power Factor", data.pf, ""],
+            ].map(([label, value, unit]) => (
+              <div
+                key={label}
+                className="bg-white/7 border border-white/10 p-3 shadow-none"
+              >
+                <p className="text-[15px] font-bold uppercase tracking-[0.12em] text-white">
+                  {label}
+                </p>
+
+                <div className="mt-1 flex items-end gap-2">
+                  <span className="text-[13px] font-normal text-slate-300">
+                    {value}
+                  </span>
+
+                  {unit && (
+                    <span className="pb-[2px] text-[10px] font-medium uppercase tracking-[0.08em] text-cyan-300">
+                      {unit}
+                    </span>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="grid grid-cols-[1.2fr_0.8fr] gap-5 mt-3">
+            <div className="bg-white/7 border border-white/10 p-6 shadow-none">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-[15px] font-semibold tracking-wide">
+                  PCC Load Graph
+                </h3>
+
+                <div className="text-right">
+                  <p className="text-[12px] text-slate-400">Average</p>
+
+                  <h4 className="text-lg font-semibold text-cyan-300">
+                    {avg}%
+                  </h4>
+                </div>
+              </div>
+
+              <div className="flex items-end gap-3 h-[280px] border-b border-white/10 pb-3">
+                {graphValues.map((value, index) => (
+                  <div key={index} className="flex-1 flex flex-col justify-end">
+                    <div
+                      className="bg-cyan-400/90 shadow-none"
+                      style={{ height: `${value * 2.5}px` }}
+                    />
+
+                    <span className="text-[8px] text-center mt-2 text-blue-200">
+                      {index + 1}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="grid grid-cols-3 gap-3 mt-5">
+                <div className="bg-[#06184A]/70 border border-white/10 p-4 shadow-none">
+                  <p className="text-[14px] font-medium">Peak Load</p>
+                  <h4 className="text-[13px] font-semibold text-slate-400">
+                    {Math.max(...graphValues)}%
+                  </h4>
+                </div>
+
+                <div className="bg-[#06184A]/70 border border-white/10 p-4 shadow-none">
+                  <p className="text-[14px] font-medium">Minimum</p>
+                  <h4 className="text-[13px] font-semibold text-slate-400">
+                    {Math.min(...graphValues)}%
+                  </h4>
+                </div>
+
+                <div className="bg-[#06184A]/70 border border-white/10 p-4 shadow-none">
+                  <p className="text-[14px] font-medium">Status</p>
+                  <h4 className="text-[13px] font-semibold text-emerald-200">
+                    {data.status}
+                  </h4>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white/7 border border-white/10 p-6 shadow-none">
+              <h3 className="text-[15px] font-semibold tracking-wide mb-6">
+                Live PCC Status
+              </h3>
+
+              <div className="flex justify-center">
+                <div className="relative h-48 w-48 rounded-full border-[18px] border-white/10 flex items-center justify-center shadow-none">
+                  <div className="absolute inset-[-18px] rounded-full border-[18px] border-cyan-400 border-r-transparent border-b-transparent rotate-45" />
+
+                  <div className="text-center">
+                    <span className="block text-[30px] font-normal">
+                      {data.load}%
+                    </span>
+
+                    <span className="text-[13px] font-medium text-cyan-300 tracking-wide">
+                      PCC Load
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-8 space-y-5">
+                {[
+                  ["Load", data.load],
+                  ["Power Factor", Number(data.pf) * 100],
+                  ["Panel Health", data.health],
+                ].map(([label, value]) => (
+                  <div key={label}>
+                    <div className="flex justify-between text-[12px] mb-2">
+                      <span className="text-blue-100 font-medium">
+                        {label}
+                      </span>
+
+                      <span className="text-cyan-300 font-semibold text-[12px]">
+                        {Math.round(value)}%
+                      </span>
+                    </div>
+
+                    <div className="h-2 bg-white/10 overflow-hidden">
+                      <div
+                        className="h-full bg-cyan-400 shadow-none"
+                        style={{ width: `${Math.min(value, 100)}%` }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const createPccAnalyticsData = (title, panel, index) => ({
+  title: `${title} - ${panel.name.replace(/\n/g, " ")}`,
+  subtitle: "LT Distribution Panel Live Analytics",
+  kwh: `${1245 + index * 18}`,
+  kvh: `${1180 + index * 15}`,
+  voltage: "433 V",
+  current: `${210 + index * 4} A`,
+  pf: index % 2 === 0 ? "0.98" : "0.97",
+  load: 70 + (index % 8),
+  health: 92 + (index % 5),
+  status: "Stable",
+});
+
 const Pcc1Popup = () => {
   const [openedPanels, setOpenedPanels] = React.useState([]);
+  const [activePccAnalytics, setActivePccAnalytics] = React.useState(null);
 
   const pcc1Panels = [
     { name: "LT6\nIN", arrow: "down" },
@@ -2655,23 +3801,66 @@ const Pcc1Popup = () => {
 
       {type === "down" && (
         <>
-          <path d="M 50 0 V 48" stroke="#004AAD" strokeWidth="2.5" strokeLinecap="round" />
-          <path d="M 50 0 V 48" stroke="#00E5FF" strokeWidth="2.5" strokeLinecap="round" className="flow-path-right" markerEnd={`url(#arrow-wing-${id})`} />
+          <path
+            d="M 50 0 V 48"
+            stroke="#004AAD"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+          />
+          <path
+            d="M 50 0 V 48"
+            stroke="#00E5FF"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            className="flow-path-right"
+            markerEnd={`url(#arrow-wing-${id})`}
+          />
         </>
       )}
 
       {type === "up" && (
         <>
-          <path d="M 50 48 V 0" stroke="#004AAD" strokeWidth="2.5" strokeLinecap="round" />
-          <path d="M 50 48 V 0" stroke="#00E5FF" strokeWidth="2.5" strokeLinecap="round" className="flow-path-left" markerEnd={`url(#arrow-wing-${id})`} />
+          <path
+            d="M 50 48 V 0"
+            stroke="#004AAD"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+          />
+          <path
+            d="M 50 48 V 0"
+            stroke="#00E5FF"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            className="flow-path-left"
+            markerEnd={`url(#arrow-wing-${id})`}
+          />
         </>
       )}
 
       {type === "both" && (
         <>
-          <path d="M 18 24 H 82" stroke="#004AAD" strokeWidth="2.5" strokeLinecap="round" />
-          <path d="M 18 24 H 82" stroke="#00E5FF" strokeWidth="2.5" strokeLinecap="round" className="flow-path-right" markerEnd={`url(#arrow-wing-${id})`} />
-          <path d="M 82 24 H 18" stroke="#00E5FF" strokeWidth="2.5" strokeLinecap="round" className="flow-path-left" markerEnd={`url(#arrow-wing-${id})`} />
+          <path
+            d="M 18 24 H 82"
+            stroke="#004AAD"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+          />
+          <path
+            d="M 18 24 H 82"
+            stroke="#00E5FF"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            className="flow-path-right"
+            markerEnd={`url(#arrow-wing-${id})`}
+          />
+          <path
+            d="M 82 24 H 18"
+            stroke="#00E5FF"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            className="flow-path-left"
+            markerEnd={`url(#arrow-wing-${id})`}
+          />
         </>
       )}
     </svg>
@@ -2683,30 +3872,18 @@ const Pcc1Popup = () => {
         {heading}
       </div>
 
-      <div className="flex justify-between text-[9px] leading-[15px]">
-        <span className="text-blue-200">kWh</span>
-        <span className="text-white">1245</span>
-      </div>
-
-      <div className="flex justify-between text-[9px] leading-[15px]">
-        <span className="text-blue-200">kVh</span>
-        <span className="text-white">1180</span>
-      </div>
-
-      <div className="flex justify-between text-[9px] leading-[15px]">
-        <span className="text-blue-200">V</span>
-        <span className="text-white">433V</span>
-      </div>
-
-      <div className="flex justify-between text-[9px] leading-[15px]">
-        <span className="text-blue-200">PF</span>
-        <span className="text-white">0.98</span>
-      </div>
-
-      <div className="flex justify-between text-[9px] leading-[15px]">
-        <span className="text-blue-200">Amps</span>
-        <span className="text-white">210A</span>
-      </div>
+      {[
+        ["kWh", "1245"],
+        ["kVh", "1180"],
+        ["V", "433V"],
+        ["PF", "0.98"],
+        ["Amps", "210A"],
+      ].map(([label, value]) => (
+        <div key={label} className="flex justify-between text-[9px] leading-[15px]">
+          <span className="text-blue-200">{label}</span>
+          <span className="text-white">{value}</span>
+        </div>
+      ))}
     </div>
   );
 
@@ -2729,9 +3906,17 @@ const Pcc1Popup = () => {
                   prev.includes(panelId) ? prev : [...prev, panelId]
                 )
               }
-              className="relative h-full flex-1 min-w-0 bg-[#081F5C] border-2 border-[#004AAD] border-r-0 last:border-r-2 text-white"
+              onClick={() =>
+                setActivePccAnalytics(
+                  createPccAnalyticsData(title, panel, index)
+                )
+              }
+              className="relative h-full flex-1 min-w-0 bg-[#081F5C] border-2 border-[#004AAD] border-r-0 last:border-r-2 text-white cursor-pointer"
             >
-              <FlowArrow type={panel.arrow} id={`${title.replace(/\s/g, "")}-${index}`} />
+              <FlowArrow
+                type={panel.arrow}
+                id={`${title.replace(/\s/g, "")}-${index}`}
+              />
 
               {isOpened ? (
                 <PanelFeatures heading={panel.name} />
@@ -2750,19 +3935,32 @@ const Pcc1Popup = () => {
   );
 
   return (
-    <PopupShell title="Wing 1 LT Distribution Flow" onBack={() => setActivePopup("pccMain")}>
-      <div className="w-full max-w-[1600px] mx-auto px-4 py-6 overflow-visible">
-        <div className="relative w-full h-[520px] overflow-visible">
-          <PCCRow title="PCC 1" top="top-[25px]" rowPanels={pcc1Panels} />
-          <PCCRow title="PCC 2" top="top-[285px]" rowPanels={pcc2Panels} />
+    <>
+      <PopupShell
+        title="Wing 1 LT Distribution Flow"
+        onBack={() => setActivePopup("pccMain")}
+      >
+        <div className="w-full max-w-[1600px] mx-auto px-4 py-6 overflow-visible">
+          <div className="relative w-full h-[520px] overflow-visible">
+            <PCCRow title="PCC 1" top="top-[25px]" rowPanels={pcc1Panels} />
+            <PCCRow title="PCC 2" top="top-[285px]" rowPanels={pcc2Panels} />
+          </div>
         </div>
-      </div>
-    </PopupShell>
+      </PopupShell>
+
+      {activePccAnalytics && (
+        <PccPanelAnalyticsView
+          data={activePccAnalytics}
+          onBack={() => setActivePccAnalytics(null)}
+        />
+      )}
+    </>
   );
 };
 
 const Pcc2Popup = () => {
   const [openedPanels, setOpenedPanels] = React.useState([]);
+  const [activePccAnalytics, setActivePccAnalytics] = React.useState(null);
 
   const pcc3Panels = [
     { name: "LT4\nIN", arrow: "down" },
@@ -2817,23 +4015,66 @@ const Pcc2Popup = () => {
 
       {type === "down" && (
         <>
-          <path d="M 50 0 V 48" stroke="#004AAD" strokeWidth="2.5" strokeLinecap="round" />
-          <path d="M 50 0 V 48" stroke="#00E5FF" strokeWidth="2.5" strokeLinecap="round" className="flow-path-right" markerEnd={`url(#arrow-wing2-${id})`} />
+          <path
+            d="M 50 0 V 48"
+            stroke="#004AAD"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+          />
+          <path
+            d="M 50 0 V 48"
+            stroke="#00E5FF"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            className="flow-path-right"
+            markerEnd={`url(#arrow-wing2-${id})`}
+          />
         </>
       )}
 
       {type === "up" && (
         <>
-          <path d="M 50 48 V 0" stroke="#004AAD" strokeWidth="2.5" strokeLinecap="round" />
-          <path d="M 50 48 V 0" stroke="#00E5FF" strokeWidth="2.5" strokeLinecap="round" className="flow-path-left" markerEnd={`url(#arrow-wing2-${id})`} />
+          <path
+            d="M 50 48 V 0"
+            stroke="#004AAD"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+          />
+          <path
+            d="M 50 48 V 0"
+            stroke="#00E5FF"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            className="flow-path-left"
+            markerEnd={`url(#arrow-wing2-${id})`}
+          />
         </>
       )}
 
       {type === "both" && (
         <>
-          <path d="M 18 24 H 82" stroke="#004AAD" strokeWidth="2.5" strokeLinecap="round" />
-          <path d="M 18 24 H 82" stroke="#00E5FF" strokeWidth="2.5" strokeLinecap="round" className="flow-path-right" markerEnd={`url(#arrow-wing2-${id})`} />
-          <path d="M 82 24 H 18" stroke="#00E5FF" strokeWidth="2.5" strokeLinecap="round" className="flow-path-left" markerEnd={`url(#arrow-wing2-${id})`} />
+          <path
+            d="M 18 24 H 82"
+            stroke="#004AAD"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+          />
+          <path
+            d="M 18 24 H 82"
+            stroke="#00E5FF"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            className="flow-path-right"
+            markerEnd={`url(#arrow-wing2-${id})`}
+          />
+          <path
+            d="M 82 24 H 18"
+            stroke="#00E5FF"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            className="flow-path-left"
+            markerEnd={`url(#arrow-wing2-${id})`}
+          />
         </>
       )}
     </svg>
@@ -2845,30 +4086,18 @@ const Pcc2Popup = () => {
         {heading}
       </div>
 
-      <div className="flex justify-between text-[9px] leading-[15px]">
-        <span className="text-blue-200">kWh</span>
-        <span className="text-white">1245</span>
-      </div>
-
-      <div className="flex justify-between text-[9px] leading-[15px]">
-        <span className="text-blue-200">kVh</span>
-        <span className="text-white">1180</span>
-      </div>
-
-      <div className="flex justify-between text-[9px] leading-[15px]">
-        <span className="text-blue-200">V</span>
-        <span className="text-white">433V</span>
-      </div>
-
-      <div className="flex justify-between text-[9px] leading-[15px]">
-        <span className="text-blue-200">PF</span>
-        <span className="text-white">0.98</span>
-      </div>
-
-      <div className="flex justify-between text-[9px] leading-[15px]">
-        <span className="text-blue-200">Amps</span>
-        <span className="text-white">210A</span>
-      </div>
+      {[
+        ["kWh", "1245"],
+        ["kVh", "1180"],
+        ["V", "433V"],
+        ["PF", "0.98"],
+        ["Amps", "210A"],
+      ].map(([label, value]) => (
+        <div key={label} className="flex justify-between text-[9px] leading-[15px]">
+          <span className="text-blue-200">{label}</span>
+          <span className="text-white">{value}</span>
+        </div>
+      ))}
     </div>
   );
 
@@ -2891,9 +4120,17 @@ const Pcc2Popup = () => {
                   prev.includes(panelId) ? prev : [...prev, panelId]
                 )
               }
-              className="relative h-full flex-1 min-w-0 bg-[#081F5C] border-2 border-[#004AAD] border-r-0 last:border-r-2 text-white"
+              onClick={() =>
+                setActivePccAnalytics(
+                  createPccAnalyticsData(title, panel, index)
+                )
+              }
+              className="relative h-full flex-1 min-w-0 bg-[#081F5C] border-2 border-[#004AAD] border-r-0 last:border-r-2 text-white cursor-pointer"
             >
-              <FlowArrow type={panel.arrow} id={`${title.replace(/\s/g, "")}-${index}`} />
+              <FlowArrow
+                type={panel.arrow}
+                id={`${title.replace(/\s/g, "")}-${index}`}
+              />
 
               {isOpened ? (
                 <PanelFeatures heading={panel.name} />
@@ -2912,14 +4149,26 @@ const Pcc2Popup = () => {
   );
 
   return (
-    <PopupShell title="Wing 2 LT Distribution Flow" onBack={() => setActivePopup("pccMain")}>
-      <div className="w-full max-w-7xl mx-auto px-4 py-6 overflow-visible">
-        <div className="relative w-full h-[520px] overflow-visible">
-          <PCCRow title="PCC 3" top="top-[25px]" rowPanels={pcc3Panels} />
-          <PCCRow title="PCC 4" top="top-[285px]" rowPanels={pcc4Panels} />
+    <>
+      <PopupShell
+        title="Wing 2 LT Distribution Flow"
+        onBack={() => setActivePopup("pccMain")}
+      >
+        <div className="w-full max-w-7xl mx-auto px-4 py-6 overflow-visible">
+          <div className="relative w-full h-[520px] overflow-visible">
+            <PCCRow title="PCC 3" top="top-[25px]" rowPanels={pcc3Panels} />
+            <PCCRow title="PCC 4" top="top-[285px]" rowPanels={pcc4Panels} />
+          </div>
         </div>
-      </div>
-    </PopupShell>
+      </PopupShell>
+
+      {activePccAnalytics && (
+        <PccPanelAnalyticsView
+          data={activePccAnalytics}
+          onBack={() => setActivePccAnalytics(null)}
+        />
+      )}
+    </>
   );
 };
 
@@ -3023,10 +4272,222 @@ const PCCMainPopup = () => (
 );
 
 
+const RaisingMainAnalyticsView = ({ data, onBack }) => {
+  if (!data) return null;
+
+  const graphValues = [42, 48, 55, 61, 66, data.load, 72, 76, 74, data.load];
+
+  const avg = Math.round(
+    graphValues.reduce((a, b) => a + b, 0) / graphValues.length
+  );
+
+  return (
+    <div className="fixed inset-0 z-[99999] bg-[#020B24] text-white overflow-auto">
+      <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(0,74,173,0.22),transparent_35%),radial-gradient(circle_at_top_right,rgba(34,211,238,0.1),transparent_30%)] p-8">
+        <div className="max-w-7xl mx-auto">
+          <button
+            type="button"
+            onClick={onBack}
+            className="mb-6 px-5 py-2.5 bg-white/5 border border-cyan-400/40 text-cyan-200 text-[12px] font-medium tracking-wide hover:bg-cyan-400/10 transition shadow-none"
+          >
+            ← Back to Raising Main
+          </button>
+
+          <div className="relative overflow-hidden bg-white/8 border border-white/10 shadow-none p-4">
+            <div className="absolute top-0 left-0 right-0 h-[3px] bg-cyan-400" />
+
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="mt-2 text-3xl font-normal tracking-wide">
+                  {data.title} Analytics
+                </h2>
+
+                <p className="mt-1 text-[13px] font-medium text-blue-300 tracking-wide">
+                  {data.subtitle}
+                </p>
+              </div>
+
+              <div className="text-right">
+                <span className="inline-flex items-center gap-2 px-4 py-1 bg-emerald-400/10 border border-emerald-400/30 text-emerald-300 text-[11px] font-semibold tracking-wide">
+                  <span className="h-2 w-2 rounded-full bg-emerald-400" />
+                  {data.status}
+                </span>
+
+                <p className="mt-3 text-[10px] text-slate-400 tracking-wide">
+                  Status: {data.status}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-5 gap-4 mt-3">
+            {[
+              ["Energy", data.kwh, "kWh"],
+              ["Reactive", data.kvh, "kVh"],
+              ["Current", data.current, ""],
+              ["Voltage", data.voltage, ""],
+              ["Power Factor", data.pf, ""],
+            ].map(([label, value, unit]) => (
+              <div
+                key={label}
+                className="bg-white/7 border border-white/10 p-3 shadow-none"
+              >
+                <p className="text-[15px] font-bold uppercase tracking-[0.12em] text-white">
+                  {label}
+                </p>
+
+                <div className="mt-1 flex items-end gap-2">
+                  <span className="text-[13px] font-normal text-slate-300">
+                    {value}
+                  </span>
+
+                  {unit && (
+                    <span className="pb-[2px] text-[10px] font-medium uppercase tracking-[0.08em] text-cyan-300">
+                      {unit}
+                    </span>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="grid grid-cols-[1.2fr_0.8fr] gap-5 mt-3">
+            <div className="bg-white/7 border border-white/10 p-6 shadow-none">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-[15px] font-semibold tracking-wide">
+                  Raising Main Load Graph
+                </h3>
+
+                <div className="text-right">
+                  <p className="text-[12px] text-slate-400">Average</p>
+                  <h4 className="text-lg font-semibold text-cyan-300">
+                    {avg}%
+                  </h4>
+                </div>
+              </div>
+
+              <div className="flex items-end gap-3 h-[280px] border-b border-white/10 pb-3">
+                {graphValues.map((value, index) => (
+                  <div key={index} className="flex-1 flex flex-col justify-end">
+                    <div
+                      className="bg-cyan-400/90 shadow-none"
+                      style={{ height: `${value * 2.5}px` }}
+                    />
+
+                    <span className="text-[8px] text-center mt-2 text-blue-200">
+                      {index + 1}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="grid grid-cols-3 gap-3 mt-5">
+                <div className="bg-[#06184A]/70 border border-white/10 p-4 shadow-none">
+                  <p className="text-[14px] font-medium">Peak Load</p>
+                  <h4 className="text-[13px] font-semibold text-slate-400">
+                    {Math.max(...graphValues)}%
+                  </h4>
+                </div>
+
+                <div className="bg-[#06184A]/70 border border-white/10 p-4 shadow-none">
+                  <p className="text-[14px] font-medium">Minimum</p>
+                  <h4 className="text-[13px] font-semibold text-slate-400">
+                    {Math.min(...graphValues)}%
+                  </h4>
+                </div>
+
+                <div className="bg-[#06184A]/70 border border-white/10 p-4 shadow-none">
+                  <p className="text-[14px] font-medium">Status</p>
+                  <h4 className="text-[13px] font-semibold text-emerald-200">
+                    {data.status}
+                  </h4>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white/7 border border-white/10 p-6 shadow-none">
+              <h3 className="text-[15px] font-semibold tracking-wide mb-6">
+                Live Raising Main Status
+              </h3>
+
+              <div className="flex justify-center">
+                <div className="relative h-48 w-48 rounded-full border-[18px] border-white/10 flex items-center justify-center shadow-none">
+                  <div className="absolute inset-[-18px] rounded-full border-[18px] border-cyan-400 border-r-transparent border-b-transparent rotate-45" />
+
+                  <div className="text-center">
+                    <span className="block text-[30px] font-normal">
+                      {data.load}%
+                    </span>
+
+                    <span className="text-[13px] font-medium text-cyan-300 tracking-wide">
+                      RM Load
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-8 space-y-5">
+                {[
+                  ["Load", data.load],
+                  ["Power Factor", Number(data.pf) * 100],
+                  ["RM Health", data.health],
+                ].map(([label, value]) => (
+                  <div key={label}>
+                    <div className="flex justify-between text-[12px] mb-2">
+                      <span className="text-blue-100 font-medium">
+                        {label}
+                      </span>
+
+                      <span className="text-cyan-300 font-semibold text-[12px]">
+                        {Math.round(value)}%
+                      </span>
+                    </div>
+
+                    <div className="h-2 bg-white/10 overflow-hidden">
+                      <div
+                        className="h-full bg-cyan-400 shadow-none"
+                        style={{ width: `${Math.min(value, 100)}%` }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+             
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const RaisingMainPopup = () => {
   const [openedBoxes, setOpenedBoxes] = React.useState([]);
+  const [activeRmAnalytics, setActiveRmAnalytics] = React.useState(null);
 
-  const RMBox = ({ id, title, subtitle, hover = false, tall = false }) => {
+  const createRmData = (id, title, subtitle, index = 0) => ({
+    id,
+    title,
+    subtitle: subtitle || "433V Raising Main Distribution",
+    kwh: `${1245 + index * 65}`,
+    kvh: `${1180 + index * 58}`,
+    voltage: "433 V",
+    current: `${210 + index * 12} A`,
+    pf: index % 2 === 0 ? "0.98" : "0.97",
+    load: 72 + index * 4,
+    health: 94 + index,
+    status: "Stable",
+  });
+
+  const RMBox = ({
+    id,
+    title,
+    subtitle,
+    hover = false,
+    tall = false,
+    onClick,
+  }) => {
     const isOpened = openedBoxes.includes(id);
 
     const monitorData = [
@@ -3040,20 +4501,27 @@ const RaisingMainPopup = () => {
     const handleHover = () => {
       if (!hover) return;
 
-      setOpenedBoxes((prev) =>
-        prev.includes(id) ? prev : [...prev, id]
-      );
+      setOpenedBoxes((prev) => (prev.includes(id) ? prev : [...prev, id]));
+    };
+
+    const handleClick = (event) => {
+      event.stopPropagation();
+      if (onClick) onClick();
     };
 
     return (
       <div
         onMouseEnter={handleHover}
+        onClick={handleClick}
         className={`relative ${
           tall ? "h-[150px]" : "h-[95px]"
         } w-full bg-[#081F5C] border-2 border-[#004AAD] text-white shadow-xl panel-active-glow flex flex-col items-center justify-center text-center cursor-pointer overflow-hidden px-3`}
       >
         {hover && isOpened ? (
-          <div className="absolute inset-0 z-20 bg-[#081F5C] px-4 py-3">
+          <div
+            onClick={handleClick}
+            className="absolute inset-0 z-20 bg-[#081F5C] px-4 py-3"
+          >
             <div className="text-center text-[9px] font-black text-blue-300 uppercase tracking-wide border-b border-[#2B5DA8] pb-1 mb-2">
               {title}
             </div>
@@ -3084,138 +4552,236 @@ const RaisingMainPopup = () => {
   };
 
   return (
-    <PopupShell
-      title="Raising Main Distribution"
-      onBack={() => setActivePopup(null)}
-    >
-      <div className="w-full max-w-6xl mx-auto px-6 py-6 overflow-visible">
-        <div className="relative w-full h-[520px] overflow-visible">
-          {/* MAIN RAISING MAIN */}
-          <div className="absolute left-1/2 top-[-15px] -translate-x-1/2 w-[280px]">
-            <RMBox
-              id="main-rm"
-              title="Raising Main"
-              subtitle="Main Vertical Distribution"
-            />
-          </div>
+    <>
+      <PopupShell
+        title="Raising Main Distribution"
+        onBack={() => setActivePopup(null)}
+      >
+        <div className="w-full max-w-6xl mx-auto px-6 py-6 overflow-visible">
+          <div className="relative w-full h-[520px] overflow-visible">
+            <div className="absolute left-1/2 top-[-15px] -translate-x-1/2 w-[280px]">
+              <RMBox
+                id="main-rm"
+                title="Raising Main"
+                subtitle="Main Vertical Distribution"
+                onClick={() =>
+                  setActiveRmAnalytics(
+                    createRmData(
+                      "main-rm",
+                      "Raising Main",
+                      "Main Vertical Distribution",
+                      0
+                    )
+                  )
+                }
+              />
+            </div>
 
-          {/* FLOW: MAIN RAISING MAIN → WING A / WING B */}
-          <svg
-            className="absolute left-0 top-[80px] w-full h-[110px] overflow-visible pointer-events-none"
-            viewBox="0 0 1000 110"
-            fill="none"
-          >
-            <defs>
-              <marker
-                id="rm-arrow-1"
-                viewBox="0 0 10 10"
-                refX="4"
-                refY="5"
-                markerWidth="8"
-                markerHeight="8"
-                orient="auto"
-              >
-                <path d="M0 2 L6 5 L0 8 Z" fill="#00E5FF" />
-              </marker>
-            </defs>
+            <svg
+              className="absolute left-0 top-[80px] w-full h-[110px] overflow-visible pointer-events-none"
+              viewBox="0 0 1000 110"
+              fill="none"
+            >
+              <defs>
+                <marker
+                  id="rm-arrow-1"
+                  viewBox="0 0 10 10"
+                  refX="4"
+                  refY="5"
+                  markerWidth="8"
+                  markerHeight="8"
+                  orient="auto"
+                >
+                  <path d="M0 2 L6 5 L0 8 Z" fill="#00E5FF" />
+                </marker>
+              </defs>
 
-            {["M500 0 V32 H250 V82", "M500 32 H750 V82"].map((d, i) => (
-              <React.Fragment key={i}>
-                <path
-                  d={d}
-                  stroke="#004AAD"
-                  strokeWidth="4"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d={d}
-                  stroke="#00E5FF"
-                  strokeWidth="4"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className={i === 0 ? "flow-path-left" : "flow-path-right"}
-                  markerEnd="url(#rm-arrow-1)"
-                />
-              </React.Fragment>
-            ))}
-          </svg>
+              {["M500 0 V32 H250 V82", "M500 32 H750 V82"].map(
+                (d, i) => (
+                  <React.Fragment key={i}>
+                    <path
+                      d={d}
+                      stroke="#004AAD"
+                      strokeWidth="4"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      d={d}
+                      stroke="#00E5FF"
+                      strokeWidth="4"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className={i === 0 ? "flow-path-left" : "flow-path-right"}
+                      markerEnd="url(#rm-arrow-1)"
+                    />
+                  </React.Fragment>
+                )
+              )}
+            </svg>
 
-          {/* WING A / WING B */}
-          <div className="absolute left-[9%] top-[175px] w-[34%]">
-            <RMBox id="wing-a" title="Wing A" />
-          </div>
+            <div className="absolute left-[9%] top-[175px] w-[34%]">
+              <RMBox
+                id="wing-a"
+                title="Wing A"
+                subtitle="RM Feed A"
+                onClick={() =>
+                  setActiveRmAnalytics(
+                    createRmData("wing-a", "Wing A", "Raising Main Feed A", 1)
+                  )
+                }
+              />
+            </div>
 
-          <div className="absolute right-[9%] top-[175px] w-[34%]">
-            <RMBox id="wing-b" title="Wing B" />
-          </div>
+            <div className="absolute right-[9%] top-[175px] w-[34%]">
+              <RMBox
+                id="wing-b"
+                title="Wing B"
+                subtitle="RM Feed B"
+                onClick={() =>
+                  setActiveRmAnalytics(
+                    createRmData("wing-b", "Wing B", "Raising Main Feed B", 2)
+                  )
+                }
+              />
+            </div>
 
-          {/* FLOW: WINGS → 2 + 2 RAISING MAINS */}
-          <svg
-            className="absolute left-0 top-[270px] w-full h-[95px] overflow-visible pointer-events-none"
-            viewBox="0 0 1000 95"
-            fill="none"
-          >
-            <defs>
-              <marker
-                id="rm-arrow-2"
-                viewBox="0 0 10 10"
-                refX="4"
-                refY="5"
-                markerWidth="8"
-                markerHeight="8"
-                orient="auto"
-              >
-                <path d="M0 2 L6 5 L0 8 Z" fill="#00E5FF" />
-              </marker>
-            </defs>
+            <svg
+              className="absolute left-0 top-[270px] w-full h-[95px] overflow-visible pointer-events-none"
+              viewBox="0 0 1000 95"
+              fill="none"
+            >
+              <defs>
+                <marker
+                  id="rm-arrow-2"
+                  viewBox="0 0 10 10"
+                  refX="4"
+                  refY="5"
+                  markerWidth="8"
+                  markerHeight="8"
+                  orient="auto"
+                >
+                  <path d="M0 2 L6 5 L0 8 Z" fill="#00E5FF" />
+                </marker>
+              </defs>
 
-            {[
-              "M250 0 V32 H140 V76",
-              "M250 0 V32 H360 V76",
-              "M750 0 V32 H640 V76",
-              "M750 0 V32 H860 V76",
-            ].map((d, i) => (
-              <React.Fragment key={i}>
-                <path
-                  d={d}
-                  stroke="#004AAD"
-                  strokeWidth="4"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d={d}
-                  stroke="#00E5FF"
-                  strokeWidth="4"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="flow-path-right"
-                  markerEnd="url(#rm-arrow-2)"
-                />
-              </React.Fragment>
-            ))}
-          </svg>
+              {[
+                "M250 0 V32 H140 V76",
+                "M250 0 V32 H360 V76",
+                "M750 0 V32 H640 V76",
+                "M750 0 V32 H860 V76",
+              ].map((d, i) => (
+                <React.Fragment key={i}>
+                  <path
+                    d={d}
+                    stroke="#004AAD"
+                    strokeWidth="4"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d={d}
+                    stroke="#00E5FF"
+                    strokeWidth="4"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="flow-path-right"
+                    markerEnd="url(#rm-arrow-2)"
+                  />
+                </React.Fragment>
+              ))}
+            </svg>
 
-          {/* FINAL 4 RAISING MAIN BOXES */}
-          <div className="absolute left-[6%] top-[350px] w-[18%]">
-            <RMBox id="rm-a1" title="Raising Main 1" hover tall />
-          </div>
+            <div className="absolute left-[6%] top-[350px] w-[18%]">
+              <RMBox
+                id="rm-a1"
+                title="Raising Main 1"
+                subtitle="Wing A Vertical Bus"
+                hover
+                tall
+                onClick={() =>
+                  setActiveRmAnalytics(
+                    createRmData(
+                      "rm-a1",
+                      "Raising Main 1",
+                      "Wing A Vertical Bus",
+                      3
+                    )
+                  )
+                }
+              />
+            </div>
 
-          <div className="absolute left-[30%] top-[350px] w-[18%]">
-            <RMBox id="rm-a2" title="Raising Main 2" hover tall />
-          </div>
+            <div className="absolute left-[30%] top-[350px] w-[18%]">
+              <RMBox
+                id="rm-a2"
+                title="Raising Main 2"
+                subtitle="Wing A Vertical Bus"
+                hover
+                tall
+                onClick={() =>
+                  setActiveRmAnalytics(
+                    createRmData(
+                      "rm-a2",
+                      "Raising Main 2",
+                      "Wing A Vertical Bus",
+                      4
+                    )
+                  )
+                }
+              />
+            </div>
 
-          <div className="absolute right-[30%] top-[350px] w-[18%]">
-            <RMBox id="rm-b1" title="Raising Main 3" hover tall />
-          </div>
+            <div className="absolute right-[30%] top-[350px] w-[18%]">
+              <RMBox
+                id="rm-b1"
+                title="Raising Main 3"
+                subtitle="Wing B Vertical Bus"
+                hover
+                tall
+                onClick={() =>
+                  setActiveRmAnalytics(
+                    createRmData(
+                      "rm-b1",
+                      "Raising Main 3",
+                      "Wing B Vertical Bus",
+                      5
+                    )
+                  )
+                }
+              />
+            </div>
 
-          <div className="absolute right-[6%] top-[350px] w-[18%]">
-            <RMBox id="rm-b2" title="Raising Main 4" hover tall />
+            <div className="absolute right-[6%] top-[350px] w-[18%]">
+              <RMBox
+                id="rm-b2"
+                title="Raising Main 4"
+                subtitle="Wing B Vertical Bus"
+                hover
+                tall
+                onClick={() =>
+                  setActiveRmAnalytics(
+                    createRmData(
+                      "rm-b2",
+                      "Raising Main 4",
+                      "Wing B Vertical Bus",
+                      6
+                    )
+                  )
+                }
+              />
+            </div>
           </div>
         </div>
-      </div>
-    </PopupShell>
+      </PopupShell>
+
+      {activeRmAnalytics && (
+        <RaisingMainAnalyticsView
+          data={activeRmAnalytics}
+          onBack={() => setActiveRmAnalytics(null)}
+        />
+      )}
+    </>
   );
 };
 
@@ -3549,16 +5115,7 @@ const BuildingsPopup = () => {
 
 
 
-      {activePopup === "source" && (
-  <SourcePopup setActivePopup={setActivePopup} />
-)}
-
-{["inc1Analytics", "outAnalytics", "inc2Analytics"].includes(activePopup) && (
-  <IndividualSourceAnalytics
-    type={activePopup}
-    onBack={() => setActivePopup("source")}
-  />
-)}
+      {activePopup === "source" && <SourcePopup />}
       {activePopup === "feeders" && <FeederPopup />}
       {activePopup === "transformers" && <TransformersPopup />}
       {activePopup === "kiosks" && <KioskPopup />}
